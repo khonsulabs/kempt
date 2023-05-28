@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Index - Criterion.rs</title>
+    <style type="text/css">
+        body {
+            font: 14px Helvetica Neue;
+            text-rendering: optimizelegibility;
+        }
+
+        .body {
+            width: 960px;
+            margin: auto;
+        }
+
+        a:link {
+            color: #1F78B4;
+            text-decoration: none;
+        }
+
+        h2 {
+            font-size: 36px;
+            font-weight: 300;
+        }
+
+        h3 {
+            font-size: 24px;
+            font-weight: 300;
+        }
+
+        #footer {
+            height: 40px;
+            background: #888;
+            color: white;
+            font-size: larger;
+            font-weight: 300;
+        }
+
+        #footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        #footer p {
+            text-align: center
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #888;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="body">
+        <h2>Criterion.rs Benchmark Index</h2>
+        See individual benchmark pages below for more details.
+        <ul>
+            <li><a href="../fill-rdm u128/report/index.html">fill-rdm u128</a></li>
+            
+            <ul>
+                <li>
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th><a href="../fill-rdm u128/btree/report/index.html">btree</a></th>
+                            <th><a href="../fill-rdm u128/hash/report/index.html">hash</a></th>
+                            <th><a href="../fill-rdm u128/object/report/index.html">object</a></th>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u128/5/report/index.html">5</a></th>
+                            <td><a href="../fill-rdm u128/btree/5/report/index.html">fill-rdm u128/btree/5</a></td>
+                            <td><a href="../fill-rdm u128/hash/5/report/index.html">fill-rdm u128/hash/5</a></td>
+                            <td><a href="../fill-rdm u128/object/5/report/index.html">fill-rdm u128/object/5</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u128/10/report/index.html">10</a></th>
+                            <td><a href="../fill-rdm u128/btree/10/report/index.html">fill-rdm u128/btree/10</a></td>
+                            <td><a href="../fill-rdm u128/hash/10/report/index.html">fill-rdm u128/hash/10</a></td>
+                            <td><a href="../fill-rdm u128/object/10/report/index.html">fill-rdm u128/object/10</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u128/25/report/index.html">25</a></th>
+                            <td><a href="../fill-rdm u128/btree/25/report/index.html">fill-rdm u128/btree/25</a></td>
+                            <td><a href="../fill-rdm u128/hash/25/report/index.html">fill-rdm u128/hash/25</a></td>
+                            <td><a href="../fill-rdm u128/object/25/report/index.html">fill-rdm u128/object/25</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u128/50/report/index.html">50</a></th>
+                            <td><a href="../fill-rdm u128/btree/50/report/index.html">fill-rdm u128/btree/50</a></td>
+                            <td><a href="../fill-rdm u128/hash/50/report/index.html">fill-rdm u128/hash/50</a></td>
+                            <td><a href="../fill-rdm u128/object/50/report/index.html">fill-rdm u128/object/50</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u128/75/report/index.html">75</a></th>
+                            <td><a href="../fill-rdm u128/btree/75/report/index.html">fill-rdm u128/btree/75</a></td>
+                            <td><a href="../fill-rdm u128/hash/75/report/index.html">fill-rdm u128/hash/75</a></td>
+                            <td><a href="../fill-rdm u128/object/75/report/index.html">fill-rdm u128/object/75</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u128/100/report/index.html">100</a></th>
+                            <td><a href="../fill-rdm u128/btree/100/report/index.html">fill-rdm u128/btree/100</a></td>
+                            <td><a href="../fill-rdm u128/hash/100/report/index.html">fill-rdm u128/hash/100</a></td>
+                            <td><a href="../fill-rdm u128/object/100/report/index.html">fill-rdm u128/object/100</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u128/500/report/index.html">500</a></th>
+                            <td><a href="../fill-rdm u128/btree/500/report/index.html">fill-rdm u128/btree/500</a></td>
+                            <td><a href="../fill-rdm u128/hash/500/report/index.html">fill-rdm u128/hash/500</a></td>
+                            <td><a href="../fill-rdm u128/object/500/report/index.html">fill-rdm u128/object/500</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u128/1000/report/index.html">1000</a></th>
+                            <td><a href="../fill-rdm u128/btree/1000/report/index.html">fill-rdm u128/btree/1000</a></td>
+                            <td><a href="../fill-rdm u128/hash/1000/report/index.html">fill-rdm u128/hash/1000</a></td>
+                            <td><a href="../fill-rdm u128/object/1000/report/index.html">fill-rdm u128/object/1000</a></td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+            <li><a href="../fill-rdm u8/report/index.html">fill-rdm u8</a></li>
+            
+            <ul>
+                <li>
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th><a href="../fill-rdm u8/btree/report/index.html">btree</a></th>
+                            <th><a href="../fill-rdm u8/hash/report/index.html">hash</a></th>
+                            <th><a href="../fill-rdm u8/object/report/index.html">object</a></th>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u8/5/report/index.html">5</a></th>
+                            <td><a href="../fill-rdm u8/btree/5/report/index.html">fill-rdm u8/btree/5</a></td>
+                            <td><a href="../fill-rdm u8/hash/5/report/index.html">fill-rdm u8/hash/5</a></td>
+                            <td><a href="../fill-rdm u8/object/5/report/index.html">fill-rdm u8/object/5</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u8/10/report/index.html">10</a></th>
+                            <td><a href="../fill-rdm u8/btree/10/report/index.html">fill-rdm u8/btree/10</a></td>
+                            <td><a href="../fill-rdm u8/hash/10/report/index.html">fill-rdm u8/hash/10</a></td>
+                            <td><a href="../fill-rdm u8/object/10/report/index.html">fill-rdm u8/object/10</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u8/25/report/index.html">25</a></th>
+                            <td><a href="../fill-rdm u8/btree/25/report/index.html">fill-rdm u8/btree/25</a></td>
+                            <td><a href="../fill-rdm u8/hash/25/report/index.html">fill-rdm u8/hash/25</a></td>
+                            <td><a href="../fill-rdm u8/object/25/report/index.html">fill-rdm u8/object/25</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u8/50/report/index.html">50</a></th>
+                            <td><a href="../fill-rdm u8/btree/50/report/index.html">fill-rdm u8/btree/50</a></td>
+                            <td><a href="../fill-rdm u8/hash/50/report/index.html">fill-rdm u8/hash/50</a></td>
+                            <td><a href="../fill-rdm u8/object/50/report/index.html">fill-rdm u8/object/50</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u8/75/report/index.html">75</a></th>
+                            <td><a href="../fill-rdm u8/btree/75/report/index.html">fill-rdm u8/btree/75</a></td>
+                            <td><a href="../fill-rdm u8/hash/75/report/index.html">fill-rdm u8/hash/75</a></td>
+                            <td><a href="../fill-rdm u8/object/75/report/index.html">fill-rdm u8/object/75</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm u8/100/report/index.html">100</a></th>
+                            <td><a href="../fill-rdm u8/btree/100/report/index.html">fill-rdm u8/btree/100</a></td>
+                            <td><a href="../fill-rdm u8/hash/100/report/index.html">fill-rdm u8/hash/100</a></td>
+                            <td><a href="../fill-rdm u8/object/100/report/index.html">fill-rdm u8/object/100</a></td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+            <li><a href="../fill-rdm usize/report/index.html">fill-rdm usize</a></li>
+            
+            <ul>
+                <li>
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th><a href="../fill-rdm usize/btree/report/index.html">btree</a></th>
+                            <th><a href="../fill-rdm usize/hash/report/index.html">hash</a></th>
+                            <th><a href="../fill-rdm usize/object/report/index.html">object</a></th>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm usize/5/report/index.html">5</a></th>
+                            <td><a href="../fill-rdm usize/btree/5/report/index.html">fill-rdm usize/btree/5</a></td>
+                            <td><a href="../fill-rdm usize/hash/5/report/index.html">fill-rdm usize/hash/5</a></td>
+                            <td><a href="../fill-rdm usize/object/5/report/index.html">fill-rdm usize/object/5</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm usize/10/report/index.html">10</a></th>
+                            <td><a href="../fill-rdm usize/btree/10/report/index.html">fill-rdm usize/btree/10</a></td>
+                            <td><a href="../fill-rdm usize/hash/10/report/index.html">fill-rdm usize/hash/10</a></td>
+                            <td><a href="../fill-rdm usize/object/10/report/index.html">fill-rdm usize/object/10</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm usize/25/report/index.html">25</a></th>
+                            <td><a href="../fill-rdm usize/btree/25/report/index.html">fill-rdm usize/btree/25</a></td>
+                            <td><a href="../fill-rdm usize/hash/25/report/index.html">fill-rdm usize/hash/25</a></td>
+                            <td><a href="../fill-rdm usize/object/25/report/index.html">fill-rdm usize/object/25</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm usize/50/report/index.html">50</a></th>
+                            <td><a href="../fill-rdm usize/btree/50/report/index.html">fill-rdm usize/btree/50</a></td>
+                            <td><a href="../fill-rdm usize/hash/50/report/index.html">fill-rdm usize/hash/50</a></td>
+                            <td><a href="../fill-rdm usize/object/50/report/index.html">fill-rdm usize/object/50</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm usize/75/report/index.html">75</a></th>
+                            <td><a href="../fill-rdm usize/btree/75/report/index.html">fill-rdm usize/btree/75</a></td>
+                            <td><a href="../fill-rdm usize/hash/75/report/index.html">fill-rdm usize/hash/75</a></td>
+                            <td><a href="../fill-rdm usize/object/75/report/index.html">fill-rdm usize/object/75</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm usize/100/report/index.html">100</a></th>
+                            <td><a href="../fill-rdm usize/btree/100/report/index.html">fill-rdm usize/btree/100</a></td>
+                            <td><a href="../fill-rdm usize/hash/100/report/index.html">fill-rdm usize/hash/100</a></td>
+                            <td><a href="../fill-rdm usize/object/100/report/index.html">fill-rdm usize/object/100</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm usize/500/report/index.html">500</a></th>
+                            <td><a href="../fill-rdm usize/btree/500/report/index.html">fill-rdm usize/btree/500</a></td>
+                            <td><a href="../fill-rdm usize/hash/500/report/index.html">fill-rdm usize/hash/500</a></td>
+                            <td><a href="../fill-rdm usize/object/500/report/index.html">fill-rdm usize/object/500</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-rdm usize/1000/report/index.html">1000</a></th>
+                            <td><a href="../fill-rdm usize/btree/1000/report/index.html">fill-rdm usize/btree/1000</a></td>
+                            <td><a href="../fill-rdm usize/hash/1000/report/index.html">fill-rdm usize/hash/1000</a></td>
+                            <td><a href="../fill-rdm usize/object/1000/report/index.html">fill-rdm usize/object/1000</a></td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+            <li><a href="../fill-seq u128/report/index.html">fill-seq u128</a></li>
+            
+            <ul>
+                <li>
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th><a href="../fill-seq u128/btree/report/index.html">btree</a></th>
+                            <th><a href="../fill-seq u128/hash/report/index.html">hash</a></th>
+                            <th><a href="../fill-seq u128/object/report/index.html">object</a></th>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u128/5/report/index.html">5</a></th>
+                            <td><a href="../fill-seq u128/btree/5/report/index.html">fill-seq u128/btree/5</a></td>
+                            <td><a href="../fill-seq u128/hash/5/report/index.html">fill-seq u128/hash/5</a></td>
+                            <td><a href="../fill-seq u128/object/5/report/index.html">fill-seq u128/object/5</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u128/10/report/index.html">10</a></th>
+                            <td><a href="../fill-seq u128/btree/10/report/index.html">fill-seq u128/btree/10</a></td>
+                            <td><a href="../fill-seq u128/hash/10/report/index.html">fill-seq u128/hash/10</a></td>
+                            <td><a href="../fill-seq u128/object/10/report/index.html">fill-seq u128/object/10</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u128/25/report/index.html">25</a></th>
+                            <td><a href="../fill-seq u128/btree/25/report/index.html">fill-seq u128/btree/25</a></td>
+                            <td><a href="../fill-seq u128/hash/25/report/index.html">fill-seq u128/hash/25</a></td>
+                            <td><a href="../fill-seq u128/object/25/report/index.html">fill-seq u128/object/25</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u128/50/report/index.html">50</a></th>
+                            <td><a href="../fill-seq u128/btree/50/report/index.html">fill-seq u128/btree/50</a></td>
+                            <td><a href="../fill-seq u128/hash/50/report/index.html">fill-seq u128/hash/50</a></td>
+                            <td><a href="../fill-seq u128/object/50/report/index.html">fill-seq u128/object/50</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u128/75/report/index.html">75</a></th>
+                            <td><a href="../fill-seq u128/btree/75/report/index.html">fill-seq u128/btree/75</a></td>
+                            <td><a href="../fill-seq u128/hash/75/report/index.html">fill-seq u128/hash/75</a></td>
+                            <td><a href="../fill-seq u128/object/75/report/index.html">fill-seq u128/object/75</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u128/100/report/index.html">100</a></th>
+                            <td><a href="../fill-seq u128/btree/100/report/index.html">fill-seq u128/btree/100</a></td>
+                            <td><a href="../fill-seq u128/hash/100/report/index.html">fill-seq u128/hash/100</a></td>
+                            <td><a href="../fill-seq u128/object/100/report/index.html">fill-seq u128/object/100</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u128/500/report/index.html">500</a></th>
+                            <td><a href="../fill-seq u128/btree/500/report/index.html">fill-seq u128/btree/500</a></td>
+                            <td><a href="../fill-seq u128/hash/500/report/index.html">fill-seq u128/hash/500</a></td>
+                            <td><a href="../fill-seq u128/object/500/report/index.html">fill-seq u128/object/500</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u128/1000/report/index.html">1000</a></th>
+                            <td><a href="../fill-seq u128/btree/1000/report/index.html">fill-seq u128/btree/1000</a></td>
+                            <td><a href="../fill-seq u128/hash/1000/report/index.html">fill-seq u128/hash/1000</a></td>
+                            <td><a href="../fill-seq u128/object/1000/report/index.html">fill-seq u128/object/1000</a></td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+            <li><a href="../fill-seq u8/report/index.html">fill-seq u8</a></li>
+            
+            <ul>
+                <li>
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th><a href="../fill-seq u8/btree/report/index.html">btree</a></th>
+                            <th><a href="../fill-seq u8/hash/report/index.html">hash</a></th>
+                            <th><a href="../fill-seq u8/object/report/index.html">object</a></th>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u8/5/report/index.html">5</a></th>
+                            <td><a href="../fill-seq u8/btree/5/report/index.html">fill-seq u8/btree/5</a></td>
+                            <td><a href="../fill-seq u8/hash/5/report/index.html">fill-seq u8/hash/5</a></td>
+                            <td><a href="../fill-seq u8/object/5/report/index.html">fill-seq u8/object/5</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u8/10/report/index.html">10</a></th>
+                            <td><a href="../fill-seq u8/btree/10/report/index.html">fill-seq u8/btree/10</a></td>
+                            <td><a href="../fill-seq u8/hash/10/report/index.html">fill-seq u8/hash/10</a></td>
+                            <td><a href="../fill-seq u8/object/10/report/index.html">fill-seq u8/object/10</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u8/25/report/index.html">25</a></th>
+                            <td><a href="../fill-seq u8/btree/25/report/index.html">fill-seq u8/btree/25</a></td>
+                            <td><a href="../fill-seq u8/hash/25/report/index.html">fill-seq u8/hash/25</a></td>
+                            <td><a href="../fill-seq u8/object/25/report/index.html">fill-seq u8/object/25</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u8/50/report/index.html">50</a></th>
+                            <td><a href="../fill-seq u8/btree/50/report/index.html">fill-seq u8/btree/50</a></td>
+                            <td><a href="../fill-seq u8/hash/50/report/index.html">fill-seq u8/hash/50</a></td>
+                            <td><a href="../fill-seq u8/object/50/report/index.html">fill-seq u8/object/50</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u8/75/report/index.html">75</a></th>
+                            <td><a href="../fill-seq u8/btree/75/report/index.html">fill-seq u8/btree/75</a></td>
+                            <td><a href="../fill-seq u8/hash/75/report/index.html">fill-seq u8/hash/75</a></td>
+                            <td><a href="../fill-seq u8/object/75/report/index.html">fill-seq u8/object/75</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq u8/100/report/index.html">100</a></th>
+                            <td><a href="../fill-seq u8/btree/100/report/index.html">fill-seq u8/btree/100</a></td>
+                            <td><a href="../fill-seq u8/hash/100/report/index.html">fill-seq u8/hash/100</a></td>
+                            <td><a href="../fill-seq u8/object/100/report/index.html">fill-seq u8/object/100</a></td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+            <li><a href="../fill-seq usize/report/index.html">fill-seq usize</a></li>
+            
+            <ul>
+                <li>
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th><a href="../fill-seq usize/btree/report/index.html">btree</a></th>
+                            <th><a href="../fill-seq usize/hash/report/index.html">hash</a></th>
+                            <th><a href="../fill-seq usize/object/report/index.html">object</a></th>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq usize/5/report/index.html">5</a></th>
+                            <td><a href="../fill-seq usize/btree/5/report/index.html">fill-seq usize/btree/5</a></td>
+                            <td><a href="../fill-seq usize/hash/5/report/index.html">fill-seq usize/hash/5</a></td>
+                            <td><a href="../fill-seq usize/object/5/report/index.html">fill-seq usize/object/5</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq usize/10/report/index.html">10</a></th>
+                            <td><a href="../fill-seq usize/btree/10/report/index.html">fill-seq usize/btree/10</a></td>
+                            <td><a href="../fill-seq usize/hash/10/report/index.html">fill-seq usize/hash/10</a></td>
+                            <td><a href="../fill-seq usize/object/10/report/index.html">fill-seq usize/object/10</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq usize/25/report/index.html">25</a></th>
+                            <td><a href="../fill-seq usize/btree/25/report/index.html">fill-seq usize/btree/25</a></td>
+                            <td><a href="../fill-seq usize/hash/25/report/index.html">fill-seq usize/hash/25</a></td>
+                            <td><a href="../fill-seq usize/object/25/report/index.html">fill-seq usize/object/25</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq usize/50/report/index.html">50</a></th>
+                            <td><a href="../fill-seq usize/btree/50/report/index.html">fill-seq usize/btree/50</a></td>
+                            <td><a href="../fill-seq usize/hash/50/report/index.html">fill-seq usize/hash/50</a></td>
+                            <td><a href="../fill-seq usize/object/50/report/index.html">fill-seq usize/object/50</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq usize/75/report/index.html">75</a></th>
+                            <td><a href="../fill-seq usize/btree/75/report/index.html">fill-seq usize/btree/75</a></td>
+                            <td><a href="../fill-seq usize/hash/75/report/index.html">fill-seq usize/hash/75</a></td>
+                            <td><a href="../fill-seq usize/object/75/report/index.html">fill-seq usize/object/75</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq usize/100/report/index.html">100</a></th>
+                            <td><a href="../fill-seq usize/btree/100/report/index.html">fill-seq usize/btree/100</a></td>
+                            <td><a href="../fill-seq usize/hash/100/report/index.html">fill-seq usize/hash/100</a></td>
+                            <td><a href="../fill-seq usize/object/100/report/index.html">fill-seq usize/object/100</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq usize/500/report/index.html">500</a></th>
+                            <td><a href="../fill-seq usize/btree/500/report/index.html">fill-seq usize/btree/500</a></td>
+                            <td><a href="../fill-seq usize/hash/500/report/index.html">fill-seq usize/hash/500</a></td>
+                            <td><a href="../fill-seq usize/object/500/report/index.html">fill-seq usize/object/500</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../fill-seq usize/1000/report/index.html">1000</a></th>
+                            <td><a href="../fill-seq usize/btree/1000/report/index.html">fill-seq usize/btree/1000</a></td>
+                            <td><a href="../fill-seq usize/hash/1000/report/index.html">fill-seq usize/hash/1000</a></td>
+                            <td><a href="../fill-seq usize/object/1000/report/index.html">fill-seq usize/object/1000</a></td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+            <li><a href="../lookup u128/report/index.html">lookup u128</a></li>
+            
+            <ul>
+                <li>
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th><a href="../lookup u128/btree/report/index.html">btree</a></th>
+                            <th><a href="../lookup u128/hash/report/index.html">hash</a></th>
+                            <th><a href="../lookup u128/object/report/index.html">object</a></th>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u128/5/report/index.html">5</a></th>
+                            <td><a href="../lookup u128/btree/5/report/index.html">lookup u128/btree/5</a></td>
+                            <td><a href="../lookup u128/hash/5/report/index.html">lookup u128/hash/5</a></td>
+                            <td><a href="../lookup u128/object/5/report/index.html">lookup u128/object/5</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u128/10/report/index.html">10</a></th>
+                            <td><a href="../lookup u128/btree/10/report/index.html">lookup u128/btree/10</a></td>
+                            <td><a href="../lookup u128/hash/10/report/index.html">lookup u128/hash/10</a></td>
+                            <td><a href="../lookup u128/object/10/report/index.html">lookup u128/object/10</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u128/25/report/index.html">25</a></th>
+                            <td><a href="../lookup u128/btree/25/report/index.html">lookup u128/btree/25</a></td>
+                            <td><a href="../lookup u128/hash/25/report/index.html">lookup u128/hash/25</a></td>
+                            <td><a href="../lookup u128/object/25/report/index.html">lookup u128/object/25</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u128/50/report/index.html">50</a></th>
+                            <td><a href="../lookup u128/btree/50/report/index.html">lookup u128/btree/50</a></td>
+                            <td><a href="../lookup u128/hash/50/report/index.html">lookup u128/hash/50</a></td>
+                            <td><a href="../lookup u128/object/50/report/index.html">lookup u128/object/50</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u128/75/report/index.html">75</a></th>
+                            <td><a href="../lookup u128/btree/75/report/index.html">lookup u128/btree/75</a></td>
+                            <td><a href="../lookup u128/hash/75/report/index.html">lookup u128/hash/75</a></td>
+                            <td><a href="../lookup u128/object/75/report/index.html">lookup u128/object/75</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u128/100/report/index.html">100</a></th>
+                            <td><a href="../lookup u128/btree/100/report/index.html">lookup u128/btree/100</a></td>
+                            <td><a href="../lookup u128/hash/100/report/index.html">lookup u128/hash/100</a></td>
+                            <td><a href="../lookup u128/object/100/report/index.html">lookup u128/object/100</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u128/500/report/index.html">500</a></th>
+                            <td><a href="../lookup u128/btree/500/report/index.html">lookup u128/btree/500</a></td>
+                            <td><a href="../lookup u128/hash/500/report/index.html">lookup u128/hash/500</a></td>
+                            <td><a href="../lookup u128/object/500/report/index.html">lookup u128/object/500</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u128/1000/report/index.html">1000</a></th>
+                            <td><a href="../lookup u128/btree/1000/report/index.html">lookup u128/btree/1000</a></td>
+                            <td><a href="../lookup u128/hash/1000/report/index.html">lookup u128/hash/1000</a></td>
+                            <td><a href="../lookup u128/object/1000/report/index.html">lookup u128/object/1000</a></td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+            <li><a href="../lookup u8/report/index.html">lookup u8</a></li>
+            
+            <ul>
+                <li>
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th><a href="../lookup u8/btree/report/index.html">btree</a></th>
+                            <th><a href="../lookup u8/hash/report/index.html">hash</a></th>
+                            <th><a href="../lookup u8/object/report/index.html">object</a></th>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u8/5/report/index.html">5</a></th>
+                            <td><a href="../lookup u8/btree/5/report/index.html">lookup u8/btree/5</a></td>
+                            <td><a href="../lookup u8/hash/5/report/index.html">lookup u8/hash/5</a></td>
+                            <td><a href="../lookup u8/object/5/report/index.html">lookup u8/object/5</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u8/10/report/index.html">10</a></th>
+                            <td><a href="../lookup u8/btree/10/report/index.html">lookup u8/btree/10</a></td>
+                            <td><a href="../lookup u8/hash/10/report/index.html">lookup u8/hash/10</a></td>
+                            <td><a href="../lookup u8/object/10/report/index.html">lookup u8/object/10</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u8/25/report/index.html">25</a></th>
+                            <td><a href="../lookup u8/btree/25/report/index.html">lookup u8/btree/25</a></td>
+                            <td><a href="../lookup u8/hash/25/report/index.html">lookup u8/hash/25</a></td>
+                            <td><a href="../lookup u8/object/25/report/index.html">lookup u8/object/25</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u8/50/report/index.html">50</a></th>
+                            <td><a href="../lookup u8/btree/50/report/index.html">lookup u8/btree/50</a></td>
+                            <td><a href="../lookup u8/hash/50/report/index.html">lookup u8/hash/50</a></td>
+                            <td><a href="../lookup u8/object/50/report/index.html">lookup u8/object/50</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u8/75/report/index.html">75</a></th>
+                            <td><a href="../lookup u8/btree/75/report/index.html">lookup u8/btree/75</a></td>
+                            <td><a href="../lookup u8/hash/75/report/index.html">lookup u8/hash/75</a></td>
+                            <td><a href="../lookup u8/object/75/report/index.html">lookup u8/object/75</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup u8/100/report/index.html">100</a></th>
+                            <td><a href="../lookup u8/btree/100/report/index.html">lookup u8/btree/100</a></td>
+                            <td><a href="../lookup u8/hash/100/report/index.html">lookup u8/hash/100</a></td>
+                            <td><a href="../lookup u8/object/100/report/index.html">lookup u8/object/100</a></td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+            <li><a href="../lookup usize/report/index.html">lookup usize</a></li>
+            
+            <ul>
+                <li>
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th><a href="../lookup usize/btree/report/index.html">btree</a></th>
+                            <th><a href="../lookup usize/hash/report/index.html">hash</a></th>
+                            <th><a href="../lookup usize/object/report/index.html">object</a></th>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup usize/5/report/index.html">5</a></th>
+                            <td><a href="../lookup usize/btree/5/report/index.html">lookup usize/btree/5</a></td>
+                            <td><a href="../lookup usize/hash/5/report/index.html">lookup usize/hash/5</a></td>
+                            <td><a href="../lookup usize/object/5/report/index.html">lookup usize/object/5</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup usize/10/report/index.html">10</a></th>
+                            <td><a href="../lookup usize/btree/10/report/index.html">lookup usize/btree/10</a></td>
+                            <td><a href="../lookup usize/hash/10/report/index.html">lookup usize/hash/10</a></td>
+                            <td><a href="../lookup usize/object/10/report/index.html">lookup usize/object/10</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup usize/25/report/index.html">25</a></th>
+                            <td><a href="../lookup usize/btree/25/report/index.html">lookup usize/btree/25</a></td>
+                            <td><a href="../lookup usize/hash/25/report/index.html">lookup usize/hash/25</a></td>
+                            <td><a href="../lookup usize/object/25/report/index.html">lookup usize/object/25</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup usize/50/report/index.html">50</a></th>
+                            <td><a href="../lookup usize/btree/50/report/index.html">lookup usize/btree/50</a></td>
+                            <td><a href="../lookup usize/hash/50/report/index.html">lookup usize/hash/50</a></td>
+                            <td><a href="../lookup usize/object/50/report/index.html">lookup usize/object/50</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup usize/75/report/index.html">75</a></th>
+                            <td><a href="../lookup usize/btree/75/report/index.html">lookup usize/btree/75</a></td>
+                            <td><a href="../lookup usize/hash/75/report/index.html">lookup usize/hash/75</a></td>
+                            <td><a href="../lookup usize/object/75/report/index.html">lookup usize/object/75</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup usize/100/report/index.html">100</a></th>
+                            <td><a href="../lookup usize/btree/100/report/index.html">lookup usize/btree/100</a></td>
+                            <td><a href="../lookup usize/hash/100/report/index.html">lookup usize/hash/100</a></td>
+                            <td><a href="../lookup usize/object/100/report/index.html">lookup usize/object/100</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup usize/500/report/index.html">500</a></th>
+                            <td><a href="../lookup usize/btree/500/report/index.html">lookup usize/btree/500</a></td>
+                            <td><a href="../lookup usize/hash/500/report/index.html">lookup usize/hash/500</a></td>
+                            <td><a href="../lookup usize/object/500/report/index.html">lookup usize/object/500</a></td>
+                        </tr>
+                        <tr>
+                            <th><a href="../lookup usize/1000/report/index.html">1000</a></th>
+                            <td><a href="../lookup usize/btree/1000/report/index.html">lookup usize/btree/1000</a></td>
+                            <td><a href="../lookup usize/hash/1000/report/index.html">lookup usize/hash/1000</a></td>
+                            <td><a href="../lookup usize/object/1000/report/index.html">lookup usize/object/1000</a></td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+        </ul>
+    </div>
+    <div id="footer">
+        <p>This report was generated by
+            <a href="https://github.com/bheisler/criterion.rs">Criterion.rs</a>, a statistics-driven benchmarking
+            library in Rust.</p>
+    </div>
+</body>
+</html>
