@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"objectmap":[["impl&lt;Key, Value&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.69.0/core/cmp/trait.PartialOrd.html\" title=\"trait core::cmp::PartialOrd\">PartialOrd</a>&lt;Key&gt; for <a class=\"struct\" href=\"objectmap/struct.Field.html\" title=\"struct objectmap::Field\">Field</a>&lt;Key, Value&gt;<span class=\"where fmt-newline\">where\n    Key: <a class=\"trait\" href=\"https://doc.rust-lang.org/1.69.0/core/cmp/trait.PartialOrd.html\" title=\"trait core::cmp::PartialOrd\">PartialOrd</a>,</span>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
