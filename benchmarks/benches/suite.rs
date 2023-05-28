@@ -160,7 +160,7 @@ where
 {
     let mut keys = Vec::new();
     let mut key = Key::default();
-    while keys.len() < 10000 && key <= max {
+    while keys.len() < 10000 && key < max {
         keys.push(key);
         key += Key::from(1);
     }

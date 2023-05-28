@@ -3,13 +3,12 @@ name = "benchmarks"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 objectmap = { path = ".." }
 
 [dev-dependencies]
-criterion = { version = "0.4.0", features = ["html_reports"] }
+criterion = { version = "0.5.1", features = ["html_reports"] }
 rand = { version = "0.8" }
 fnv = "1.0.7"
 

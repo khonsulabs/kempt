@@ -3,14 +3,14 @@
 A `#[forbid_unsafe]` ordered map for Rust.
 
 ```rust
-use orderedmap::OrderedMap;
+use objectmap::ObjectMap;
 
-let mut map = OrderedMap::new();
+let mut map = ObjectMap::new();
 map.insert("a", 1);
 map.insert("b", 2);
-assert_eq!(map["a"], 1);
+assert_eq!(map.get(&"a"), Some(&1));
 let replaced = map.insert("a", 2);
-assert_eq!(map["a"], 2);
+assert_eq!(map.get(&"a"), Some(&2));
 assert_eq!(replaced, Some(1));
 ```
 
