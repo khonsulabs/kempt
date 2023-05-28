@@ -3,7 +3,7 @@ name: Benchmarks
 on: [push, pull_request]
 
 jobs:
-  docs:
+  benchmarks:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,17 +15,17 @@ jobs:
       - name: Configure cache
         uses: Swatinem/rust-cache@v2
 
-      - name: Generate Docs
+      - name: Run Benchmarks
         run: |
           cargo bench -p benchmarks
 
-      - name: Deploy Docs
+      - name: Deploy Reports
         if: github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
           branch: gh-pages
-          folder: target/doc/
+          folder: target/criterion/
           git-config-name: kl-botsu
           git-config-email: botsu@khonsulabs.com
-          target-folder: /main/
+          target-folder: /coverage/
           clean: true

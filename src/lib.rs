@@ -84,11 +84,12 @@ where
     /// Inserts `key` and `value`. If an entry already existed for `key`, the
     /// value being overwritten is returned.
     #[inline]
-    pub fn insert(&mut self, key: Key, value: Value) -> Option<Value> {
-        match self.find_key_mut(&key) {
-            Ok(existing) => Some(mem::replace(&mut existing.value, value)),
+    pub fn insert(&mut self, key: Key, value: Value) -> Option<Field<Key, Value>> {
+        let field = Field { key, value };
+        match self.find_key_mut(&field.key) {
+            Ok(existing) => Some(mem::replace(existing, field)),
             Err(insert_at) => {
-                self.0.insert(insert_at, Field { key, value });
+                self.0.insert(insert_at, field);
                 None
             }
         }
@@ -114,13 +115,13 @@ where
 
     /// Removes the value associated with `key`, if found.
     #[inline]
-    pub fn remove<Needle>(&mut self, key: &Needle) -> Option<Value>
+    pub fn remove<Needle>(&mut self, key: &Needle) -> Option<Field<Key, Value>>
     where
         Needle: PartialOrd<Key>,
     {
         let index = self.find_key_index(key).ok()?;
         let field = self.0.remove(index);
-        Some(field.value)
+        Some(field)
     }
 
     /// Returns the number of fields in this object.
@@ -247,8 +248,8 @@ where
     pub fn merge_with(
         &mut self,
         other: &Self,
-        mut filter: impl FnMut(&Value) -> Option<Value>,
-        mut merge: impl FnMut(&mut Value, &Value),
+        mut filter: impl FnMut(&Key, &Value) -> Option<Value>,
+        mut merge: impl FnMut(&Key, &mut Value, &Value),
     ) where
         Key: Clone,
     {
@@ -267,12 +268,12 @@ where
                     // Both have the value, we might need to merge.
                     self_index += 1;
                     other_index += 1;
-                    merge(&mut self_field.value, &other_field.value);
+                    merge(&self_field.key, &mut self_field.value, &other_field.value);
                 }
                 Ordering::Greater => {
                     // Other has a value that self doesn't.
                     other_index += 1;
-                    let Some(value) = filter(&other_field.value) else { continue };
+                    let Some(value) = filter(&other_field.key, &other_field.value) else { continue };
 
                     self.0.insert(
                         self_index,
@@ -289,7 +290,7 @@ where
         if other_index < other.0.len() {
             // Other has more entries that we don't have
             for field in &other.0[other_index..] {
-                let Some(value) = filter(&field.value) else { continue };
+                let Some(value) = filter(&field.key, &field.value) else { continue };
 
                 self.0.push(Field {
                     key: field.key.clone(),
@@ -390,7 +391,7 @@ where
 }
 
 /// A field in an [`ObjectMap`].
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Field<Key, Value> {
     key: Key,
     /// The value contained in this field.
@@ -901,3 +902,6 @@ impl<'a, Key, Value> DoubleEndedIterator for Drain<'a, Key, Value> {
 }
 
 impl<'a, Key, Value> FusedIterator for Drain<'a, Key, Value> {}
+
+#[cfg(test)]
+mod tests;
