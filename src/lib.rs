@@ -11,8 +11,11 @@ extern crate alloc;
 #[cfg(feature = "serde")]
 mod serde;
 
+use alloc::borrow::ToOwned;
+use alloc::string::String;
 use alloc::vec::{self, Vec};
 use core::alloc::Layout;
+use core::borrow::Borrow;
 use core::cmp::Ordering;
 use core::fmt::{self, Debug};
 use core::iter::FusedIterator;
@@ -29,29 +32,20 @@ use core::{mem, slice};
 /// general, this collection excels when there are fewer entries, while
 /// `HashMap` or `BTreeMap` will be better choices with larger numbers of
 /// entries.
-pub struct ObjectMap<Key, Value>(Vec<Field<Key, Value>>);
+pub struct ObjectMap<Key, Value>
+where
+    Key: Sort<Key>,
+{
+    fields: Vec<Field<Key, Value>>,
+}
 
-impl<Key, Value> Default for ObjectMap<Key, Value> {
+impl<Key, Value> Default for ObjectMap<Key, Value>
+where
+    Key: Sort<Key>,
+{
     #[inline]
     fn default() -> Self {
         Self::new()
-    }
-}
-
-impl<Key, Value> ObjectMap<Key, Value> {
-    /// Returns an empty map.
-    #[must_use]
-    #[inline]
-    pub const fn new() -> Self {
-        Self(Vec::new())
-    }
-
-    /// Returns a map with enough memory allocated to store `capacity` elements
-    /// without reallocation.
-    #[must_use]
-    #[inline]
-    pub fn with_capacity(capacity: usize) -> Self {
-        Self(Vec::with_capacity(capacity))
     }
 }
 
@@ -77,9 +71,26 @@ const fn scan_limit<Key, Value>() -> usize {
 
 impl<Key, Value> ObjectMap<Key, Value>
 where
-    Key: Ord,
+    Key: Sort<Key>,
 {
     const SCAN_LIMIT: usize = scan_limit::<Key, Value>();
+
+    /// Returns an empty map.
+    #[must_use]
+    #[inline]
+    pub const fn new() -> Self {
+        Self { fields: Vec::new() }
+    }
+
+    /// Returns a map with enough memory allocated to store `capacity` elements
+    /// without reallocation.
+    #[must_use]
+    #[inline]
+    pub fn with_capacity(capacity: usize) -> Self {
+        Self {
+            fields: Vec::with_capacity(capacity),
+        }
+    }
 
     /// Inserts `key` and `value`. If an entry already existed for `key`, the
     /// value being overwritten is returned.
@@ -89,7 +100,7 @@ where
         match self.find_key_mut(&field.key) {
             Ok(existing) => Some(mem::replace(existing, field)),
             Err(insert_at) => {
-                self.0.insert(insert_at, field);
+                self.fields.insert(insert_at, field);
                 None
             }
         }
@@ -99,7 +110,8 @@ where
     #[inline]
     pub fn contains<Needle>(&self, key: &Needle) -> bool
     where
-        Needle: PartialOrd<Key>,
+        Key: Sort<Needle>,
+        Needle: ?Sized,
     {
         self.find_key_index(key).is_ok()
     }
@@ -108,7 +120,8 @@ where
     #[inline]
     pub fn get<Needle>(&self, key: &Needle) -> Option<&Value>
     where
-        Needle: PartialOrd<Key>,
+        Key: Sort<Needle>,
+        Needle: ?Sized,
     {
         self.find_key(key).ok().map(|field| &field.value)
     }
@@ -117,10 +130,11 @@ where
     #[inline]
     pub fn remove<Needle>(&mut self, key: &Needle) -> Option<Field<Key, Value>>
     where
-        Needle: PartialOrd<Key>,
+        Key: Sort<Needle>,
+        Needle: ?Sized,
     {
         let index = self.find_key_index(key).ok()?;
-        let field = self.0.remove(index);
+        let field = self.fields.remove(index);
         Some(field)
     }
 
@@ -128,64 +142,73 @@ where
     #[must_use]
     #[inline]
     pub fn len(&self) -> usize {
-        self.0.len()
+        self.fields.len()
     }
 
     /// Returns true if this object has no fields.
     #[must_use]
     #[inline]
     pub fn is_empty(&self) -> bool {
-        self.0.is_empty()
+        self.fields.is_empty()
     }
 
     /// Returns an [`Entry`] for the associated key.
     #[inline]
-    pub fn entry<Needle>(&mut self, key: &Needle) -> Entry<'_, Key, Value>
+    pub fn entry<'key, Needle>(
+        &mut self,
+        key: impl Into<SearchKey<'key, Key, Needle>>,
+    ) -> Entry<'_, Key, Value>
     where
-        Needle: PartialOrd<Key>,
+        Key: Sort<Needle> + Borrow<Needle>,
+        Needle: ToOwned<Owned = Key> + ?Sized + 'key,
     {
-        match self.find_key_index(key) {
+        let key = key.into();
+        match self.find_key_index(key.as_ref()) {
             Ok(index) => Entry::Occupied(OccupiedEntry::new(self, index)),
-            Err(insert_at) => Entry::Vacant(VacantEntry::new(self, insert_at)),
+            Err(insert_at) => Entry::Vacant(VacantEntry::new(self, key.into_owned(), insert_at)),
         }
     }
 
     #[inline]
     fn find_key<Needle>(&self, needle: &Needle) -> Result<&Field<Key, Value>, usize>
     where
-        Needle: PartialOrd<Key>,
+        Key: Sort<Needle>,
+        Needle: ?Sized,
     {
-        self.find_key_index(needle).map(|index| &self.0[index])
+        self.find_key_index(needle).map(|index| &self.fields[index])
     }
 
     #[inline]
     fn find_key_mut<Needle>(&mut self, needle: &Needle) -> Result<&mut Field<Key, Value>, usize>
     where
-        Needle: PartialOrd<Key>,
+        Key: Sort<Needle>,
+        Needle: ?Sized,
     {
-        self.find_key_index(needle).map(|index| &mut self.0[index])
+        self.find_key_index(needle)
+            .map(|index| &mut self.fields[index])
     }
 
     #[inline]
     fn find_key_index<Needle>(&self, needle: &Needle) -> Result<usize, usize>
     where
-        Needle: PartialOrd<Key>,
+        Key: Sort<Needle>,
+        Needle: ?Sized,
     {
         // When the collection contains `Self::SCAN_LIMIT` or fewer elements,
         // there should be no jumps before we reach a sequential scan for the
         // key. When the collection is larger, we use a binary search to narrow
         // the search window until the window is 16 elements or less.
         let mut min = 0;
-        let mut max = self.0.len();
+        let mut max = self.fields.len();
         loop {
             let delta = max - min;
             if delta <= Self::SCAN_LIMIT {
-                for (relative_index, field) in self.0[min..max].iter().enumerate() {
-                    let comparison = needle.partial_cmp(&field.key).expect("invalid comparison");
+                for (relative_index, field) in self.fields[min..max].iter().enumerate() {
+                    let comparison = <Key as crate::Sort<Needle>>::compare(&field.key, needle);
                     return match comparison {
-                        Ordering::Less => Err(min + relative_index),
+                        Ordering::Less => continue,
                         Ordering::Equal => Ok(min + relative_index),
-                        Ordering::Greater => continue,
+                        Ordering::Greater => Err(min + relative_index),
                     };
                 }
 
@@ -193,14 +216,13 @@ where
             }
 
             let midpoint = min + delta / 2;
-            let comparison = needle
-                .partial_cmp(&self.0[midpoint].key)
-                .expect("invalid comparison");
+            let comparison =
+                <Key as crate::Sort<Needle>>::compare(&self.fields[midpoint].key, needle);
 
             match comparison {
-                Ordering::Less => max = midpoint,
+                Ordering::Less => min = midpoint + 1,
                 Ordering::Equal => return Ok(midpoint),
-                Ordering::Greater => min = midpoint + 1,
+                Ordering::Greater => max = midpoint,
             }
         }
     }
@@ -216,14 +238,14 @@ where
     #[must_use]
     #[inline]
     pub fn iter_mut(&self) -> Iter<'_, Key, Value> {
-        Iter(self.0.iter())
+        Iter(self.fields.iter())
     }
 
     /// Returns an iterator over the values in this object.
     #[must_use]
     #[inline]
     pub fn values(&self) -> Values<'_, Key, Value> {
-        Values(self.0.iter())
+        Values(self.fields.iter())
     }
 
     /// Returns an iterator returning all of the values contained in this
@@ -231,7 +253,7 @@ where
     #[must_use]
     #[inline]
     pub fn into_values(self) -> IntoValues<Key, Value> {
-        IntoValues(self.0.into_iter())
+        IntoValues(self.fields.into_iter())
     }
 
     /// Merges the fields from `other` into `self`.
@@ -257,9 +279,9 @@ where
         let mut other_index = 0;
 
         while self_index < self.len() && other_index < other.len() {
-            let self_field = &mut self.0[self_index];
-            let other_field = &other.0[other_index];
-            match self_field.key.cmp(&other_field.key) {
+            let self_field = &mut self.fields[self_index];
+            let other_field = &other.fields[other_index];
+            match Key::compare(&self_field.key, &other_field.key) {
                 Ordering::Less => {
                     // Self has a key that other didn't.
                     self_index += 1;
@@ -275,7 +297,7 @@ where
                     other_index += 1;
                     let Some(value) = filter(&other_field.key, &other_field.value) else { continue };
 
-                    self.0.insert(
+                    self.fields.insert(
                         self_index,
                         Field {
                             key: other_field.key.clone(),
@@ -287,12 +309,12 @@ where
             }
         }
 
-        if other_index < other.0.len() {
+        if other_index < other.fields.len() {
             // Other has more entries that we don't have
-            for field in &other.0[other_index..] {
+            for field in &other.fields[other_index..] {
                 let Some(value) = filter(&field.key, &field.value) else { continue };
 
-                self.0.push(Field {
+                self.fields.push(Field {
                     key: field.key.clone(),
                     value,
                 });
@@ -303,21 +325,79 @@ where
     /// Returns an iterator that returns all of the elements in this collection.
     /// After the iterator is dropped, this object will be empty.
     pub fn drain(&mut self) -> Drain<'_, Key, Value> {
-        Drain(self.0.drain(..))
+        Drain(self.fields.drain(..))
+    }
+}
+
+trait EntryKey<Key, Needle = Key>
+where
+    Needle: ?Sized,
+{
+    fn as_ref(&self) -> &Needle;
+    fn into_owned(self) -> Key;
+}
+
+/// A key provided to the [`ObjectMap::entry`] function.
+///
+/// This is a [`Cow`](alloc::borrow::Cow)-like type that is slightly more
+/// flexible with `From` implementations. The `Owned` and `Borrowed` types are
+/// kept separate, allowing for more general `From` implementations.
+pub enum SearchKey<'key, Owned, Borrowed>
+where
+    Borrowed: ?Sized,
+{
+    /// A borrowed key.
+    Borrowed(&'key Borrowed),
+    /// An owned key.
+    Owned(Owned),
+}
+
+impl<'key, K> From<K> for SearchKey<'key, K, K> {
+    fn from(value: K) -> Self {
+        SearchKey::Owned(value)
+    }
+}
+
+impl<'key, Key, Needle> From<&'key Needle> for SearchKey<'key, Key, Needle>
+where
+    Needle: ?Sized,
+{
+    fn from(value: &'key Needle) -> Self {
+        SearchKey::Borrowed(value)
+    }
+}
+
+impl<'key, Key, Needle> SearchKey<'key, Key, Needle>
+where
+    Key: Borrow<Needle>,
+    Needle: ToOwned<Owned = Key> + ?Sized,
+{
+    fn as_ref(&self) -> &Needle {
+        match self {
+            SearchKey::Borrowed(key) => key,
+            SearchKey::Owned(owned) => owned.borrow(),
+        }
+    }
+
+    fn into_owned(self) -> Key {
+        match self {
+            SearchKey::Borrowed(key) => key.to_owned(),
+            SearchKey::Owned(owned) => owned,
+        }
     }
 }
 
 impl<Key, Value> Clone for ObjectMap<Key, Value>
 where
-    Key: Clone + Ord,
+    Key: Clone + Sort<Key>,
     Value: Clone,
 {
     #[inline]
     fn clone(&self) -> Self {
         let mut new_obj = Self::with_capacity(self.len());
 
-        for field in &self.0 {
-            new_obj.0.push(Field {
+        for field in &self.fields {
+            new_obj.fields.push(Field {
                 key: field.key.clone(),
                 value: field.value.clone(),
             });
@@ -330,7 +410,7 @@ where
 
 impl<Key, Value> Debug for ObjectMap<Key, Value>
 where
-    Key: Debug,
+    Key: Debug + Sort<Key>,
     Value: Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -342,42 +422,54 @@ where
     }
 }
 
-impl<Key, Value> Index<usize> for ObjectMap<Key, Value> {
+impl<Key, Value> Index<usize> for ObjectMap<Key, Value>
+where
+    Key: Sort<Key>,
+{
     type Output = Value;
 
     fn index(&self, index: usize) -> &Self::Output {
-        &self.0[index].value
+        &self.fields[index].value
     }
 }
 
-impl<Key, Value> IndexMut<usize> for ObjectMap<Key, Value> {
+impl<Key, Value> IndexMut<usize> for ObjectMap<Key, Value>
+where
+    Key: Sort<Key>,
+{
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        &mut self.0[index].value
+        &mut self.fields[index].value
     }
 }
 
-impl<'a, Key, Value> IntoIterator for &'a ObjectMap<Key, Value> {
+impl<'a, Key, Value> IntoIterator for &'a ObjectMap<Key, Value>
+where
+    Key: Sort<Key>,
+{
     type IntoIter = Iter<'a, Key, Value>;
     type Item = &'a Field<Key, Value>;
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
-        Iter(self.0.iter())
+        Iter(self.fields.iter())
     }
 }
 
-impl<Key, Value> IntoIterator for ObjectMap<Key, Value> {
+impl<Key, Value> IntoIterator for ObjectMap<Key, Value>
+where
+    Key: Sort<Key>,
+{
     type IntoIter = IntoIter<Key, Value>;
     type Item = Field<Key, Value>;
 
     fn into_iter(self) -> Self::IntoIter {
-        IntoIter(self.0.into_iter())
+        IntoIter(self.fields.into_iter())
     }
 }
 
 impl<Key, Value> FromIterator<(Key, Value)> for ObjectMap<Key, Value>
 where
-    Key: Ord,
+    Key: Sort<Key>,
 {
     #[inline]
     fn from_iter<T: IntoIterator<Item = (Key, Value)>>(iter: T) -> Self {
@@ -435,14 +527,20 @@ where
 
 /// The result of looking up an entry by its key.
 #[derive(Debug)]
-pub enum Entry<'a, Key, Value> {
+pub enum Entry<'a, Key, Value>
+where
+    Key: Sort<Key>,
+{
     /// A field was found for the given key.
     Occupied(OccupiedEntry<'a, Key, Value>),
     /// A field was not found for the given key.
     Vacant(VacantEntry<'a, Key, Value>),
 }
 
-impl<'a, Key, Value> Entry<'a, Key, Value> {
+impl<'a, Key, Value> Entry<'a, Key, Value>
+where
+    Key: Sort<Key>,
+{
     /// Invokes `update()` with the stored entry, if one was found.
     #[must_use]
     #[inline]
@@ -456,22 +554,37 @@ impl<'a, Key, Value> Entry<'a, Key, Value> {
 
     /// If an entry was not found for the given key, `contents` is invoked to
     #[inline]
-    pub fn or_insert_with(self, contents: impl FnOnce() -> Field<Key, Value>) -> &'a mut Value {
+    pub fn or_insert_with(self, contents: impl FnOnce() -> Value) -> &'a mut Value {
         match self {
             Entry::Occupied(entry) => entry.into_mut(),
-            Entry::Vacant(entry) => entry.insert_field(contents()),
+            Entry::Vacant(entry) => entry.insert(contents()),
+        }
+    }
+
+    /// If an entry was not found for the given key, `contents` is invoked to
+    #[inline]
+    pub fn or_insert(self, value: Value) -> &'a mut Value {
+        match self {
+            Entry::Occupied(entry) => entry.into_mut(),
+            Entry::Vacant(entry) => entry.insert(value),
         }
     }
 }
 
 /// An entry that exists in an [`ObjectMap`].
 #[derive(Debug)]
-pub struct OccupiedEntry<'a, Key, Value> {
+pub struct OccupiedEntry<'a, Key, Value>
+where
+    Key: Sort<Key>,
+{
     object: &'a mut ObjectMap<Key, Value>,
     index: usize,
 }
 
-impl<'a, Key, Value> OccupiedEntry<'a, Key, Value> {
+impl<'a, Key, Value> OccupiedEntry<'a, Key, Value>
+where
+    Key: Sort<Key>,
+{
     #[inline]
     fn new(object: &'a mut ObjectMap<Key, Value>, index: usize) -> Self {
         Self { object, index }
@@ -479,12 +592,12 @@ impl<'a, Key, Value> OccupiedEntry<'a, Key, Value> {
 
     #[inline]
     fn field(&self) -> &Field<Key, Value> {
-        &self.object.0[self.index]
+        &self.object.fields[self.index]
     }
 
     #[inline]
     fn field_mut(&mut self) -> &mut Field<Key, Value> {
-        &mut self.object.0[self.index]
+        &mut self.object.fields[self.index]
     }
 
     /// Converts this entry into a mutable reference to the value.
@@ -495,7 +608,7 @@ impl<'a, Key, Value> OccupiedEntry<'a, Key, Value> {
     #[must_use]
     #[inline]
     pub fn into_mut(self) -> &'a mut Value {
-        &mut self.object.0[self.index].value
+        &mut self.object.fields[self.index].value
     }
 
     /// Returns the key of this field.
@@ -516,11 +629,14 @@ impl<'a, Key, Value> OccupiedEntry<'a, Key, Value> {
     #[must_use]
     #[inline]
     pub fn remove(self) -> Field<Key, Value> {
-        self.object.0.remove(self.index)
+        self.object.fields.remove(self.index)
     }
 }
 
-impl<'a, Key, Value> Deref for OccupiedEntry<'a, Key, Value> {
+impl<'a, Key, Value> Deref for OccupiedEntry<'a, Key, Value>
+where
+    Key: Sort<Key>,
+{
     type Target = Value;
 
     #[inline]
@@ -529,7 +645,10 @@ impl<'a, Key, Value> Deref for OccupiedEntry<'a, Key, Value> {
     }
 }
 
-impl<'a, Key, Value> DerefMut for OccupiedEntry<'a, Key, Value> {
+impl<'a, Key, Value> DerefMut for OccupiedEntry<'a, Key, Value>
+where
+    Key: Sort<Key>,
+{
     #[inline]
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.field_mut().value
@@ -538,15 +657,26 @@ impl<'a, Key, Value> DerefMut for OccupiedEntry<'a, Key, Value> {
 
 /// A vacant entry in an [`ObjectMap`].
 #[derive(Debug)]
-pub struct VacantEntry<'a, Key, Value> {
+pub struct VacantEntry<'a, Key, Value>
+where
+    Key: Sort<Key>,
+{
     object: &'a mut ObjectMap<Key, Value>,
+    key: Key,
     insert_at: usize,
 }
 
-impl<'a, Key, Value> VacantEntry<'a, Key, Value> {
+impl<'a, Key, Value> VacantEntry<'a, Key, Value>
+where
+    Key: Sort<Key>,
+{
     #[inline]
-    fn new(object: &'a mut ObjectMap<Key, Value>, insert_at: usize) -> Self {
-        Self { object, insert_at }
+    fn new(object: &'a mut ObjectMap<Key, Value>, key: Key, insert_at: usize) -> Self {
+        Self {
+            object,
+            key,
+            insert_at,
+        }
     }
 
     /// Inserts `key` and `value` at this location in the object.
@@ -556,26 +686,11 @@ impl<'a, Key, Value> VacantEntry<'a, Key, Value> {
     /// This function panics if `key` does not match the original order of the
     /// key that was passed to [`ObjectMap::entry()`].
     #[inline]
-    pub fn insert(self, key: Key, value: Value) -> &'a mut Value {
-        self.insert_field(Field::new(key, value))
-    }
-
-    /// Inserts a field at this vacant location in the object.
-    ///
-    /// # Panics
-    ///
-    /// This function panics if `key` does not match the original order of the
-    /// key that was passed to [`ObjectMap::entry()`].
-    #[inline]
-    pub fn insert_field(self, field: Field<Key, Value>) -> &'a mut Value {
-        // TODO verify that this is the correct insert position! We trusted them
-        // to give us the same key, but we can't verify it without causing
-        // lifetime issues. The two extra comparisons should be less penalizing
-        // than a forced clone for any type that owns an allocation, and should
-        // be dwarfed by the memcpy of the underyling data when the vec
-        // accomodates the insertion.
-        self.object.0.insert(self.insert_at, field);
-        &mut self.object.0[self.insert_at].value
+    pub fn insert(self, value: Value) -> &'a mut Value {
+        self.object
+            .fields
+            .insert(self.insert_at, Field::new(self.key, value));
+        &mut self.object.fields[self.insert_at].value
     }
 }
 
@@ -905,3 +1020,72 @@ impl<'a, Key, Value> FusedIterator for Drain<'a, Key, Value> {}
 
 #[cfg(test)]
 mod tests;
+
+/// Provides a comparison between `Self` and `Other`.
+///
+/// This function should only be implemented for types who guarantee that their
+/// `PartialOrd<Other>` implementations are identical to their `PartialOrd`
+/// implementations. For example, `Path` and `PathBuf` can be interchangeably
+/// compared regardless of whether the left or right or both are a `Path` or
+/// `PathBuf`.
+///
+/// Why not just use `PartialOrd<Other>`? Unfortunately, `PartialOrd<str>` is
+/// [not implemented for
+/// `String`](https://github.com/rust-lang/rust/issues/82990). This led to
+/// issues implementing the [`ObjectMap::entry`] function when passing a `&str`
+/// when the `Key` type was `String`.
+///
+/// This trait is automatically implemented for types that implement `Ord` and
+/// `PartialOrd<Other>`, but it additionally provides implementations for
+/// `String`/`str` and `Vec<T>`/`[T]`.
+///
+/// **In general, this trait should not need to be implemented.** Implement
+/// `Ord` on your `Key` type, and if needed, implement `PartialOrd<Other>` for
+/// your borrowed form.
+pub trait Sort<Other = Self>
+where
+    Other: ?Sized,
+{
+    /// Compare `self` and `other`, returning the comparison result.
+    ///
+    /// This function should be implemented identically to
+    /// `Ord::cmp`/`PartialOrd::partial_cmp`.
+    fn compare(&self, other: &Other) -> Ordering;
+}
+
+impl Sort<str> for String {
+    fn compare(&self, b: &str) -> Ordering {
+        self.as_str().cmp(b)
+    }
+}
+
+impl<T> Sort<[T]> for Vec<T>
+where
+    T: Ord,
+{
+    fn compare(&self, b: &[T]) -> Ordering {
+        self.as_slice().cmp(b)
+    }
+}
+
+impl<Key, Needle> Sort<Needle> for Key
+where
+    Key: Ord + PartialOrd<Needle>,
+{
+    fn compare(&self, b: &Needle) -> Ordering {
+        self.partial_cmp(b).expect("comparison failed")
+    }
+}
+
+impl<'a, Key> EntryKey<<Key as ToOwned>::Owned, Key> for &'a Key
+where
+    Key: ToOwned,
+{
+    fn as_ref(&self) -> &Key {
+        self
+    }
+
+    fn into_owned(self) -> <Key as ToOwned>::Owned {
+        self.to_owned()
+    }
+}

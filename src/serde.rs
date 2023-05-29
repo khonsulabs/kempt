@@ -4,11 +4,11 @@ use serde::de::{MapAccess, Visitor};
 use serde::ser::SerializeMap;
 use serde::{Deserialize, Serialize};
 
-use crate::{Field, ObjectMap};
+use crate::{Field, ObjectMap, Sort};
 
 impl<Key, Value> Serialize for ObjectMap<Key, Value>
 where
-    Key: Serialize + Ord,
+    Key: Serialize + Sort<Key>,
     Value: Serialize,
 {
     #[inline]
@@ -26,7 +26,7 @@ where
 
 impl<'de, Key, Value> Deserialize<'de> for ObjectMap<Key, Value>
 where
-    Key: Deserialize<'de> + Ord,
+    Key: Deserialize<'de> + Sort<Key>,
     Value: Deserialize<'de>,
 {
     #[inline]
@@ -42,7 +42,7 @@ struct MapVisitor<Key, Value>(PhantomData<(Key, Value)>);
 
 impl<'de, Key, Value> Visitor<'de> for MapVisitor<Key, Value>
 where
-    Key: Deserialize<'de> + Ord,
+    Key: Deserialize<'de> + Sort<Key>,
     Value: Deserialize<'de>,
 {
     type Value = ObjectMap<Key, Value>;
