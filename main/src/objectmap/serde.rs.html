@@ -70,11 +70,11 @@
 <span class="kw">use </span>serde::ser::SerializeMap;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="kw">use crate</span>::{Field, ObjectMap};
+<span class="kw">use crate</span>::{Field, ObjectMap, Sort};
 
 <span class="kw">impl</span>&lt;Key, Value&gt; Serialize <span class="kw">for </span>ObjectMap&lt;Key, Value&gt;
 <span class="kw">where
-    </span>Key: Serialize + Ord,
+    </span>Key: Serialize + Sort&lt;Key&gt;,
     Value: Serialize,
 {
     <span class="attr">#[inline]
@@ -92,7 +92,7 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, Key, Value&gt; Deserialize&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>ObjectMap&lt;Key, Value&gt;
 <span class="kw">where
-    </span>Key: Deserialize&lt;<span class="lifetime">&#39;de</span>&gt; + Ord,
+    </span>Key: Deserialize&lt;<span class="lifetime">&#39;de</span>&gt; + Sort&lt;Key&gt;,
     Value: Deserialize&lt;<span class="lifetime">&#39;de</span>&gt;,
 {
     <span class="attr">#[inline]
@@ -108,7 +108,7 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, Key, Value&gt; Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>MapVisitor&lt;Key, Value&gt;
 <span class="kw">where
-    </span>Key: Deserialize&lt;<span class="lifetime">&#39;de</span>&gt; + Ord,
+    </span>Key: Deserialize&lt;<span class="lifetime">&#39;de</span>&gt; + Sort&lt;Key&gt;,
     Value: Deserialize&lt;<span class="lifetime">&#39;de</span>&gt;,
 {
     <span class="kw">type </span>Value = ObjectMap&lt;Key, Value&gt;;
