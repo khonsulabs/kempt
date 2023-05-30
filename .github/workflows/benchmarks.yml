@@ -27,5 +27,5 @@ jobs:
           folder: target/criterion/
           git-config-name: kl-botsu
           git-config-email: botsu@khonsulabs.com
-          target-folder: /coverage/
+          target-folder: /benchmarks/
           clean: true
