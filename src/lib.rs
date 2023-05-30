@@ -665,10 +665,12 @@ impl<'a, Key, Value> Iterator for Iter<'a, Key, Value> {
         self.0.next()
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
     }
 
+    #[inline]
     fn count(self) -> usize
     where
         Self: Sized,
@@ -676,6 +678,7 @@ impl<'a, Key, Value> Iterator for Iter<'a, Key, Value> {
         self.0.count()
     }
 
+    #[inline]
     fn last(self) -> Option<Self::Item>
     where
         Self: Sized,
@@ -683,22 +686,26 @@ impl<'a, Key, Value> Iterator for Iter<'a, Key, Value> {
         self.0.last()
     }
 
+    #[inline]
     fn nth(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth(n)
     }
 }
 
 impl<'a, Key, Value> ExactSizeIterator for Iter<'a, Key, Value> {
+    #[inline]
     fn len(&self) -> usize {
         self.0.len()
     }
 }
 
 impl<'a, Key, Value> DoubleEndedIterator for Iter<'a, Key, Value> {
+    #[inline]
     fn next_back(&mut self) -> Option<Self::Item> {
         self.0.next_back()
     }
 
+    #[inline]
     fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth_back(n)
     }
@@ -718,10 +725,12 @@ impl<'a, Key, Value> Iterator for IterMut<'a, Key, Value> {
         Some((&field.key, &mut field.value))
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
     }
 
+    #[inline]
     fn count(self) -> usize
     where
         Self: Sized,
@@ -729,6 +738,7 @@ impl<'a, Key, Value> Iterator for IterMut<'a, Key, Value> {
         self.0.count()
     }
 
+    #[inline]
     fn last(self) -> Option<Self::Item>
     where
         Self: Sized,
@@ -736,24 +746,28 @@ impl<'a, Key, Value> Iterator for IterMut<'a, Key, Value> {
         self.0.last().map(|field| (&field.key, &mut field.value))
     }
 
+    #[inline]
     fn nth(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth(n).map(|field| (&field.key, &mut field.value))
     }
 }
 
 impl<'a, Key, Value> ExactSizeIterator for IterMut<'a, Key, Value> {
+    #[inline]
     fn len(&self) -> usize {
         self.0.len()
     }
 }
 
 impl<'a, Key, Value> DoubleEndedIterator for IterMut<'a, Key, Value> {
+    #[inline]
     fn next_back(&mut self) -> Option<Self::Item> {
         self.0
             .next_back()
             .map(|field| (&field.key, &mut field.value))
     }
 
+    #[inline]
     fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
         self.0
             .nth_back(n)
@@ -775,10 +789,12 @@ impl<Key, Value> Iterator for IntoIter<Key, Value> {
         self.0.next()
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
     }
 
+    #[inline]
     fn count(self) -> usize
     where
         Self: Sized,
@@ -786,6 +802,7 @@ impl<Key, Value> Iterator for IntoIter<Key, Value> {
         self.0.count()
     }
 
+    #[inline]
     fn last(self) -> Option<Self::Item>
     where
         Self: Sized,
@@ -793,22 +810,26 @@ impl<Key, Value> Iterator for IntoIter<Key, Value> {
         self.0.last()
     }
 
+    #[inline]
     fn nth(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth(n)
     }
 }
 
 impl<Key, Value> ExactSizeIterator for IntoIter<Key, Value> {
+    #[inline]
     fn len(&self) -> usize {
         self.0.len()
     }
 }
 
 impl<Key, Value> DoubleEndedIterator for IntoIter<Key, Value> {
+    #[inline]
     fn next_back(&mut self) -> Option<Self::Item> {
         self.0.next_back()
     }
 
+    #[inline]
     fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth_back(n)
     }
@@ -828,10 +849,12 @@ impl<'a, Key, Value> Iterator for Values<'a, Key, Value> {
         Some(&field.value)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
     }
 
+    #[inline]
     fn count(self) -> usize
     where
         Self: Sized,
@@ -839,6 +862,7 @@ impl<'a, Key, Value> Iterator for Values<'a, Key, Value> {
         self.0.count()
     }
 
+    #[inline]
     fn last(self) -> Option<Self::Item>
     where
         Self: Sized,
@@ -846,22 +870,26 @@ impl<'a, Key, Value> Iterator for Values<'a, Key, Value> {
         self.0.last().map(|field| &field.value)
     }
 
+    #[inline]
     fn nth(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth(n).map(|field| &field.value)
     }
 }
 
 impl<'a, Key, Value> ExactSizeIterator for Values<'a, Key, Value> {
+    #[inline]
     fn len(&self) -> usize {
         self.0.len()
     }
 }
 
 impl<'a, Key, Value> DoubleEndedIterator for Values<'a, Key, Value> {
+    #[inline]
     fn next_back(&mut self) -> Option<Self::Item> {
         self.0.next_back().map(|field| &field.value)
     }
 
+    #[inline]
     fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth_back(n).map(|field| &field.value)
     }
@@ -881,10 +909,12 @@ impl<'a, Key, Value> Iterator for ValuesMut<'a, Key, Value> {
         Some(&mut field.value)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
     }
 
+    #[inline]
     fn count(self) -> usize
     where
         Self: Sized,
@@ -892,6 +922,7 @@ impl<'a, Key, Value> Iterator for ValuesMut<'a, Key, Value> {
         self.0.count()
     }
 
+    #[inline]
     fn last(self) -> Option<Self::Item>
     where
         Self: Sized,
@@ -899,22 +930,26 @@ impl<'a, Key, Value> Iterator for ValuesMut<'a, Key, Value> {
         self.0.last().map(|field| &mut field.value)
     }
 
+    #[inline]
     fn nth(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth(n).map(|field| &mut field.value)
     }
 }
 
 impl<'a, Key, Value> ExactSizeIterator for ValuesMut<'a, Key, Value> {
+    #[inline]
     fn len(&self) -> usize {
         self.0.len()
     }
 }
 
 impl<'a, Key, Value> DoubleEndedIterator for ValuesMut<'a, Key, Value> {
+    #[inline]
     fn next_back(&mut self) -> Option<Self::Item> {
         self.0.next_back().map(|field| &mut field.value)
     }
 
+    #[inline]
     fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth_back(n).map(|field| &mut field.value)
     }
@@ -935,10 +970,12 @@ impl<Key, Value> Iterator for IntoValues<Key, Value> {
         Some(field.value)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
     }
 
+    #[inline]
     fn count(self) -> usize
     where
         Self: Sized,
@@ -946,6 +983,7 @@ impl<Key, Value> Iterator for IntoValues<Key, Value> {
         self.0.count()
     }
 
+    #[inline]
     fn last(self) -> Option<Self::Item>
     where
         Self: Sized,
@@ -953,22 +991,26 @@ impl<Key, Value> Iterator for IntoValues<Key, Value> {
         self.0.last().map(|field| field.value)
     }
 
+    #[inline]
     fn nth(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth(n).map(|field| field.value)
     }
 }
 
 impl<Key, Value> ExactSizeIterator for IntoValues<Key, Value> {
+    #[inline]
     fn len(&self) -> usize {
         self.0.len()
     }
 }
 
 impl<Key, Value> DoubleEndedIterator for IntoValues<Key, Value> {
+    #[inline]
     fn next_back(&mut self) -> Option<Self::Item> {
         self.0.next_back().map(|field| field.value)
     }
 
+    #[inline]
     fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth_back(n).map(|field| field.value)
     }
@@ -990,10 +1032,12 @@ impl<'a, Key, Value> Iterator for Drain<'a, Key, Value> {
         self.0.next()
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
     }
 
+    #[inline]
     fn count(self) -> usize
     where
         Self: Sized,
@@ -1001,6 +1045,7 @@ impl<'a, Key, Value> Iterator for Drain<'a, Key, Value> {
         self.0.count()
     }
 
+    #[inline]
     fn last(self) -> Option<Self::Item>
     where
         Self: Sized,
@@ -1008,22 +1053,26 @@ impl<'a, Key, Value> Iterator for Drain<'a, Key, Value> {
         self.0.last()
     }
 
+    #[inline]
     fn nth(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth(n)
     }
 }
 
 impl<'a, Key, Value> ExactSizeIterator for Drain<'a, Key, Value> {
+    #[inline]
     fn len(&self) -> usize {
         self.0.len()
     }
 }
 
 impl<'a, Key, Value> DoubleEndedIterator for Drain<'a, Key, Value> {
+    #[inline]
     fn next_back(&mut self) -> Option<Self::Item> {
         self.0.next_back()
     }
 
+    #[inline]
     fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
         self.0.nth_back(n)
     }
@@ -1067,6 +1116,7 @@ where
 }
 
 impl Sort<str> for String {
+    #[inline]
     fn compare(&self, b: &str) -> Ordering {
         self.as_str().cmp(b)
     }
@@ -1076,6 +1126,7 @@ impl<T> Sort<[T]> for Vec<T>
 where
     T: Ord,
 {
+    #[inline]
     fn compare(&self, b: &[T]) -> Ordering {
         self.as_slice().cmp(b)
     }
@@ -1085,6 +1136,7 @@ impl<Key, Needle> Sort<Needle> for Key
 where
     Key: Ord + PartialOrd<Needle>,
 {
+    #[inline]
     fn compare(&self, b: &Needle) -> Ordering {
         self.partial_cmp(b).expect("comparison failed")
     }
@@ -1094,10 +1146,12 @@ impl<'a, Key> EntryKey<<Key as ToOwned>::Owned, Key> for &'a Key
 where
     Key: ToOwned,
 {
+    #[inline]
     fn as_ref(&self) -> &Key {
         self
     }
 
+    #[inline]
     fn into_owned(self) -> <Key as ToOwned>::Owned {
         self.to_owned()
     }
