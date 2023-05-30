@@ -60,6 +60,10 @@ const fn scan_limit<Key, Value>() -> usize {
     let field_layout = Layout::new::<Field<Key, Value>>();
     let align = field_layout.align();
     let aligned = ((field_layout.size() + (align - 1)) / align) * align;
+    if aligned == 0 {
+        return 1;
+    }
+
     let scan_limit = 128 / aligned;
     if scan_limit > 16 {
         16

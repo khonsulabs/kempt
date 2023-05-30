@@ -1,4 +1,5 @@
 use alloc::borrow::ToOwned;
+use alloc::rc::Rc;
 use alloc::string::String;
 use core::borrow::Borrow;
 use std::println;
@@ -200,4 +201,29 @@ fn merge() {
     assert_eq!(multiples_of_2_and_3_but_not_5.get(&6), Some(&2));
     assert_eq!(multiples_of_2_and_3_but_not_5.get(&30), None);
     assert_eq!(multiples_of_2_and_3_but_not_5.len(), 54);
+}
+
+#[test]
+fn entry_to_owned_on_insert() {
+    #[derive(Ord, PartialOrd, Eq, PartialEq)]
+    struct NotCloneable;
+
+    impl Clone for NotCloneable {
+        fn clone(&self) -> Self {
+            unreachable!()
+        }
+    }
+
+    let rc = Rc::new(0);
+    let mut map = ObjectMap::<Rc<usize>, ()>::new();
+    map.entry(&rc);
+    assert_eq!(Rc::strong_count(&rc), 1);
+    map.entry(&rc).or_insert(());
+    assert_eq!(Rc::strong_count(&rc), 2);
+
+    // This final test proves that when passing in the owned copy, it is used
+    // without being cloned.
+    let mut map = ObjectMap::<NotCloneable, ()>::new();
+    map.entry(NotCloneable).or_insert(());
+    assert!(map.contains(&NotCloneable));
 }
