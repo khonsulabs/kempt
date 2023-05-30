@@ -1156,6 +1156,10 @@
 <a href="#1156" id="1156">1156</a>
 <a href="#1157" id="1157">1157</a>
 <a href="#1158" id="1158">1158</a>
+<a href="#1159" id="1159">1159</a>
+<a href="#1160" id="1160">1160</a>
+<a href="#1161" id="1161">1161</a>
+<a href="#1162" id="1162">1162</a>
 </pre><pre class="rust"><code><span class="attr">#![doc = <span class="macro">include_str!</span>(<span class="string">&quot;../README.md&quot;</span>)]
 #![no_std]
 #![forbid(unsafe_code)]
@@ -1218,6 +1222,10 @@
     <span class="kw">let </span>field_layout = Layout::new::&lt;Field&lt;Key, Value&gt;&gt;();
     <span class="kw">let </span>align = field_layout.align();
     <span class="kw">let </span>aligned = ((field_layout.size() + (align - <span class="number">1</span>)) / align) * align;
+    <span class="kw">if </span>aligned == <span class="number">0 </span>{
+        <span class="kw">return </span><span class="number">1</span>;
+    }
+
     <span class="kw">let </span>scan_limit = <span class="number">128 </span>/ aligned;
     <span class="kw">if </span>scan_limit &gt; <span class="number">16 </span>{
         <span class="number">16
