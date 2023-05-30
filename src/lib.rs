@@ -19,7 +19,7 @@ use core::borrow::Borrow;
 use core::cmp::Ordering;
 use core::fmt::{self, Debug};
 use core::iter::FusedIterator;
-use core::ops::{Deref, DerefMut, Index, IndexMut};
+use core::ops::{Deref, DerefMut};
 use core::{mem, slice};
 
 /// An ordered Key/Value map.
@@ -32,6 +32,7 @@ use core::{mem, slice};
 /// general, this collection excels when there are fewer entries, while
 /// `HashMap` or `BTreeMap` will be better choices with larger numbers of
 /// entries.
+#[derive(Clone)]
 pub struct ObjectMap<Key, Value>
 where
     Key: Sort<Key>,
@@ -96,7 +97,7 @@ where
     /// value being overwritten is returned.
     #[inline]
     pub fn insert(&mut self, key: Key, value: Value) -> Option<Field<Key, Value>> {
-        let field = Field { key, value };
+        let field = Field::new(key, value);
         match self.find_key_mut(&field.key) {
             Ok(existing) => Some(mem::replace(existing, field)),
             Err(insert_at) => {
@@ -237,8 +238,8 @@ where
     /// Returns an iterator over the fields in this object, with mutable access.
     #[must_use]
     #[inline]
-    pub fn iter_mut(&self) -> Iter<'_, Key, Value> {
-        Iter(self.fields.iter())
+    pub fn iter_mut(&mut self) -> IterMut<'_, Key, Value> {
+        IterMut(self.fields.iter_mut())
     }
 
     /// Returns an iterator over the values in this object.
@@ -246,6 +247,13 @@ where
     #[inline]
     pub fn values(&self) -> Values<'_, Key, Value> {
         Values(self.fields.iter())
+    }
+
+    /// Returns an iterator over the fields in this object, with mutable access.
+    #[must_use]
+    #[inline]
+    pub fn values_mut(&mut self) -> ValuesMut<'_, Key, Value> {
+        ValuesMut(self.fields.iter_mut())
     }
 
     /// Returns an iterator returning all of the values contained in this
@@ -297,13 +305,8 @@ where
                     other_index += 1;
                     let Some(value) = filter(&other_field.key, &other_field.value) else { continue };
 
-                    self.fields.insert(
-                        self_index,
-                        Field {
-                            key: other_field.key.clone(),
-                            value,
-                        },
-                    );
+                    self.fields
+                        .insert(self_index, Field::new(other_field.key.clone(), value));
                     self_index += 1;
                 }
             }
@@ -314,10 +317,7 @@ where
             for field in &other.fields[other_index..] {
                 let Some(value) = filter(&field.key, &field.value) else { continue };
 
-                self.fields.push(Field {
-                    key: field.key.clone(),
-                    value,
-                });
+                self.fields.push(Field::new(field.key.clone(), value));
             }
         }
     }
@@ -387,27 +387,6 @@ where
     }
 }
 
-impl<Key, Value> Clone for ObjectMap<Key, Value>
-where
-    Key: Clone + Sort<Key>,
-    Value: Clone,
-{
-    #[inline]
-    fn clone(&self) -> Self {
-        let mut new_obj = Self::with_capacity(self.len());
-
-        for field in &self.fields {
-            new_obj.fields.push(Field {
-                key: field.key.clone(),
-                value: field.value.clone(),
-            });
-            new_obj.insert(field.key.clone(), field.value.clone());
-        }
-
-        new_obj
-    }
-}
-
 impl<Key, Value> Debug for ObjectMap<Key, Value>
 where
     Key: Debug + Sort<Key>,
@@ -419,26 +398,6 @@ where
             s.entry(key, value);
         }
         s.finish()
-    }
-}
-
-impl<Key, Value> Index<usize> for ObjectMap<Key, Value>
-where
-    Key: Sort<Key>,
-{
-    type Output = Value;
-
-    fn index(&self, index: usize) -> &Self::Output {
-        &self.fields[index].value
-    }
-}
-
-impl<Key, Value> IndexMut<usize> for ObjectMap<Key, Value>
-where
-    Key: Sort<Key>,
-{
-    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        &mut self.fields[index].value
     }
 }
 
@@ -502,26 +461,6 @@ impl<Key, Value> Field<Key, Value> {
     #[inline]
     pub fn key(&self) -> &Key {
         &self.key
-    }
-}
-
-impl<Key, Value> PartialEq<Key> for Field<Key, Value>
-where
-    Key: PartialEq,
-{
-    #[inline]
-    fn eq(&self, other: &Key) -> bool {
-        &self.key == other
-    }
-}
-
-impl<Key, Value> PartialOrd<Key> for Field<Key, Value>
-where
-    Key: PartialOrd,
-{
-    #[inline]
-    fn partial_cmp(&self, other: &Key) -> Option<Ordering> {
-        self.key.partial_cmp(other)
     }
 }
 
@@ -908,6 +847,59 @@ impl<'a, Key, Value> DoubleEndedIterator for Values<'a, Key, Value> {
 }
 
 impl<'a, Key, Value> FusedIterator for Values<'a, Key, Value> {}
+
+/// An iterator over mutable values contained in an [`ObjectMap`].
+pub struct ValuesMut<'a, Key, Value>(slice::IterMut<'a, Field<Key, Value>>);
+
+impl<'a, Key, Value> Iterator for ValuesMut<'a, Key, Value> {
+    type Item = &'a mut Value;
+
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        let field = self.0.next()?;
+        Some(&mut field.value)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.0.size_hint()
+    }
+
+    fn count(self) -> usize
+    where
+        Self: Sized,
+    {
+        self.0.count()
+    }
+
+    fn last(self) -> Option<Self::Item>
+    where
+        Self: Sized,
+    {
+        self.0.last().map(|field| &mut field.value)
+    }
+
+    fn nth(&mut self, n: usize) -> Option<Self::Item> {
+        self.0.nth(n).map(|field| &mut field.value)
+    }
+}
+
+impl<'a, Key, Value> ExactSizeIterator for ValuesMut<'a, Key, Value> {
+    fn len(&self) -> usize {
+        self.0.len()
+    }
+}
+
+impl<'a, Key, Value> DoubleEndedIterator for ValuesMut<'a, Key, Value> {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        self.0.next_back().map(|field| &mut field.value)
+    }
+
+    fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
+        self.0.nth_back(n).map(|field| &mut field.value)
+    }
+}
+
+impl<'a, Key, Value> FusedIterator for ValuesMut<'a, Key, Value> {}
 
 /// An iterator returning all of the values contained in an [`ObjectMap`] as its
 /// underlying storage is freed.
