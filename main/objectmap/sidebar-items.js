@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Entry","SearchKey"],"struct":["Drain","Field","IntoIter","IntoValues","Iter","IterMut","ObjectMap","OccupiedEntry","VacantEntry","Values"],"trait":["Sort"]};
+window.SIDEBAR_ITEMS = {"enum":["Entry","SearchKey"],"struct":["Drain","Field","IntoIter","IntoValues","Iter","IterMut","ObjectMap","OccupiedEntry","VacantEntry","Values","ValuesMut"],"trait":["Sort"]};
