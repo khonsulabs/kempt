@@ -158,7 +158,7 @@ where
     pub fn entry<'key, Needle>(
         &mut self,
         key: impl Into<SearchKey<'key, Key, Needle>>,
-    ) -> Entry<'_, Key, Value>
+    ) -> Entry<'_, 'key, Key, Value, Needle>
     where
         Key: Sort<Needle> + Borrow<Needle>,
         Needle: ToOwned<Owned = Key> + ?Sized + 'key,
@@ -166,7 +166,7 @@ where
         let key = key.into();
         match self.find_key_index(key.as_ref()) {
             Ok(index) => Entry::Occupied(OccupiedEntry::new(self, index)),
-            Err(insert_at) => Entry::Vacant(VacantEntry::new(self, key.into_owned(), insert_at)),
+            Err(insert_at) => Entry::Vacant(VacantEntry::new(self, key, insert_at)),
         }
     }
 
@@ -342,6 +342,7 @@ where
 /// This is a [`Cow`](alloc::borrow::Cow)-like type that is slightly more
 /// flexible with `From` implementations. The `Owned` and `Borrowed` types are
 /// kept separate, allowing for more general `From` implementations.
+#[derive(Debug)]
 pub enum SearchKey<'key, Owned, Borrowed>
 where
     Borrowed: ?Sized,
@@ -466,19 +467,21 @@ impl<Key, Value> Field<Key, Value> {
 
 /// The result of looking up an entry by its key.
 #[derive(Debug)]
-pub enum Entry<'a, Key, Value>
+pub enum Entry<'a, 'key, Key, Value, BorrowedKey>
 where
     Key: Sort<Key>,
+    BorrowedKey: ?Sized,
 {
     /// A field was found for the given key.
     Occupied(OccupiedEntry<'a, Key, Value>),
     /// A field was not found for the given key.
-    Vacant(VacantEntry<'a, Key, Value>),
+    Vacant(VacantEntry<'a, 'key, Key, Value, BorrowedKey>),
 }
 
-impl<'a, Key, Value> Entry<'a, Key, Value>
+impl<'a, 'key, Key, Value, BorrowedKey> Entry<'a, 'key, Key, Value, BorrowedKey>
 where
     Key: Sort<Key>,
+    BorrowedKey: ?Sized,
 {
     /// Invokes `update()` with the stored entry, if one was found.
     #[must_use]
@@ -493,7 +496,11 @@ where
 
     /// If an entry was not found for the given key, `contents` is invoked to
     #[inline]
-    pub fn or_insert_with(self, contents: impl FnOnce() -> Value) -> &'a mut Value {
+    pub fn or_insert_with(self, contents: impl FnOnce() -> Value) -> &'a mut Value
+    where
+        Key: Borrow<BorrowedKey>,
+        BorrowedKey: ToOwned<Owned = Key>,
+    {
         match self {
             Entry::Occupied(entry) => entry.into_mut(),
             Entry::Vacant(entry) => entry.insert(contents()),
@@ -502,7 +509,11 @@ where
 
     /// If an entry was not found for the given key, `contents` is invoked to
     #[inline]
-    pub fn or_insert(self, value: Value) -> &'a mut Value {
+    pub fn or_insert(self, value: Value) -> &'a mut Value
+    where
+        Key: Borrow<BorrowedKey>,
+        BorrowedKey: ToOwned<Owned = Key>,
+    {
         match self {
             Entry::Occupied(entry) => entry.into_mut(),
             Entry::Vacant(entry) => entry.insert(value),
@@ -596,21 +607,27 @@ where
 
 /// A vacant entry in an [`ObjectMap`].
 #[derive(Debug)]
-pub struct VacantEntry<'a, Key, Value>
+pub struct VacantEntry<'a, 'key, Key, Value, BorrowedKey>
 where
     Key: Sort<Key>,
+    BorrowedKey: ?Sized,
 {
     object: &'a mut ObjectMap<Key, Value>,
-    key: Key,
+    key: SearchKey<'key, Key, BorrowedKey>,
     insert_at: usize,
 }
 
-impl<'a, Key, Value> VacantEntry<'a, Key, Value>
+impl<'a, 'key, Key, Value, BorrowedKey> VacantEntry<'a, 'key, Key, Value, BorrowedKey>
 where
     Key: Sort<Key>,
+    BorrowedKey: ?Sized,
 {
     #[inline]
-    fn new(object: &'a mut ObjectMap<Key, Value>, key: Key, insert_at: usize) -> Self {
+    fn new(
+        object: &'a mut ObjectMap<Key, Value>,
+        key: SearchKey<'key, Key, BorrowedKey>,
+        insert_at: usize,
+    ) -> Self {
         Self {
             object,
             key,
@@ -625,10 +642,14 @@ where
     /// This function panics if `key` does not match the original order of the
     /// key that was passed to [`ObjectMap::entry()`].
     #[inline]
-    pub fn insert(self, value: Value) -> &'a mut Value {
+    pub fn insert(self, value: Value) -> &'a mut Value
+    where
+        Key: Borrow<BorrowedKey>,
+        BorrowedKey: ToOwned<Owned = Key>,
+    {
         self.object
             .fields
-            .insert(self.insert_at, Field::new(self.key, value));
+            .insert(self.insert_at, Field::new(self.key.into_owned(), value));
         &mut self.object.fields[self.insert_at].value
     }
 }
