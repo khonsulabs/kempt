@@ -268,6 +268,35 @@ where
         IntoValues(self.fields.into_iter())
     }
 
+    /// Merges the fields from `self` and `other` into a new object.
+    ///
+    /// * If a field is contained in `other` but not contained in `self`,
+    ///   `filter()` is called. If `filter()` returns a value, the returned
+    ///   value is inserted into the new object using the original key.
+    /// * If a field is contained in both `other` and `self`, `merge()` is
+    ///   called with mutable access to a clone of the value from `self` and a
+    ///   reference to the value from `other`. The `merge()` function is
+    ///   responsible for updating the value if needed to complete the merge.
+    ///   The merged value is inserted into the returned object.
+    /// * If a field is contained in `self` but not in `other`, it is always
+    ///   cloned.
+    #[inline]
+    #[must_use]
+    pub fn merged_with(
+        &self,
+        other: &Self,
+        filter: impl FnMut(&Key, &Value) -> Option<Value>,
+        merge: impl FnMut(&Key, &mut Value, &Value),
+    ) -> Self
+    where
+        Key: Clone,
+        Value: Clone,
+    {
+        let mut base = self.clone();
+        base.merge_with(other, filter, merge);
+        base
+    }
+
     /// Merges the fields from `other` into `self`.
     ///
     /// * If a field is contained in `other` but not contained in `self`,

@@ -181,17 +181,18 @@ fn merge() {
         .step_by(3)
         .map(|i| (i, 1))
         .collect::<ObjectMap<_, _>>();
-    let mut multiples_of_2_and_3_but_not_5 = ObjectMap::new();
-    multiples_of_2_and_3_but_not_5.merge_with(
-        &multiples_of_two,
-        |key, to_copy| (*key % 5 != 0).then_some(*to_copy),
-        |_key, _existing, _incoming| unreachable!(),
-    );
-    multiples_of_2_and_3_but_not_5.merge_with(
-        &multiples_of_three,
-        |key, to_copy| (*key % 5 != 0).then_some(*to_copy),
-        |_key, existing, incoming| *existing += *incoming,
-    );
+    let copy_if_not_five = |key: &usize, value: &usize| (*key % 5 != 0).then_some(*value);
+    let multiples_of_2_and_3_but_not_5 = ObjectMap::new()
+        .merged_with(
+            &multiples_of_two,
+            copy_if_not_five,
+            |_key, _existing, _incoming| unreachable!(),
+        )
+        .merged_with(
+            &multiples_of_three,
+            copy_if_not_five,
+            |_key, existing, incoming| *existing += *incoming,
+        );
     println!(
         "All: {multiples_of_2_and_3_but_not_5:?}, {}",
         multiples_of_2_and_3_but_not_5.len()
