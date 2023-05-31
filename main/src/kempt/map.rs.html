@@ -1153,6 +1153,43 @@
 <a href="#1153" id="1153">1153</a>
 <a href="#1154" id="1154">1154</a>
 <a href="#1155" id="1155">1155</a>
+<a href="#1156" id="1156">1156</a>
+<a href="#1157" id="1157">1157</a>
+<a href="#1158" id="1158">1158</a>
+<a href="#1159" id="1159">1159</a>
+<a href="#1160" id="1160">1160</a>
+<a href="#1161" id="1161">1161</a>
+<a href="#1162" id="1162">1162</a>
+<a href="#1163" id="1163">1163</a>
+<a href="#1164" id="1164">1164</a>
+<a href="#1165" id="1165">1165</a>
+<a href="#1166" id="1166">1166</a>
+<a href="#1167" id="1167">1167</a>
+<a href="#1168" id="1168">1168</a>
+<a href="#1169" id="1169">1169</a>
+<a href="#1170" id="1170">1170</a>
+<a href="#1171" id="1171">1171</a>
+<a href="#1172" id="1172">1172</a>
+<a href="#1173" id="1173">1173</a>
+<a href="#1174" id="1174">1174</a>
+<a href="#1175" id="1175">1175</a>
+<a href="#1176" id="1176">1176</a>
+<a href="#1177" id="1177">1177</a>
+<a href="#1178" id="1178">1178</a>
+<a href="#1179" id="1179">1179</a>
+<a href="#1180" id="1180">1180</a>
+<a href="#1181" id="1181">1181</a>
+<a href="#1182" id="1182">1182</a>
+<a href="#1183" id="1183">1183</a>
+<a href="#1184" id="1184">1184</a>
+<a href="#1185" id="1185">1185</a>
+<a href="#1186" id="1186">1186</a>
+<a href="#1187" id="1187">1187</a>
+<a href="#1188" id="1188">1188</a>
+<a href="#1189" id="1189">1189</a>
+<a href="#1190" id="1190">1190</a>
+<a href="#1191" id="1191">1191</a>
+<a href="#1192" id="1192">1192</a>
 </pre><pre class="rust"><code><span class="kw">use </span>alloc::borrow::ToOwned;
 <span class="kw">use </span>alloc::vec::{<span class="self">self</span>, Vec};
 <span class="kw">use </span>core::alloc::Layout;
@@ -1174,7 +1211,8 @@
 /// This type is designed for collections with a limited number of keys. In
 /// general, this collection excels when there are fewer entries, while
 /// `HashMap` or `BTreeMap` will be better choices with larger numbers of
-/// entries.
+/// entries. Additionally, `HashMap` will perform better if comparing the keys
+/// is expensive.
 </span><span class="attr">#[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
 </span><span class="kw">pub struct </span>Map&lt;Key, Value&gt;
 <span class="kw">where
@@ -1251,6 +1289,14 @@
         }
     }
 
+    <span class="doccomment">/// Returns the current capacity this map can hold before it must
+    /// reallocate.
+    </span><span class="attr">#[must_use]
+    #[inline]
+    </span><span class="kw">pub fn </span>capacity(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.fields.capacity()
+    }
+
     <span class="doccomment">/// Inserts `key` and `value`. If an entry already existed for `key`, the
     /// value being overwritten is returned.
     </span><span class="attr">#[inline]
@@ -1267,20 +1313,20 @@
 
     <span class="doccomment">/// Returns true if this object contains `key`.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>contains&lt;Needle&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>Needle) -&gt; bool
+    </span><span class="kw">pub fn </span>contains&lt;SearchFor&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>SearchFor) -&gt; bool
     <span class="kw">where
-        </span>Key: Sort&lt;Needle&gt;,
-        Needle: <span class="question-mark">?</span>Sized,
+        </span>Key: Sort&lt;SearchFor&gt;,
+        SearchFor: <span class="question-mark">?</span>Sized,
     {
         <span class="self">self</span>.find_key_index(key).is_ok()
     }
 
     <span class="doccomment">/// Returns the value associated with `key`, if found.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get&lt;Needle&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>Needle) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Value&gt;
+    </span><span class="kw">pub fn </span>get&lt;SearchFor&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>SearchFor) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Value&gt;
     <span class="kw">where
-        </span>Key: Sort&lt;Needle&gt;,
-        Needle: <span class="question-mark">?</span>Sized,
+        </span>Key: Sort&lt;SearchFor&gt;,
+        SearchFor: <span class="question-mark">?</span>Sized,
     {
         <span class="self">self</span>.find_key(key).ok().map(|field| <span class="kw-2">&amp;</span>field.value)
     }
@@ -1303,10 +1349,10 @@
 
     <span class="doccomment">/// Removes the value associated with `key`, if found.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>remove&lt;Needle&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>Needle) -&gt; <span class="prelude-ty">Option</span>&lt;Field&lt;Key, Value&gt;&gt;
+    </span><span class="kw">pub fn </span>remove&lt;SearchFor&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>SearchFor) -&gt; <span class="prelude-ty">Option</span>&lt;Field&lt;Key, Value&gt;&gt;
     <span class="kw">where
-        </span>Key: Sort&lt;Needle&gt;,
-        Needle: <span class="question-mark">?</span>Sized,
+        </span>Key: Sort&lt;SearchFor&gt;,
+        SearchFor: <span class="question-mark">?</span>Sized,
     {
         <span class="kw">let </span>index = <span class="self">self</span>.find_key_index(key).ok()<span class="question-mark">?</span>;
         <span class="prelude-val">Some</span>(<span class="self">self</span>.remove_by_index(index))
@@ -1339,13 +1385,13 @@
 
     <span class="doccomment">/// Returns an [`Entry`] for the associated key.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>entry&lt;<span class="lifetime">&#39;key</span>, Needle&gt;(
+    </span><span class="kw">pub fn </span>entry&lt;<span class="lifetime">&#39;key</span>, SearchFor&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        key: <span class="kw">impl </span>Into&lt;SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, Needle&gt;&gt;,
-    ) -&gt; Entry&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;key</span>, Key, Value, Needle&gt;
+        key: <span class="kw">impl </span>Into&lt;SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, SearchFor&gt;&gt;,
+    ) -&gt; Entry&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;key</span>, Key, Value, SearchFor&gt;
     <span class="kw">where
-        </span>Key: Sort&lt;Needle&gt; + Borrow&lt;Needle&gt;,
-        Needle: ToOwned&lt;Owned = Key&gt; + <span class="question-mark">?</span>Sized + <span class="lifetime">&#39;key</span>,
+        </span>Key: Sort&lt;SearchFor&gt; + Borrow&lt;SearchFor&gt;,
+        SearchFor: ToOwned&lt;Owned = Key&gt; + <span class="question-mark">?</span>Sized + <span class="lifetime">&#39;key</span>,
     {
         <span class="kw">let </span>key = key.into();
         <span class="kw">match </span><span class="self">self</span>.find_key_index(key.as_ref()) {
@@ -1355,29 +1401,33 @@
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>find_key&lt;Needle&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, needle: <span class="kw-2">&amp;</span>Needle) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>Field&lt;Key, Value&gt;, usize&gt;
+    </span><span class="kw">fn </span>find_key&lt;SearchFor&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, search_for: <span class="kw-2">&amp;</span>SearchFor) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>Field&lt;Key, Value&gt;, usize&gt;
     <span class="kw">where
-        </span>Key: Sort&lt;Needle&gt;,
-        Needle: <span class="question-mark">?</span>Sized,
+        </span>Key: Sort&lt;SearchFor&gt;,
+        SearchFor: <span class="question-mark">?</span>Sized,
     {
-        <span class="self">self</span>.find_key_index(needle).map(|index| <span class="kw-2">&amp;</span><span class="self">self</span>.fields[index])
+        <span class="self">self</span>.find_key_index(search_for)
+            .map(|index| <span class="kw-2">&amp;</span><span class="self">self</span>.fields[index])
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>find_key_mut&lt;Needle&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, needle: <span class="kw-2">&amp;</span>Needle) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;mut </span>Field&lt;Key, Value&gt;, usize&gt;
+    </span><span class="kw">fn </span>find_key_mut&lt;SearchFor&gt;(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        search_for: <span class="kw-2">&amp;</span>SearchFor,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;mut </span>Field&lt;Key, Value&gt;, usize&gt;
     <span class="kw">where
-        </span>Key: Sort&lt;Needle&gt;,
-        Needle: <span class="question-mark">?</span>Sized,
+        </span>Key: Sort&lt;SearchFor&gt;,
+        SearchFor: <span class="question-mark">?</span>Sized,
     {
-        <span class="self">self</span>.find_key_index(needle)
+        <span class="self">self</span>.find_key_index(search_for)
             .map(|index| <span class="kw-2">&amp;mut </span><span class="self">self</span>.fields[index])
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>find_key_index&lt;Needle&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, needle: <span class="kw-2">&amp;</span>Needle) -&gt; <span class="prelude-ty">Result</span>&lt;usize, usize&gt;
+    </span><span class="kw">fn </span>find_key_index&lt;SearchFor&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, search_for: <span class="kw-2">&amp;</span>SearchFor) -&gt; <span class="prelude-ty">Result</span>&lt;usize, usize&gt;
     <span class="kw">where
-        </span>Key: Sort&lt;Needle&gt;,
-        Needle: <span class="question-mark">?</span>Sized,
+        </span>Key: Sort&lt;SearchFor&gt;,
+        SearchFor: <span class="question-mark">?</span>Sized,
     {
         <span class="comment">// When the collection contains `Self::SCAN_LIMIT` or fewer elements,
         // there should be no jumps before we reach a sequential scan for the
@@ -1390,7 +1440,8 @@
             <span class="kw">let </span>delta = max - min;
             <span class="kw">if </span>delta &lt;= <span class="self">Self</span>::SCAN_LIMIT {
                 <span class="kw">for </span>(relative_index, field) <span class="kw">in </span><span class="self">self</span>.fields[min..max].iter().enumerate() {
-                    <span class="kw">let </span>comparison = &lt;Key <span class="kw">as </span><span class="kw">crate</span>::Sort&lt;Needle&gt;&gt;::compare(<span class="kw-2">&amp;</span>field.key, needle);
+                    <span class="kw">let </span>comparison =
+                        &lt;Key <span class="kw">as </span><span class="kw">crate</span>::Sort&lt;SearchFor&gt;&gt;::compare(<span class="kw-2">&amp;</span>field.key, search_for);
                     <span class="kw">return match </span>comparison {
                         Ordering::Less =&gt; <span class="kw">continue</span>,
                         Ordering::Equal =&gt; <span class="prelude-val">Ok</span>(min + relative_index),
@@ -1403,7 +1454,7 @@
 
             <span class="kw">let </span>midpoint = min + delta / <span class="number">2</span>;
             <span class="kw">let </span>comparison =
-                &lt;Key <span class="kw">as </span><span class="kw">crate</span>::Sort&lt;Needle&gt;&gt;::compare(<span class="kw-2">&amp;</span><span class="self">self</span>.fields[midpoint].key, needle);
+                &lt;Key <span class="kw">as </span><span class="kw">crate</span>::Sort&lt;SearchFor&gt;&gt;::compare(<span class="kw-2">&amp;</span><span class="self">self</span>.fields[midpoint].key, search_for);
 
             <span class="kw">match </span>comparison {
                 Ordering::Less =&gt; min = midpoint + <span class="number">1</span>,
@@ -1462,6 +1513,18 @@
     ///   The merged value is inserted into the returned object.
     /// * If a field is contained in `self` but not in `other`, it is always
     ///   cloned.
+    ///
+    /// ```rust
+    /// use kempt::Map;
+    ///
+    /// let a: Map&lt;&amp;&#39;static str, usize&gt; = [(&quot;a&quot;, 1), (&quot;b&quot;, 2)].into_iter().collect();
+    /// let b: Map&lt;&amp;&#39;static str, usize&gt; = [(&quot;a&quot;, 1), (&quot;c&quot;, 3)].into_iter().collect();
+    /// let merged = a.merged_with(&amp;b, |_key, b| Some(*b), |_key, a, b| *a += *b);
+    ///
+    /// assert_eq!(merged.get(&amp;&quot;a&quot;), Some(&amp;2));
+    /// assert_eq!(merged.get(&amp;&quot;b&quot;), Some(&amp;2));
+    /// assert_eq!(merged.get(&amp;&quot;c&quot;), Some(&amp;3));
+    /// ```
     </span><span class="attr">#[inline]
     #[must_use]
     </span><span class="kw">pub fn </span>merged_with(
@@ -1488,6 +1551,17 @@
     ///   the value from `other`. The `merge()` function is responsible for
     ///   updating the value if needed to complete the merge.
     /// * If a field is contained in `self` but not in `other`, it is ignored.
+    ///
+    /// ```rust
+    /// use kempt::Map;
+    ///
+    /// let mut a: Map&lt;&amp;&#39;static str, usize&gt; = [(&quot;a&quot;, 1), (&quot;b&quot;, 2)].into_iter().collect();
+    /// let b: Map&lt;&amp;&#39;static str, usize&gt; = [(&quot;a&quot;, 1), (&quot;c&quot;, 3)].into_iter().collect();
+    /// a.merge_with(&amp;b, |_key, b| Some(*b), |_key, a, b| *a += *b);
+    /// assert_eq!(a.get(&amp;&quot;a&quot;), Some(&amp;2));
+    /// assert_eq!(a.get(&amp;&quot;b&quot;), Some(&amp;2));
+    /// assert_eq!(a.get(&amp;&quot;c&quot;), Some(&amp;3));
+    /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>merge_with(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
@@ -1543,11 +1617,11 @@
     }
 }
 
-<span class="kw">trait </span>EntryKey&lt;Key, Needle = Key&gt;
+<span class="kw">trait </span>EntryKey&lt;Key, SearchFor = Key&gt;
 <span class="kw">where
-    </span>Needle: <span class="question-mark">?</span>Sized,
+    </span>SearchFor: <span class="question-mark">?</span>Sized,
 {
-    <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Needle;
+    <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>SearchFor;
     <span class="kw">fn </span>into_owned(<span class="self">self</span>) -&gt; Key;
 }
 
@@ -1588,21 +1662,21 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;key</span>, Key, Needle&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;key </span>Needle&gt; <span class="kw">for </span>SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, Needle&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;key</span>, Key, Borrowed&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;key </span>Borrowed&gt; <span class="kw">for </span>SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, Borrowed&gt;
 <span class="kw">where
-    </span>Needle: <span class="question-mark">?</span>Sized,
+    </span>Borrowed: <span class="question-mark">?</span>Sized,
 {
-    <span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;key </span>Needle) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;key </span>Borrowed) -&gt; <span class="self">Self </span>{
         SearchKey::Borrowed(value)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;key</span>, Key, Needle&gt; SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, Needle&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;key</span>, Key, Borrowed&gt; SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, Borrowed&gt;
 <span class="kw">where
-    </span>Key: Borrow&lt;Needle&gt;,
-    Needle: ToOwned&lt;Owned = Key&gt; + <span class="question-mark">?</span>Sized,
+    </span>Key: Borrow&lt;Borrowed&gt;,
+    Borrowed: ToOwned&lt;Owned = Key&gt; + <span class="question-mark">?</span>Sized,
 {
-    <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Needle {
+    <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Borrowed {
         <span class="kw">match </span><span class="self">self </span>{
             SearchKey::Borrowed(key) =&gt; key,
             SearchKey::Owned(owned) =&gt; owned.borrow(),
