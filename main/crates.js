@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["objectmap"];
+window.ALL_CRATES = ["kempt"];

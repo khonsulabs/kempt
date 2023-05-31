@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../objectmap/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../kempt/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1189,6 +1189,7 @@
 <a href="#1189" id="1189">1189</a>
 <a href="#1190" id="1190">1190</a>
 <a href="#1191" id="1191">1191</a>
+<a href="#1192" id="1192">1192</a>
 </pre><pre class="rust"><code><span class="attr">#![doc = <span class="macro">include_str!</span>(<span class="string">&quot;../README.md&quot;</span>)]
 #![no_std]
 #![forbid(unsafe_code)]
@@ -1223,15 +1224,15 @@
 /// general, this collection excels when there are fewer entries, while
 /// `HashMap` or `BTreeMap` will be better choices with larger numbers of
 /// entries.
-</span><span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>ObjectMap&lt;Key, Value&gt;
+</span><span class="attr">#[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
+</span><span class="kw">pub struct </span>Map&lt;Key, Value&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
 {
     fields: Vec&lt;Field&lt;Key, Value&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;Key, Value&gt; Default <span class="kw">for </span>ObjectMap&lt;Key, Value&gt;
+<span class="kw">impl</span>&lt;Key, Value&gt; Default <span class="kw">for </span>Map&lt;Key, Value&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
 {
@@ -1265,7 +1266,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;Key, Value&gt; ObjectMap&lt;Key, Value&gt;
+<span class="kw">impl</span>&lt;Key, Value&gt; Map&lt;Key, Value&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
 {
@@ -1395,7 +1396,8 @@
         // key. When the collection is larger, we use a binary search to narrow
         // the search window until the window is 16 elements or less.
         </span><span class="kw">let </span><span class="kw-2">mut </span>min = <span class="number">0</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>max = <span class="self">self</span>.fields.len();
+        <span class="kw">let </span>field_count = <span class="self">self</span>.fields.len();
+        <span class="kw">let </span><span class="kw-2">mut </span>max = field_count;
         <span class="kw">loop </span>{
             <span class="kw">let </span>delta = max - min;
             <span class="kw">if </span>delta &lt;= <span class="self">Self</span>::SCAN_LIMIT {
@@ -1459,7 +1461,8 @@
         IntoValues(<span class="self">self</span>.fields.into_iter())
     }
 
-    <span class="doccomment">/// Merges the fields from `self` and `other` into a new object.
+    <span class="doccomment">/// Merges the fields from `self` and `other` into a new object, returning
+    /// the updated object.
     ///
     /// * If a field is contained in `other` but not contained in `self`,
     ///   `filter()` is called. If `filter()` returns a value, the returned
@@ -1474,7 +1477,7 @@
     </span><span class="attr">#[inline]
     #[must_use]
     </span><span class="kw">pub fn </span>merged_with(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        <span class="kw-2">mut </span><span class="self">self</span>,
         other: <span class="kw-2">&amp;</span><span class="self">Self</span>,
         filter: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;</span>Key, <span class="kw-2">&amp;</span>Value) -&gt; <span class="prelude-ty">Option</span>&lt;Value&gt;,
         merge: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;</span>Key, <span class="kw-2">&amp;mut </span>Value, <span class="kw-2">&amp;</span>Value),
@@ -1483,10 +1486,9 @@
         </span>Key: Clone,
         Value: Clone,
     {
-        <span class="kw">let </span><span class="kw-2">mut </span>base = <span class="self">self</span>.clone();
-        base.merge_with(other, filter, merge);
-        base
-    }
+        <span class="self">self</span>.merge_with(other, filter, merge);
+        <span class="self">self
+    </span>}
 
     <span class="doccomment">/// Merges the fields from `other` into `self`.
     ///
@@ -1561,7 +1563,7 @@
     <span class="kw">fn </span>into_owned(<span class="self">self</span>) -&gt; Key;
 }
 
-<span class="doccomment">/// A key provided to the [`ObjectMap::entry`] function.
+<span class="doccomment">/// A key provided to the [`Map::entry`] function.
 ///
 /// This is a [`Cow`](alloc::borrow::Cow)-like type that is slightly more
 /// flexible with `From` implementations. The `Owned` and `Borrowed` types are
@@ -1612,7 +1614,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;Key, Value&gt; Debug <span class="kw">for </span>ObjectMap&lt;Key, Value&gt;
+<span class="kw">impl</span>&lt;Key, Value&gt; Debug <span class="kw">for </span>Map&lt;Key, Value&gt;
 <span class="kw">where
     </span>Key: Debug + Sort&lt;Key&gt;,
     Value: Debug,
@@ -1626,7 +1628,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ObjectMap&lt;Key, Value&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Map&lt;Key, Value&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
 {
@@ -1639,7 +1641,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;Key, Value&gt; IntoIterator <span class="kw">for </span>ObjectMap&lt;Key, Value&gt;
+<span class="kw">impl</span>&lt;Key, Value&gt; IntoIterator <span class="kw">for </span>Map&lt;Key, Value&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
 {
@@ -1651,7 +1653,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;Key, Value&gt; FromIterator&lt;(Key, Value)&gt; <span class="kw">for </span>ObjectMap&lt;Key, Value&gt;
+<span class="kw">impl</span>&lt;Key, Value&gt; FromIterator&lt;(Key, Value)&gt; <span class="kw">for </span>Map&lt;Key, Value&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
 {
@@ -1666,8 +1668,8 @@
     }
 }
 
-<span class="doccomment">/// A field in an [`ObjectMap`].
-</span><span class="attr">#[derive(Debug, Clone, Eq, PartialEq)]
+<span class="doccomment">/// A field in an [`Map`].
+</span><span class="attr">#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
 </span><span class="kw">pub struct </span>Field&lt;Key, Value&gt; {
     key: Key,
     <span class="doccomment">/// The value contained in this field.
@@ -1745,13 +1747,13 @@
     }
 }
 
-<span class="doccomment">/// An entry that exists in an [`ObjectMap`].
+<span class="doccomment">/// An entry that exists in an [`Map`].
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>OccupiedEntry&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
 {
-    object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>ObjectMap&lt;Key, Value&gt;,
+    object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;,
     index: usize,
 }
 
@@ -1760,7 +1762,7 @@
     </span>Key: Sort&lt;Key&gt;,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>new(object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>ObjectMap&lt;Key, Value&gt;, index: usize) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>new(object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;, index: usize) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ object, index }
     }
 
@@ -1829,14 +1831,14 @@
     }
 }
 
-<span class="doccomment">/// A vacant entry in an [`ObjectMap`].
+<span class="doccomment">/// A vacant entry in an [`Map`].
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>VacantEntry&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;key</span>, Key, Value, BorrowedKey&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
     BorrowedKey: <span class="question-mark">?</span>Sized,
 {
-    object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>ObjectMap&lt;Key, Value&gt;,
+    object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;,
     key: SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, BorrowedKey&gt;,
     insert_at: usize,
 }
@@ -1848,7 +1850,7 @@
 {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>new(
-        object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>ObjectMap&lt;Key, Value&gt;,
+        object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;,
         key: SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, BorrowedKey&gt;,
         insert_at: usize,
     ) -&gt; <span class="self">Self </span>{
@@ -1864,7 +1866,7 @@
     /// # Panics
     ///
     /// This function panics if `key` does not match the original order of the
-    /// key that was passed to [`ObjectMap::entry()`].
+    /// key that was passed to [`Map::entry()`].
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>insert(<span class="self">self</span>, value: Value) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Value
     <span class="kw">where
@@ -1878,7 +1880,7 @@
     }
 }
 
-<span class="doccomment">/// An iterator over the [`Field`]s in an [`ObjectMap`].
+<span class="doccomment">/// An iterator over the [`Field`]s in an [`Map`].
 </span><span class="kw">pub struct </span>Iter&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;(slice::Iter&lt;<span class="lifetime">&#39;a</span>, Field&lt;Key, Value&gt;&gt;);
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; Iterator <span class="kw">for </span>Iter&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
@@ -1937,7 +1939,7 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>Iter&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {}
 
-<span class="doccomment">/// An iterator over mutable [`Field`]s contained in an [`ObjectMap`].
+<span class="doccomment">/// An iterator over mutable [`Field`]s contained in an [`Map`].
 </span><span class="kw">pub struct </span>IterMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;(slice::IterMut&lt;<span class="lifetime">&#39;a</span>, Field&lt;Key, Value&gt;&gt;);
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; Iterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
@@ -2001,7 +2003,7 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {}
 
-<span class="doccomment">/// An iterator that returns all of the elements of an [`ObjectMap`] while
+<span class="doccomment">/// An iterator that returns all of the elements of an [`Map`] while
 /// freeing its underlying memory.
 </span><span class="kw">pub struct </span>IntoIter&lt;Key, Value&gt;(vec::IntoIter&lt;Field&lt;Key, Value&gt;&gt;);
 
@@ -2061,7 +2063,7 @@
 
 <span class="kw">impl</span>&lt;Key, Value&gt; FusedIterator <span class="kw">for </span>IntoIter&lt;Key, Value&gt; {}
 
-<span class="doccomment">/// An iterator over the values contained in an [`ObjectMap`].
+<span class="doccomment">/// An iterator over the values contained in an [`Map`].
 </span><span class="kw">pub struct </span>Values&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;(slice::Iter&lt;<span class="lifetime">&#39;a</span>, Field&lt;Key, Value&gt;&gt;);
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; Iterator <span class="kw">for </span>Values&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
@@ -2121,7 +2123,7 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>Values&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {}
 
-<span class="doccomment">/// An iterator over mutable values contained in an [`ObjectMap`].
+<span class="doccomment">/// An iterator over mutable values contained in an [`Map`].
 </span><span class="kw">pub struct </span>ValuesMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;(slice::IterMut&lt;<span class="lifetime">&#39;a</span>, Field&lt;Key, Value&gt;&gt;);
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; Iterator <span class="kw">for </span>ValuesMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
@@ -2181,7 +2183,7 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>ValuesMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {}
 
-<span class="doccomment">/// An iterator returning all of the values contained in an [`ObjectMap`] as its
+<span class="doccomment">/// An iterator returning all of the values contained in an [`Map`] as its
 /// underlying storage is freed.
 </span><span class="kw">pub struct </span>IntoValues&lt;Key, Value&gt;(vec::IntoIter&lt;Field&lt;Key, Value&gt;&gt;);
 
@@ -2242,9 +2244,9 @@
 
 <span class="kw">impl</span>&lt;Key, Value&gt; FusedIterator <span class="kw">for </span>IntoValues&lt;Key, Value&gt; {}
 
-<span class="doccomment">/// An iterator that removes all of the [`Field`]s of an [`ObjectMap`].
+<span class="doccomment">/// An iterator that removes all of the [`Field`]s of an [`Map`].
 ///
-/// When this iterator is dropped, the underlying [`ObjectMap`] will be empty
+/// When this iterator is dropped, the underlying [`Map`] will be empty
 /// regardless of whether the iterator has been fully exhausted.
 </span><span class="kw">pub struct </span>Drain&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;(vec::Drain&lt;<span class="lifetime">&#39;a</span>, Field&lt;Key, Value&gt;&gt;);
 
@@ -2318,7 +2320,7 @@
 /// Why not just use `PartialOrd&lt;Other&gt;`? Unfortunately, `PartialOrd&lt;str&gt;` is
 /// [not implemented for
 /// `String`](https://github.com/rust-lang/rust/issues/82990). This led to
-/// issues implementing the [`ObjectMap::entry`] function when passing a `&amp;str`
+/// issues implementing the [`Map::entry`] function when passing a `&amp;str`
 /// when the `Key` type was `String`.
 ///
 /// This trait is automatically implemented for types that implement `Ord` and
@@ -2381,4 +2383,4 @@
     }
 }
 </code></pre></div>
-</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="objectmap" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0 (84c898d65 2023-04-16)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="kempt" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0 (84c898d65 2023-04-16)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>
