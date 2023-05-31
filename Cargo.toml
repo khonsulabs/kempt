@@ -6,6 +6,9 @@ license = "MIT OR Apache-2.0"
 rust-version = "1.65.0"
 repository = "https://github.com/khonsulabs/kempt"
 readme = "./README.md"
+description = "Ordered collection types with no unsafe code and no_std support"
+categories = ["data-structures", "no-std"]
+keywords = ["no_std", "ordered-map"]
 
 [dependencies]
 serde = { version = "1.0.163", default-features = false, optional = true }
