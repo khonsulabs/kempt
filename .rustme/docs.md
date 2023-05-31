@@ -1,12 +1,10 @@
-# Kempt
-
 A `#[forbid_unsafe]` ordered collection crate for Rust. This crate is `no_std`
 compatible using the `alloc` crate.
 
 [![crate version](https://img.shields.io/crates/v/kempt.svg)](https://crates.io/crates/kempt)
-[![Live Build Status](https://img.shields.io/github/actions/workflow/status/khonsulabs/kempt/rust.yml?branch=main)](https://github.com/khonsulabs/kempt/actions?query=workflow:Tests)
+[![Live Build Status](https://img.shields.io/github/actions/workflow/status/khonsulabs/kempt/rust.yml?branch=$ref-name$)](https://github.com/khonsulabs/kempt/actions?query=workflow:Tests)
 [![HTML Coverage Report for `main` branch](https://khonsulabs.github.io/kempt/coverage/badge.svg)](https://khonsulabs.github.io/kempt/coverage/)
-[![Documentation for `main` branch](https://img.shields.io/badge/docs-main-informational)](https://khonsulabs.github.io/kempt/main/kempt)
+[![Documentation for `$ref-name$` branch](https://img.shields.io/badge/docs-main-informational)]($docs$)
 
 ## `Map<K, V>`
 
@@ -129,13 +127,5 @@ their target hardware rather than rely on these benchmark results.
 [interner]: https://github.com/khonsulabs/interner
 [stylecs]: https://github.com/khonsulabs/stylecs
 [fnv]: https://github.com/servo/rust-fnv
-[map]: https://khonsulabs.github.io/kempt/main/kempt/struct.Map.html
-[merge-with]: https://khonsulabs.github.io/kempt/main/kempt/struct.Map.html#method.merge_with
-
-## Open-source Licenses
-
-This project, like all projects from [Khonsu Labs](https://khonsulabs.com/), are
-open-source. This repository is available under the [MIT License](./LICENSE-MIT)
-or the [Apache License 2.0](./LICENSE-APACHE).
-
-To learn more about contributing, please see [CONTRIBUTING.md](./CONTRIBUTING.md).
+[map]: $map$
+[merge-with]: $map-merge-with$

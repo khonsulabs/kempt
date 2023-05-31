@@ -72,12 +72,12 @@ where
     }
 }
 
-impl<Key, Needle> Sort<Needle> for Key
+impl<Key, SearchFor> Sort<SearchFor> for Key
 where
-    Key: Ord + PartialOrd<Needle>,
+    Key: Ord + PartialOrd<SearchFor>,
 {
     #[inline]
-    fn compare(&self, b: &Needle) -> Ordering {
+    fn compare(&self, b: &SearchFor) -> Ordering {
         self.partial_cmp(b).expect("comparison failed")
     }
 }

@@ -223,3 +223,13 @@ fn entry_to_owned_on_insert() {
     map.entry(NotCloneable).or_insert(());
     assert!(map.contains(&NotCloneable));
 }
+
+#[test]
+fn capacity() {
+    let mut map = Map::with_capacity(1);
+    assert_eq!(map.capacity(), 1);
+    map.insert(1, 1);
+    assert_eq!(map.capacity(), 1);
+    map.insert(2, 2);
+    assert!(map.capacity() > 1);
+}

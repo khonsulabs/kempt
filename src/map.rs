@@ -19,7 +19,8 @@ use crate::Sort;
 /// This type is designed for collections with a limited number of keys. In
 /// general, this collection excels when there are fewer entries, while
 /// `HashMap` or `BTreeMap` will be better choices with larger numbers of
-/// entries.
+/// entries. Additionally, `HashMap` will perform better if comparing the keys
+/// is expensive.
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Map<Key, Value>
 where
@@ -96,6 +97,14 @@ where
         }
     }
 
+    /// Returns the current capacity this map can hold before it must
+    /// reallocate.
+    #[must_use]
+    #[inline]
+    pub fn capacity(&self) -> usize {
+        self.fields.capacity()
+    }
+
     /// Inserts `key` and `value`. If an entry already existed for `key`, the
     /// value being overwritten is returned.
     #[inline]
@@ -112,20 +121,20 @@ where
 
     /// Returns true if this object contains `key`.
     #[inline]
-    pub fn contains<Needle>(&self, key: &Needle) -> bool
+    pub fn contains<SearchFor>(&self, key: &SearchFor) -> bool
     where
-        Key: Sort<Needle>,
-        Needle: ?Sized,
+        Key: Sort<SearchFor>,
+        SearchFor: ?Sized,
     {
         self.find_key_index(key).is_ok()
     }
 
     /// Returns the value associated with `key`, if found.
     #[inline]
-    pub fn get<Needle>(&self, key: &Needle) -> Option<&Value>
+    pub fn get<SearchFor>(&self, key: &SearchFor) -> Option<&Value>
     where
-        Key: Sort<Needle>,
-        Needle: ?Sized,
+        Key: Sort<SearchFor>,
+        SearchFor: ?Sized,
     {
         self.find_key(key).ok().map(|field| &field.value)
     }
@@ -148,10 +157,10 @@ where
 
     /// Removes the value associated with `key`, if found.
     #[inline]
-    pub fn remove<Needle>(&mut self, key: &Needle) -> Option<Field<Key, Value>>
+    pub fn remove<SearchFor>(&mut self, key: &SearchFor) -> Option<Field<Key, Value>>
     where
-        Key: Sort<Needle>,
-        Needle: ?Sized,
+        Key: Sort<SearchFor>,
+        SearchFor: ?Sized,
     {
         let index = self.find_key_index(key).ok()?;
         Some(self.remove_by_index(index))
@@ -184,13 +193,13 @@ where
 
     /// Returns an [`Entry`] for the associated key.
     #[inline]
-    pub fn entry<'key, Needle>(
+    pub fn entry<'key, SearchFor>(
         &mut self,
-        key: impl Into<SearchKey<'key, Key, Needle>>,
-    ) -> Entry<'_, 'key, Key, Value, Needle>
+        key: impl Into<SearchKey<'key, Key, SearchFor>>,
+    ) -> Entry<'_, 'key, Key, Value, SearchFor>
     where
-        Key: Sort<Needle> + Borrow<Needle>,
-        Needle: ToOwned<Owned = Key> + ?Sized + 'key,
+        Key: Sort<SearchFor> + Borrow<SearchFor>,
+        SearchFor: ToOwned<Owned = Key> + ?Sized + 'key,
     {
         let key = key.into();
         match self.find_key_index(key.as_ref()) {
@@ -200,29 +209,33 @@ where
     }
 
     #[inline]
-    fn find_key<Needle>(&self, needle: &Needle) -> Result<&Field<Key, Value>, usize>
+    fn find_key<SearchFor>(&self, search_for: &SearchFor) -> Result<&Field<Key, Value>, usize>
     where
-        Key: Sort<Needle>,
-        Needle: ?Sized,
+        Key: Sort<SearchFor>,
+        SearchFor: ?Sized,
     {
-        self.find_key_index(needle).map(|index| &self.fields[index])
+        self.find_key_index(search_for)
+            .map(|index| &self.fields[index])
     }
 
     #[inline]
-    fn find_key_mut<Needle>(&mut self, needle: &Needle) -> Result<&mut Field<Key, Value>, usize>
+    fn find_key_mut<SearchFor>(
+        &mut self,
+        search_for: &SearchFor,
+    ) -> Result<&mut Field<Key, Value>, usize>
     where
-        Key: Sort<Needle>,
-        Needle: ?Sized,
+        Key: Sort<SearchFor>,
+        SearchFor: ?Sized,
     {
-        self.find_key_index(needle)
+        self.find_key_index(search_for)
             .map(|index| &mut self.fields[index])
     }
 
     #[inline]
-    fn find_key_index<Needle>(&self, needle: &Needle) -> Result<usize, usize>
+    fn find_key_index<SearchFor>(&self, search_for: &SearchFor) -> Result<usize, usize>
     where
-        Key: Sort<Needle>,
-        Needle: ?Sized,
+        Key: Sort<SearchFor>,
+        SearchFor: ?Sized,
     {
         // When the collection contains `Self::SCAN_LIMIT` or fewer elements,
         // there should be no jumps before we reach a sequential scan for the
@@ -235,7 +248,8 @@ where
             let delta = max - min;
             if delta <= Self::SCAN_LIMIT {
                 for (relative_index, field) in self.fields[min..max].iter().enumerate() {
-                    let comparison = <Key as crate::Sort<Needle>>::compare(&field.key, needle);
+                    let comparison =
+                        <Key as crate::Sort<SearchFor>>::compare(&field.key, search_for);
                     return match comparison {
                         Ordering::Less => continue,
                         Ordering::Equal => Ok(min + relative_index),
@@ -248,7 +262,7 @@ where
 
             let midpoint = min + delta / 2;
             let comparison =
-                <Key as crate::Sort<Needle>>::compare(&self.fields[midpoint].key, needle);
+                <Key as crate::Sort<SearchFor>>::compare(&self.fields[midpoint].key, search_for);
 
             match comparison {
                 Ordering::Less => min = midpoint + 1,
@@ -307,6 +321,18 @@ where
     ///   The merged value is inserted into the returned object.
     /// * If a field is contained in `self` but not in `other`, it is always
     ///   cloned.
+    ///
+    /// ```rust
+    /// use kempt::Map;
+    ///
+    /// let a: Map<&'static str, usize> = [("a", 1), ("b", 2)].into_iter().collect();
+    /// let b: Map<&'static str, usize> = [("a", 1), ("c", 3)].into_iter().collect();
+    /// let merged = a.merged_with(&b, |_key, b| Some(*b), |_key, a, b| *a += *b);
+    ///
+    /// assert_eq!(merged.get(&"a"), Some(&2));
+    /// assert_eq!(merged.get(&"b"), Some(&2));
+    /// assert_eq!(merged.get(&"c"), Some(&3));
+    /// ```
     #[inline]
     #[must_use]
     pub fn merged_with(
@@ -333,6 +359,17 @@ where
     ///   the value from `other`. The `merge()` function is responsible for
     ///   updating the value if needed to complete the merge.
     /// * If a field is contained in `self` but not in `other`, it is ignored.
+    ///
+    /// ```rust
+    /// use kempt::Map;
+    ///
+    /// let mut a: Map<&'static str, usize> = [("a", 1), ("b", 2)].into_iter().collect();
+    /// let b: Map<&'static str, usize> = [("a", 1), ("c", 3)].into_iter().collect();
+    /// a.merge_with(&b, |_key, b| Some(*b), |_key, a, b| *a += *b);
+    /// assert_eq!(a.get(&"a"), Some(&2));
+    /// assert_eq!(a.get(&"b"), Some(&2));
+    /// assert_eq!(a.get(&"c"), Some(&3));
+    /// ```
     #[inline]
     pub fn merge_with(
         &mut self,
@@ -388,11 +425,11 @@ where
     }
 }
 
-trait EntryKey<Key, Needle = Key>
+trait EntryKey<Key, SearchFor = Key>
 where
-    Needle: ?Sized,
+    SearchFor: ?Sized,
 {
-    fn as_ref(&self) -> &Needle;
+    fn as_ref(&self) -> &SearchFor;
     fn into_owned(self) -> Key;
 }
 
@@ -433,21 +470,21 @@ impl<'key, K> From<K> for SearchKey<'key, K, K> {
     }
 }
 
-impl<'key, Key, Needle> From<&'key Needle> for SearchKey<'key, Key, Needle>
+impl<'key, Key, Borrowed> From<&'key Borrowed> for SearchKey<'key, Key, Borrowed>
 where
-    Needle: ?Sized,
+    Borrowed: ?Sized,
 {
-    fn from(value: &'key Needle) -> Self {
+    fn from(value: &'key Borrowed) -> Self {
         SearchKey::Borrowed(value)
     }
 }
 
-impl<'key, Key, Needle> SearchKey<'key, Key, Needle>
+impl<'key, Key, Borrowed> SearchKey<'key, Key, Borrowed>
 where
-    Key: Borrow<Needle>,
-    Needle: ToOwned<Owned = Key> + ?Sized,
+    Key: Borrow<Borrowed>,
+    Borrowed: ToOwned<Owned = Key> + ?Sized,
 {
-    fn as_ref(&self) -> &Needle {
+    fn as_ref(&self) -> &Borrowed {
         match self {
             SearchKey::Borrowed(key) => key,
             SearchKey::Owned(owned) => owned.borrow(),
