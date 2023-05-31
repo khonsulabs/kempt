@@ -93,7 +93,7 @@
 <span class="kw">use </span>serde::ser::SerializeMap;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="kw">use crate</span>::{Field, Map, Sort};
+<span class="kw">use crate</span>::{Map, Sort};
 
 <span class="kw">impl</span>&lt;Key, Value&gt; Serialize <span class="kw">for </span>Map&lt;Key, Value&gt;
 <span class="kw">where
@@ -106,8 +106,8 @@
         </span>S: serde::Serializer,
     {
         <span class="kw">let </span><span class="kw-2">mut </span>map = serializer.serialize_map(<span class="prelude-val">Some</span>(<span class="self">self</span>.len()))<span class="question-mark">?</span>;
-        <span class="kw">for </span>Field { key, value } <span class="kw">in </span><span class="self">self </span>{
-            map.serialize_entry(key, value)<span class="question-mark">?</span>;
+        <span class="kw">for </span>field <span class="kw">in </span><span class="self">self </span>{
+            map.serialize_entry(field.key(), <span class="kw-2">&amp;</span>field.value)<span class="question-mark">?</span>;
         }
         map.end()
     }
