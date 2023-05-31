@@ -100,17 +100,20 @@ here](https://khonsulabs.github.io/kempt/benchmarks/report/index.html). Here
 are the results run from the developer's machine (an AMD Ryzen 7 3800X) for data
 sets containing 25 elements:
 
-| Benchmark   | Key Type | Map | HashMap ([fnv][fnv]) | BTreeMap |
+| Benchmark   | Key Type | [Map][map] | HashMap ([fnv][fnv]) | BTreeMap |
 |-------------|----------|-----------|----------------------|----------|
-| fill random | u8       |   211.0ns |              408.1ns |  612.2ns |
-| fill random | usize    |   201.6ns |              298.5ns |  640.0ns |
-| fill random | u128     |   282.0ns |              415.6ns |  680.2ns |
-| fill seq    | u8       |   221.0ns |              418.3ns |  606.6ns |
-| fill seq    | usize    |   189.1ns |              291.1ns |  603.3ns |
-| fill seq    | u128     |   262.6ns |              401.6ns |  659.7ns |
-| get         | u8       |     5.0ns |                4.5ns |    5.6ns |
-| get         | usize    |     5.2ns |                6.4ns |    6.1ns |
-| get         | u128     |     6.0ns |               11.6ns |    7.2ns |
+| fill random | u8       |    161.1ns |              408.9ns |  447.5ns |
+| fill random | usize    |    157.7ns |              289.2ns |  451.5ns |
+| fill random | u128     |    260.1ns |              401.0ns |  527.8ns |
+| fill seq    | u8       |    170.4ns |              413.0ns |  444.9ns |
+| fill seq    | usize    |    173.3ns |              284.2ns |  461.2ns |
+| fill seq    | u128     |    220.5ns |              404.9ns |  533.1ns |
+| get         | u8       |      5.0ns |                4.1ns |    5.5ns |
+| get         | usize    |      5.1ns |                6.4ns |    5.7ns |
+| get         | u128     |      7.3ns |               11.7ns |    6.9ns |
+| remove      | u8       |     19.4ns |               25.6ns |  187.1ns |
+| remove      | usize    |     28.2ns |               34.6ns |  199.8ns |
+| remove      | u128     |     32.2ns |               41.2ns |  203.8ns |
 
 No benchmark suite is ever perfect. Pull requests are welcome. Each potential
 user who cares about maximal performance should benchmark their own use case on

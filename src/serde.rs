@@ -67,7 +67,7 @@ where
 
 #[test]
 fn tests() {
-    use serde_test::{assert_tokens, Token};
+    use serde_test::{assert_de_tokens_error, assert_tokens, Token};
 
     let map = [(1, 1), (2, 2)].into_iter().collect::<Map<u8, u16>>();
     assert_tokens(
@@ -80,5 +80,10 @@ fn tests() {
             Token::U16(2),
             Token::MapEnd,
         ],
+    );
+
+    assert_de_tokens_error::<Map<u8, u16>>(
+        &[Token::U8(1)],
+        r#"Error { msg: "invalid type: integer `1`, expected an Map" }"#,
     );
 }
