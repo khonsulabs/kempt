@@ -4,9 +4,9 @@ A `#[forbid_unsafe]` ordered collection crate for Rust. This crate is `no_std`
 compatible using the `alloc` crate.
 
 [![crate version](https://img.shields.io/crates/v/kempt.svg)](https://crates.io/crates/kempt)
-[![Live Build Status](https://img.shields.io/github/actions/workflow/status/khonsulabs/kempt/rust.yml?branch=main)](https://github.com/khonsulabs/kempt/actions?query=workflow:Tests)
+[![Live Build Status](https://img.shields.io/github/actions/workflow/status/khonsulabs/kempt/rust.yml?branch=v0.1.0)](https://github.com/khonsulabs/kempt/actions?query=workflow:Tests)
 [![HTML Coverage Report for `main` branch](https://khonsulabs.github.io/kempt/coverage/badge.svg)](https://khonsulabs.github.io/kempt/coverage/)
-[![Documentation for `main` branch](https://img.shields.io/badge/docs-main-informational)](https://khonsulabs.github.io/kempt/main/kempt)
+[![Documentation for `v0.1.0` branch](https://img.shields.io/badge/docs-main-informational)](https://docs.rs/kempt)
 
 ## `Map<K, V>`
 
@@ -129,8 +129,8 @@ their target hardware rather than rely on these benchmark results.
 [interner]: https://github.com/khonsulabs/interner
 [stylecs]: https://github.com/khonsulabs/stylecs
 [fnv]: https://github.com/servo/rust-fnv
-[map]: https://khonsulabs.github.io/kempt/main/kempt/struct.Map.html
-[merge-with]: https://khonsulabs.github.io/kempt/main/kempt/struct.Map.html#method.merge_with
+[map]: https://docs.rs/kempt/*/kempt/struct.Map.html
+[merge-with]: https://docs.rs/kempt/*/kempt/struct.Map.html#method.merge_with
 
 ## Open-source Licenses
 
