@@ -4,9 +4,9 @@ use serde::de::{MapAccess, Visitor};
 use serde::ser::SerializeMap;
 use serde::{Deserialize, Serialize};
 
-use crate::{Field, ObjectMap, Sort};
+use crate::{Field, Map, Sort};
 
-impl<Key, Value> Serialize for ObjectMap<Key, Value>
+impl<Key, Value> Serialize for Map<Key, Value>
 where
     Key: Serialize + Sort<Key>,
     Value: Serialize,
@@ -24,7 +24,7 @@ where
     }
 }
 
-impl<'de, Key, Value> Deserialize<'de> for ObjectMap<Key, Value>
+impl<'de, Key, Value> Deserialize<'de> for Map<Key, Value>
 where
     Key: Deserialize<'de> + Sort<Key>,
     Value: Deserialize<'de>,
@@ -45,11 +45,11 @@ where
     Key: Deserialize<'de> + Sort<Key>,
     Value: Deserialize<'de>,
 {
-    type Value = ObjectMap<Key, Value>;
+    type Value = Map<Key, Value>;
 
     #[inline]
     fn expecting(&self, formatter: &mut alloc::fmt::Formatter) -> alloc::fmt::Result {
-        formatter.write_str("an ObjectMap")
+        formatter.write_str("an Map")
     }
 
     #[inline]
@@ -57,10 +57,28 @@ where
     where
         A: MapAccess<'de>,
     {
-        let mut obj = ObjectMap::with_capacity(map.size_hint().unwrap_or(0));
+        let mut obj = Map::with_capacity(map.size_hint().unwrap_or(0));
         while let Some((key, value)) = map.next_entry()? {
             obj.insert(key, value);
         }
         Ok(obj)
     }
+}
+
+#[test]
+fn tests() {
+    use serde_test::{assert_tokens, Token};
+
+    let map = [(1, 1), (2, 2)].into_iter().collect::<Map<u8, u16>>();
+    assert_tokens(
+        &map,
+        &[
+            Token::Map { len: Some(2) },
+            Token::U8(1),
+            Token::U16(1),
+            Token::U8(2),
+            Token::U16(2),
+            Token::MapEnd,
+        ],
+    );
 }

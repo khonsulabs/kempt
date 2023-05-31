@@ -2,8 +2,8 @@
 use std::collections::BTreeSet;
 
 use arbitrary::Arbitrary;
+use kempt::Map;
 use libfuzzer_sys::fuzz_target;
-use objectmap::ObjectMap;
 
 #[derive(Debug, Arbitrary)]
 enum Operation {
@@ -13,7 +13,7 @@ enum Operation {
 
 fuzz_target!(|operations: Vec<Operation>| {
     let mut master = BTreeSet::new();
-    let mut obj = ObjectMap::new();
+    let mut obj = Map::new();
 
     for operation in operations {
         match operation {

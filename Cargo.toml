@@ -1,14 +1,17 @@
 [package]
-name = "objectmap"
+name = "kempt"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 rust-version = "1.65.0"
-repository = "https://github.com/khonsulabs/objectmap"
+repository = "https://github.com/khonsulabs/kempt"
 readme = "./README.md"
 
 [dependencies]
 serde = { version = "1.0.163", default-features = false, optional = true }
+
+[dev-dependencies]
+serde_test = { version = "1.0.163" }
 
 [workspace]
 members = ["benchmarks", "xtask"]

@@ -7,11 +7,12 @@ use criterion::{
     black_box, criterion_group, criterion_main, BatchSize, Bencher, BenchmarkId, Criterion,
 };
 use fnv::FnvBuildHasher;
-use objectmap::ObjectMap;
+use kempt::Map;
 use rand::distributions::Standard;
 use rand::prelude::Distribution;
+use rand::rngs::StdRng;
 use rand::seq::SliceRandom;
-use rand::thread_rng;
+use rand::SeedableRng;
 
 fn btree_lookup<Key>(bench: &mut Bencher, keys: &[Key])
 where
@@ -52,7 +53,7 @@ where
     let set = keys
         .iter()
         .map(|key| (key.clone(), ()))
-        .collect::<ObjectMap<Key, ()>>();
+        .collect::<Map<Key, ()>>();
     let mut keys = keys.iter().cycle();
 
     bench.iter(|| {
@@ -61,12 +62,12 @@ where
     });
 }
 
-fn lookup<Key>(c: &mut Criterion, keys: &[Key])
+fn lookup<Key>(c: &mut Criterion, keys: &[Key], sizes: &[usize])
 where
     Key: Eq + Hash + Clone + Ord + Default + From<u8> + TryFrom<usize> + AddAssign,
 {
     let mut group = c.benchmark_group(format!("lookup {}", type_name::<Key>()));
-    for limit in [5, 10, 25, 50, 75, 100, 500, 1000] {
+    for limit in sizes.iter().copied() {
         if Key::try_from(limit).is_err() {
             break;
         }
@@ -124,7 +125,7 @@ where
     bench.iter_batched(
         || &keys[..*starting_size],
         |keys: &[Key]| {
-            let mut map = ObjectMap::with_capacity(*starting_size);
+            let mut map = Map::with_capacity(*starting_size);
             for key in keys {
                 map.insert(key.clone(), ());
             }
@@ -133,13 +134,13 @@ where
     );
 }
 
-fn fill<Key>(c: &mut Criterion, keys: &[Key], name: &str)
+fn fill<Key>(c: &mut Criterion, keys: &[Key], sizes: &[usize], name: &str)
 where
     Key: Eq + Hash + Clone + Ord + TryFrom<usize>,
     Standard: Distribution<Key>,
 {
     let mut group = c.benchmark_group(format!("{name} {}", type_name::<Key>()));
-    for limit in [5, 10, 25, 50, 75, 100, 500, 1000] {
+    for limit in sizes.iter().copied() {
         if Key::try_from(limit * 2).is_err() {
             break;
         }
@@ -150,6 +151,89 @@ where
             BenchmarkId::new("object", limit),
             &(keys, limit),
             object_fill,
+        );
+    }
+}
+
+fn btree_remove<Key>(bench: &mut Bencher, keys: &[Key])
+where
+    Key: Clone + Ord,
+{
+    let set = keys
+        .iter()
+        .map(|key| (key.clone(), ()))
+        .collect::<BTreeMap<_, _>>();
+    let mut keys = keys.iter().cycle();
+
+    bench.iter_batched(
+        || set.clone(),
+        |mut set| {
+            let key = black_box(keys.next().expect("cycled"));
+            assert!(set.remove(key).is_some());
+        },
+        BatchSize::LargeInput,
+    );
+}
+
+fn hash_remove<Key>(bench: &mut Bencher, keys: &[Key])
+where
+    Key: Eq + Hash + Clone,
+{
+    let set = keys
+        .iter()
+        .map(|key| (key.clone(), ()))
+        .collect::<HashMap<_, _, FnvBuildHasher>>();
+    let mut keys = keys.iter().cycle();
+
+    bench.iter_batched(
+        || set.clone(),
+        |mut set| {
+            let key = black_box(keys.next().expect("cycled"));
+            assert!(set.remove(key).is_some());
+        },
+        BatchSize::LargeInput,
+    );
+}
+
+fn object_remove<Key>(bench: &mut Bencher, keys: &[Key])
+where
+    Key: Clone + Ord,
+{
+    let set = keys
+        .iter()
+        .map(|key| (key.clone(), ()))
+        .collect::<Map<Key, ()>>();
+    let mut keys = keys.iter().cycle();
+
+    bench.iter_batched(
+        || set.clone(),
+        |mut set| {
+            let key = black_box(keys.next().expect("cycled"));
+            assert!(set.remove(key).is_some());
+        },
+        BatchSize::LargeInput,
+    );
+}
+
+fn remove<Key>(c: &mut Criterion, keys: &[Key], sizes: &[usize])
+where
+    Key: Eq + Hash + Clone + Ord + Default + From<u8> + TryFrom<usize> + AddAssign,
+{
+    let mut group = c.benchmark_group(format!("remove {}", type_name::<Key>()));
+    for limit in sizes.iter().copied() {
+        if Key::try_from(limit).is_err() {
+            break;
+        }
+        group.bench_with_input(BenchmarkId::new("hash", limit), &keys[..limit], hash_remove);
+        group.bench_with_input(
+            BenchmarkId::new("btree", limit),
+            &keys[..limit],
+            btree_remove,
+        );
+        group.bench_with_input(
+            BenchmarkId::new("object", limit),
+            &keys[..limit],
+            object_remove,
         );
     }
 }
@@ -165,27 +249,30 @@ where
         key += Key::from(1);
     }
     if shuffle {
-        keys.shuffle(&mut thread_rng());
+        let mut rng = StdRng::from_seed([0; 32]);
+        keys.shuffle(&mut rng);
     }
     keys
 }
 
-fn suite_for_key<Key>(c: &mut Criterion, max: Key)
+fn suite_for_key<Key>(c: &mut Criterion, max: Key, sizes: &[usize])
 where
     Key: Eq + Hash + Copy + Ord + Default + From<u8> + TryFrom<usize> + AddAssign,
     Standard: Distribution<Key>,
 {
     let keys = generate_keys::<Key>(max, true);
-    fill::<Key>(c, &keys, "fill-rdm");
-    lookup::<Key>(c, &keys);
+    fill::<Key>(c, &keys, sizes, "fill-rdm");
+    lookup::<Key>(c, &keys, sizes);
+    remove::<Key>(c, &keys, sizes);
     let keys = generate_keys::<Key>(max, false);
-    fill::<Key>(c, &keys, "fill-seq");
+    fill::<Key>(c, &keys, sizes, "fill-seq");
 }
 
 fn criterion_benchmark(c: &mut Criterion) {
-    suite_for_key::<u8>(c, u8::MAX);
-    suite_for_key::<usize>(c, usize::MAX);
-    suite_for_key::<u128>(c, u128::MAX);
+    let sizes = [5, 10, 25, 50, 100, 250, 500, 1000];
+    suite_for_key::<u8>(c, u8::MAX, &sizes);
+    suite_for_key::<usize>(c, usize::MAX, &sizes);
+    suite_for_key::<u128>(c, u128::MAX, &sizes);
 }
 
 criterion_group!(benches, criterion_benchmark);

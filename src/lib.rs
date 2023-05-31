@@ -32,15 +32,15 @@ use core::{mem, slice};
 /// general, this collection excels when there are fewer entries, while
 /// `HashMap` or `BTreeMap` will be better choices with larger numbers of
 /// entries.
-#[derive(Clone)]
-pub struct ObjectMap<Key, Value>
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
+pub struct Map<Key, Value>
 where
     Key: Sort<Key>,
 {
     fields: Vec<Field<Key, Value>>,
 }
 
-impl<Key, Value> Default for ObjectMap<Key, Value>
+impl<Key, Value> Default for Map<Key, Value>
 where
     Key: Sort<Key>,
 {
@@ -74,7 +74,7 @@ const fn scan_limit<Key, Value>() -> usize {
     }
 }
 
-impl<Key, Value> ObjectMap<Key, Value>
+impl<Key, Value> Map<Key, Value>
 where
     Key: Sort<Key>,
 {
@@ -204,7 +204,8 @@ where
         // key. When the collection is larger, we use a binary search to narrow
         // the search window until the window is 16 elements or less.
         let mut min = 0;
-        let mut max = self.fields.len();
+        let field_count = self.fields.len();
+        let mut max = field_count;
         loop {
             let delta = max - min;
             if delta <= Self::SCAN_LIMIT {
@@ -268,7 +269,8 @@ where
         IntoValues(self.fields.into_iter())
     }
 
-    /// Merges the fields from `self` and `other` into a new object.
+    /// Merges the fields from `self` and `other` into a new object, returning
+    /// the updated object.
     ///
     /// * If a field is contained in `other` but not contained in `self`,
     ///   `filter()` is called. If `filter()` returns a value, the returned
@@ -283,7 +285,7 @@ where
     #[inline]
     #[must_use]
     pub fn merged_with(
-        &self,
+        mut self,
         other: &Self,
         filter: impl FnMut(&Key, &Value) -> Option<Value>,
         merge: impl FnMut(&Key, &mut Value, &Value),
@@ -292,9 +294,8 @@ where
         Key: Clone,
         Value: Clone,
     {
-        let mut base = self.clone();
-        base.merge_with(other, filter, merge);
-        base
+        self.merge_with(other, filter, merge);
+        self
     }
 
     /// Merges the fields from `other` into `self`.
@@ -370,7 +371,7 @@ where
     fn into_owned(self) -> Key;
 }
 
-/// A key provided to the [`ObjectMap::entry`] function.
+/// A key provided to the [`Map::entry`] function.
 ///
 /// This is a [`Cow`](alloc::borrow::Cow)-like type that is slightly more
 /// flexible with `From` implementations. The `Owned` and `Borrowed` types are
@@ -421,7 +422,7 @@ where
     }
 }
 
-impl<Key, Value> Debug for ObjectMap<Key, Value>
+impl<Key, Value> Debug for Map<Key, Value>
 where
     Key: Debug + Sort<Key>,
     Value: Debug,
@@ -435,7 +436,7 @@ where
     }
 }
 
-impl<'a, Key, Value> IntoIterator for &'a ObjectMap<Key, Value>
+impl<'a, Key, Value> IntoIterator for &'a Map<Key, Value>
 where
     Key: Sort<Key>,
 {
@@ -448,7 +449,7 @@ where
     }
 }
 
-impl<Key, Value> IntoIterator for ObjectMap<Key, Value>
+impl<Key, Value> IntoIterator for Map<Key, Value>
 where
     Key: Sort<Key>,
 {
@@ -460,7 +461,7 @@ where
     }
 }
 
-impl<Key, Value> FromIterator<(Key, Value)> for ObjectMap<Key, Value>
+impl<Key, Value> FromIterator<(Key, Value)> for Map<Key, Value>
 where
     Key: Sort<Key>,
 {
@@ -475,8 +476,8 @@ where
     }
 }
 
-/// A field in an [`ObjectMap`].
-#[derive(Debug, Clone, Eq, PartialEq)]
+/// A field in an [`Map`].
+#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Field<Key, Value> {
     key: Key,
     /// The value contained in this field.
@@ -554,13 +555,13 @@ where
     }
 }
 
-/// An entry that exists in an [`ObjectMap`].
+/// An entry that exists in an [`Map`].
 #[derive(Debug)]
 pub struct OccupiedEntry<'a, Key, Value>
 where
     Key: Sort<Key>,
 {
-    object: &'a mut ObjectMap<Key, Value>,
+    object: &'a mut Map<Key, Value>,
     index: usize,
 }
 
@@ -569,7 +570,7 @@ where
     Key: Sort<Key>,
 {
     #[inline]
-    fn new(object: &'a mut ObjectMap<Key, Value>, index: usize) -> Self {
+    fn new(object: &'a mut Map<Key, Value>, index: usize) -> Self {
         Self { object, index }
     }
 
@@ -638,14 +639,14 @@ where
     }
 }
 
-/// A vacant entry in an [`ObjectMap`].
+/// A vacant entry in an [`Map`].
 #[derive(Debug)]
 pub struct VacantEntry<'a, 'key, Key, Value, BorrowedKey>
 where
     Key: Sort<Key>,
     BorrowedKey: ?Sized,
 {
-    object: &'a mut ObjectMap<Key, Value>,
+    object: &'a mut Map<Key, Value>,
     key: SearchKey<'key, Key, BorrowedKey>,
     insert_at: usize,
 }
@@ -657,7 +658,7 @@ where
 {
     #[inline]
     fn new(
-        object: &'a mut ObjectMap<Key, Value>,
+        object: &'a mut Map<Key, Value>,
         key: SearchKey<'key, Key, BorrowedKey>,
         insert_at: usize,
     ) -> Self {
@@ -673,7 +674,7 @@ where
     /// # Panics
     ///
     /// This function panics if `key` does not match the original order of the
-    /// key that was passed to [`ObjectMap::entry()`].
+    /// key that was passed to [`Map::entry()`].
     #[inline]
     pub fn insert(self, value: Value) -> &'a mut Value
     where
@@ -687,7 +688,7 @@ where
     }
 }
 
-/// An iterator over the [`Field`]s in an [`ObjectMap`].
+/// An iterator over the [`Field`]s in an [`Map`].
 pub struct Iter<'a, Key, Value>(slice::Iter<'a, Field<Key, Value>>);
 
 impl<'a, Key, Value> Iterator for Iter<'a, Key, Value> {
@@ -746,7 +747,7 @@ impl<'a, Key, Value> DoubleEndedIterator for Iter<'a, Key, Value> {
 
 impl<'a, Key, Value> FusedIterator for Iter<'a, Key, Value> {}
 
-/// An iterator over mutable [`Field`]s contained in an [`ObjectMap`].
+/// An iterator over mutable [`Field`]s contained in an [`Map`].
 pub struct IterMut<'a, Key, Value>(slice::IterMut<'a, Field<Key, Value>>);
 
 impl<'a, Key, Value> Iterator for IterMut<'a, Key, Value> {
@@ -810,7 +811,7 @@ impl<'a, Key, Value> DoubleEndedIterator for IterMut<'a, Key, Value> {
 
 impl<'a, Key, Value> FusedIterator for IterMut<'a, Key, Value> {}
 
-/// An iterator that returns all of the elements of an [`ObjectMap`] while
+/// An iterator that returns all of the elements of an [`Map`] while
 /// freeing its underlying memory.
 pub struct IntoIter<Key, Value>(vec::IntoIter<Field<Key, Value>>);
 
@@ -870,7 +871,7 @@ impl<Key, Value> DoubleEndedIterator for IntoIter<Key, Value> {
 
 impl<Key, Value> FusedIterator for IntoIter<Key, Value> {}
 
-/// An iterator over the values contained in an [`ObjectMap`].
+/// An iterator over the values contained in an [`Map`].
 pub struct Values<'a, Key, Value>(slice::Iter<'a, Field<Key, Value>>);
 
 impl<'a, Key, Value> Iterator for Values<'a, Key, Value> {
@@ -930,7 +931,7 @@ impl<'a, Key, Value> DoubleEndedIterator for Values<'a, Key, Value> {
 
 impl<'a, Key, Value> FusedIterator for Values<'a, Key, Value> {}
 
-/// An iterator over mutable values contained in an [`ObjectMap`].
+/// An iterator over mutable values contained in an [`Map`].
 pub struct ValuesMut<'a, Key, Value>(slice::IterMut<'a, Field<Key, Value>>);
 
 impl<'a, Key, Value> Iterator for ValuesMut<'a, Key, Value> {
@@ -990,7 +991,7 @@ impl<'a, Key, Value> DoubleEndedIterator for ValuesMut<'a, Key, Value> {
 
 impl<'a, Key, Value> FusedIterator for ValuesMut<'a, Key, Value> {}
 
-/// An iterator returning all of the values contained in an [`ObjectMap`] as its
+/// An iterator returning all of the values contained in an [`Map`] as its
 /// underlying storage is freed.
 pub struct IntoValues<Key, Value>(vec::IntoIter<Field<Key, Value>>);
 
@@ -1051,9 +1052,9 @@ impl<Key, Value> DoubleEndedIterator for IntoValues<Key, Value> {
 
 impl<Key, Value> FusedIterator for IntoValues<Key, Value> {}
 
-/// An iterator that removes all of the [`Field`]s of an [`ObjectMap`].
+/// An iterator that removes all of the [`Field`]s of an [`Map`].
 ///
-/// When this iterator is dropped, the underlying [`ObjectMap`] will be empty
+/// When this iterator is dropped, the underlying [`Map`] will be empty
 /// regardless of whether the iterator has been fully exhausted.
 pub struct Drain<'a, Key, Value>(vec::Drain<'a, Field<Key, Value>>);
 
@@ -1127,7 +1128,7 @@ mod tests;
 /// Why not just use `PartialOrd<Other>`? Unfortunately, `PartialOrd<str>` is
 /// [not implemented for
 /// `String`](https://github.com/rust-lang/rust/issues/82990). This led to
-/// issues implementing the [`ObjectMap::entry`] function when passing a `&str`
+/// issues implementing the [`Map::entry`] function when passing a `&str`
 /// when the `Key` type was `String`.
 ///
 /// This trait is automatically implemented for types that implement `Ord` and

@@ -4,11 +4,11 @@ use alloc::string::String;
 use core::borrow::Borrow;
 use std::println;
 
-use crate::{scan_limit, Entry, Field, ObjectMap};
+use crate::{scan_limit, Entry, Field, Map};
 
 #[test]
 fn basics() {
-    let mut map = ObjectMap::default();
+    let mut map = Map::default();
     assert!(map.is_empty());
     assert!(map.insert("b", 1).is_none());
     assert_eq!(map.len(), 1);
@@ -72,7 +72,7 @@ fn scan_limits() {
 
 #[test]
 fn entry() {
-    let mut map = ObjectMap::<String, usize>::new();
+    let mut map = Map::<String, usize>::new();
     let entry = map.entry("a").or_insert(1);
     assert_eq!(*entry, 1);
     let entry = map
@@ -100,7 +100,7 @@ fn entry() {
     assert_eq!(entry.replace(2), 1);
     assert_eq!(map.get("b"), Some(&2));
 
-    let mut map = ObjectMap::<CustomType, usize>::new();
+    let mut map = Map::<CustomType, usize>::new();
     let entry = map.entry(&CustomTypeBorrowed(1)).or_insert(42);
     assert_eq!(*entry, 42);
     let entry = map
@@ -159,7 +159,7 @@ impl PartialEq<CustomTypeBorrowed> for CustomType {
 fn binary_search_extremes() {
     // fill in 0..100 in two passes: first with evens, second with odds. This
     // should hit every possible combination of the binary search algorithm.
-    let mut map = ObjectMap::new();
+    let mut map = Map::new();
     for i in (0..100).step_by(2) {
         map.insert(i, i);
     }
@@ -173,16 +173,10 @@ fn binary_search_extremes() {
 
 #[test]
 fn merge() {
-    let multiples_of_two = (2..100)
-        .step_by(2)
-        .map(|i| (i, 1))
-        .collect::<ObjectMap<_, _>>();
-    let multiples_of_three = (3..100)
-        .step_by(3)
-        .map(|i| (i, 1))
-        .collect::<ObjectMap<_, _>>();
+    let multiples_of_two = (2..100).step_by(2).map(|i| (i, 1)).collect::<Map<_, _>>();
+    let multiples_of_three = (3..100).step_by(3).map(|i| (i, 1)).collect::<Map<_, _>>();
     let copy_if_not_five = |key: &usize, value: &usize| (*key % 5 != 0).then_some(*value);
-    let multiples_of_2_and_3_but_not_5 = ObjectMap::new()
+    let multiples_of_2_and_3_but_not_5 = Map::new()
         .merged_with(
             &multiples_of_two,
             copy_if_not_five,
@@ -216,7 +210,7 @@ fn entry_to_owned_on_insert() {
     }
 
     let rc = Rc::new(0);
-    let mut map = ObjectMap::<Rc<usize>, ()>::new();
+    let mut map = Map::<Rc<usize>, ()>::new();
     map.entry(&rc);
     assert_eq!(Rc::strong_count(&rc), 1);
     map.entry(&rc).or_insert(());
@@ -224,7 +218,7 @@ fn entry_to_owned_on_insert() {
 
     // This final test proves that when passing in the owned copy, it is used
     // without being cloned.
-    let mut map = ObjectMap::<NotCloneable, ()>::new();
+    let mut map = Map::<NotCloneable, ()>::new();
     map.entry(NotCloneable).or_insert(());
     assert!(map.contains(&NotCloneable));
 }
