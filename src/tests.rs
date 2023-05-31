@@ -1,6 +1,8 @@
 use alloc::borrow::ToOwned;
 use alloc::rc::Rc;
 use alloc::string::String;
+use alloc::vec;
+use alloc::vec::Vec;
 use core::borrow::Borrow;
 use std::println;
 
@@ -104,6 +106,11 @@ fn entry() {
     let Entry::Occupied(entry) = map.entry("b") else { unreachable!() };
     assert_eq!(entry.replace(2), 1);
     assert_eq!(map.get("b"), Some(&2));
+
+    // Entry with [u8]/Vec<u8>
+    let mut map = Map::<Vec<u8>, usize>::new();
+    map.entry(vec![b'a']).or_insert(1);
+    map.entry(&b"a"[..]).or_insert(1);
 
     let mut map = Map::<CustomType, usize>::new();
     let entry = map.entry(&CustomTypeBorrowed(1)).or_insert(42);
