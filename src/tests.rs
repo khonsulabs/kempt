@@ -6,7 +6,7 @@ use alloc::vec::Vec;
 use core::borrow::Borrow;
 use std::println;
 
-use crate::{scan_limit, Entry, Field, Map};
+use crate::map::{Entry, Field, Map};
 
 #[test]
 fn basics() {
@@ -27,8 +27,8 @@ fn basics() {
     assert!(!map.contains(&"c"));
     assert_eq!(map.get(&"c"), None);
 
-    assert_eq!(map.field(0).unwrap().key, "a");
-    assert_eq!(map.field(1).unwrap().key, "b");
+    assert_eq!(*map.field(0).unwrap().key(), "a");
+    assert_eq!(*map.field(1).unwrap().key(), "b");
     assert!(map.field(2).is_none());
     map.field_mut(1).unwrap().value += 1;
 
@@ -64,17 +64,6 @@ fn basics() {
     let drained = map.drain();
     drop(drained);
     assert!(map.is_empty());
-}
-
-#[test]
-fn scan_limits() {
-    // Small sizes seem better to narrow down via binary search up until ~16
-    // elements.
-    assert_eq!(scan_limit::<u8, ()>(), 16);
-    // Test a mid-point of the heuristic.
-    assert_eq!(scan_limit::<u64, u64>(), 8);
-    // Large field sizes only scan chunks of 4.
-    assert_eq!(scan_limit::<(u128, u128), (u128, u128)>(), 4);
 }
 
 #[test]

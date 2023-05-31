@@ -4,7 +4,7 @@ use serde::de::{MapAccess, Visitor};
 use serde::ser::SerializeMap;
 use serde::{Deserialize, Serialize};
 
-use crate::{Field, Map, Sort};
+use crate::{Map, Sort};
 
 impl<Key, Value> Serialize for Map<Key, Value>
 where
@@ -17,8 +17,8 @@ where
         S: serde::Serializer,
     {
         let mut map = serializer.serialize_map(Some(self.len()))?;
-        for Field { key, value } in self {
-            map.serialize_entry(key, value)?;
+        for field in self {
+            map.serialize_entry(field.key(), &field.value)?;
         }
         map.end()
     }
