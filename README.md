@@ -35,7 +35,8 @@ types do not:
 
 - Ability to merge maps ([`merge_with()`][merge-with])
 - Entry API that supports owned or borrowed representations, and only uses
-  `ToOwned` when inserting borrowed key into a vacant entry.
+  `ToOwned` when inserting borrowed key into a vacant entry
+- Ability to access fields by index in addition to the key type
 
 Overall, the `Map` type is very similar to the `BTreeMap` type, except that it
 utilizes a single storage buffer. Because of this simplified storage model, the

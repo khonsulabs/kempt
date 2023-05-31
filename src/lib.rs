@@ -131,6 +131,22 @@ where
         self.find_key(key).ok().map(|field| &field.value)
     }
 
+    /// Returns the [`Field`] at the specified `index`, or None if the index is
+    /// outside of the bounds of this collection.
+    #[inline]
+    #[must_use]
+    pub fn field(&self, index: usize) -> Option<&Field<Key, Value>> {
+        self.fields.get(index)
+    }
+
+    /// Returns a mutable reference to the [`Field`] at the specified `index`,
+    /// or None if the index is outside of the bounds of this collection.
+    #[inline]
+    #[must_use]
+    pub fn field_mut(&mut self, index: usize) -> Option<&mut Field<Key, Value>> {
+        self.fields.get_mut(index)
+    }
+
     /// Removes the value associated with `key`, if found.
     #[inline]
     pub fn remove<Needle>(&mut self, key: &Needle) -> Option<Field<Key, Value>>
@@ -139,8 +155,18 @@ where
         Needle: ?Sized,
     {
         let index = self.find_key_index(key).ok()?;
-        let field = self.fields.remove(index);
-        Some(field)
+        Some(self.remove_by_index(index))
+    }
+
+    /// Removes the field at `index`.
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if `index` is outside of the bounds of this
+    /// collection.
+    #[inline]
+    pub fn remove_by_index(&mut self, index: usize) -> Field<Key, Value> {
+        self.fields.remove(index)
     }
 
     /// Returns the number of fields in this object.

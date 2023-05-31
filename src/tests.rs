@@ -25,19 +25,24 @@ fn basics() {
     assert!(!map.contains(&"c"));
     assert_eq!(map.get(&"c"), None);
 
+    assert_eq!(map.field(0).unwrap().key, "a");
+    assert_eq!(map.field(1).unwrap().key, "b");
+    assert!(map.field(2).is_none());
+    map.field_mut(1).unwrap().value += 1;
+
     // Various iteration.
     let mut iter = map.iter();
     assert_eq!(iter.next().unwrap(), &Field::new("a", 1));
-    assert_eq!(iter.next().unwrap(), &Field::new("b", 2));
+    assert_eq!(iter.next().unwrap(), &Field::new("b", 3));
     let mut iter = map.values();
     assert_eq!(iter.next().unwrap(), &1);
-    assert_eq!(iter.next().unwrap(), &2);
+    assert_eq!(iter.next().unwrap(), &3);
     let mut iter = map.clone().into_iter();
     assert_eq!(iter.next().unwrap(), Field::new("a", 1));
-    assert_eq!(iter.next().unwrap(), Field::new("b", 2));
+    assert_eq!(iter.next().unwrap(), Field::new("b", 3));
     let mut iter = map.clone().into_values();
     assert_eq!(iter.next().unwrap(), 1);
-    assert_eq!(iter.next().unwrap(), 2);
+    assert_eq!(iter.next().unwrap(), 3);
 
     // Increment via iter_mut
     for (_, value) in map.iter_mut() {
