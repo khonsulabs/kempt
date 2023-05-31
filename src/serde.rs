@@ -84,6 +84,6 @@ fn tests() {
 
     assert_de_tokens_error::<Map<u8, u16>>(
         &[Token::U8(1)],
-        r#"Error { msg: "invalid type: integer `1`, expected an Map" }"#,
+        "invalid type: integer `1`, expected an Map",
     );
 }
