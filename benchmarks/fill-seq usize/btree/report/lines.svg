@@ -81,12 +81,12 @@ Input
 <circle cx="86" cy="473" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
 <circle cx="90" cy="473" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
 <circle cx="103" cy="470" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
-<circle cx="124" cy="465" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
+<circle cx="124" cy="464" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
 <circle cx="166" cy="451" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
-<circle cx="294" cy="394" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
-<circle cx="507" cy="282" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
+<circle cx="294" cy="396" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
+<circle cx="507" cy="284" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
 <circle cx="933" cy="52" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
-<polyline fill="none" opacity="1" stroke="#B22222" stroke-width="1" points="86,473 90,473 103,470 124,465 166,451 294,394 507,282 933,52 "/>
+<polyline fill="none" opacity="1" stroke="#B22222" stroke-width="1" points="86,473 90,473 103,470 124,464 166,451 294,396 507,284 933,52 "/>
 <text x="131" y="67" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
 btree
 </text>
