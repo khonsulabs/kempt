@@ -78,21 +78,29 @@ it meets your performance needs.</p>
 </code></pre></div>
 <p>The suite uses randomization, which means that each run may produce slightly
 different results. However, each data structure is tested with the same
-randomized data, so each individual run of a benchmark is a true comparison.</p>
+randomized data, so each individual run of a benchmark is a true comparison. The
+randomization can be provided a stable seed to allow comparing the same data
+sets by providing the <code>-s</code> option:</p>
+<div class="example-wrap"><pre class="language-sh"><code># -s takes up to 64 hexadecimal digits to produce the random seed
+cargo bench -p benchmarks -- -s0
+</code></pre></div>
 <p>Full results as run on Github Actions <a href="https://khonsulabs.github.io/kempt/benchmarks/report/index.html">can be viewed
-here</a>. Here
-are the results run from the developer’s machine (an AMD Ryzen 7 3800X) for data
-sets containing 25 elements:</p>
-<div><table><thead><tr><th>Benchmark</th><th>Key Type</th><th>Map</th><th>HashMap (<a href="https://github.com/servo/rust-fnv">fnv</a>)</th><th>BTreeMap</th></tr></thead><tbody>
-<tr><td>fill random</td><td>u8</td><td>211.0ns</td><td>408.1ns</td><td>612.2ns</td></tr>
-<tr><td>fill random</td><td>usize</td><td>201.6ns</td><td>298.5ns</td><td>640.0ns</td></tr>
-<tr><td>fill random</td><td>u128</td><td>282.0ns</td><td>415.6ns</td><td>680.2ns</td></tr>
-<tr><td>fill seq</td><td>u8</td><td>221.0ns</td><td>418.3ns</td><td>606.6ns</td></tr>
-<tr><td>fill seq</td><td>usize</td><td>189.1ns</td><td>291.1ns</td><td>603.3ns</td></tr>
-<tr><td>fill seq</td><td>u128</td><td>262.6ns</td><td>401.6ns</td><td>659.7ns</td></tr>
-<tr><td>get</td><td>u8</td><td>5.0ns</td><td>4.5ns</td><td>5.6ns</td></tr>
-<tr><td>get</td><td>usize</td><td>5.2ns</td><td>6.4ns</td><td>6.1ns</td></tr>
-<tr><td>get</td><td>u128</td><td>6.0ns</td><td>11.6ns</td><td>7.2ns</td></tr>
+here</a>, using a
+randomized seed. Here are the results run from the developer’s machine (an AMD
+Ryzen 7 3800X) for data sets containing 25 elements using <code>-s0</code>:</p>
+<div><table><thead><tr><th>Benchmark</th><th>Key Type</th><th><a href="https://khonsulabs.github.io/kempt/main/kempt/struct.Map.html">Map</a></th><th>HashMap (<a href="https://github.com/servo/rust-fnv">fnv</a>)</th><th>BTreeMap</th></tr></thead><tbody>
+<tr><td>fill random</td><td>u8</td><td>161.1ns</td><td>408.9ns</td><td>447.5ns</td></tr>
+<tr><td>fill random</td><td>usize</td><td>157.7ns</td><td>289.2ns</td><td>451.5ns</td></tr>
+<tr><td>fill random</td><td>u128</td><td>260.1ns</td><td>401.0ns</td><td>527.8ns</td></tr>
+<tr><td>fill seq</td><td>u8</td><td>170.4ns</td><td>413.0ns</td><td>444.9ns</td></tr>
+<tr><td>fill seq</td><td>usize</td><td>173.3ns</td><td>284.2ns</td><td>461.2ns</td></tr>
+<tr><td>fill seq</td><td>u128</td><td>220.5ns</td><td>404.9ns</td><td>533.1ns</td></tr>
+<tr><td>get</td><td>u8</td><td>5.0ns</td><td>4.1ns</td><td>5.5ns</td></tr>
+<tr><td>get</td><td>usize</td><td>5.1ns</td><td>6.4ns</td><td>5.7ns</td></tr>
+<tr><td>get</td><td>u128</td><td>7.3ns</td><td>11.7ns</td><td>6.9ns</td></tr>
+<tr><td>remove</td><td>u8</td><td>19.4ns</td><td>25.6ns</td><td>187.1ns</td></tr>
+<tr><td>remove</td><td>usize</td><td>28.2ns</td><td>34.6ns</td><td>199.8ns</td></tr>
+<tr><td>remove</td><td>u128</td><td>32.2ns</td><td>41.2ns</td><td>203.8ns</td></tr>
 </tbody></table>
 </div>
 <p>No benchmark suite is ever perfect. Pull requests are welcome. Each potential

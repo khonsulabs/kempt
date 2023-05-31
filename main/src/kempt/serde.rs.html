@@ -82,6 +82,11 @@
 <a href="#82" id="82">82</a>
 <a href="#83" id="83">83</a>
 <a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
 </pre><pre class="rust"><code><span class="kw">use </span>core::marker::PhantomData;
 
 <span class="kw">use </span>serde::de::{MapAccess, Visitor};
@@ -151,7 +156,7 @@
 
 <span class="attr">#[test]
 </span><span class="kw">fn </span>tests() {
-    <span class="kw">use </span>serde_test::{assert_tokens, Token};
+    <span class="kw">use </span>serde_test::{assert_de_tokens_error, assert_tokens, Token};
 
     <span class="kw">let </span>map = [(<span class="number">1</span>, <span class="number">1</span>), (<span class="number">2</span>, <span class="number">2</span>)].into_iter().collect::&lt;Map&lt;u8, u16&gt;&gt;();
     assert_tokens(
@@ -164,6 +169,11 @@
             Token::U16(<span class="number">2</span>),
             Token::MapEnd,
         ],
+    );
+
+    assert_de_tokens_error::&lt;Map&lt;u8, u16&gt;&gt;(
+        <span class="kw-2">&amp;</span>[Token::U8(<span class="number">1</span>)],
+        <span class="string">r#&quot;Error { msg: &quot;invalid type: integer `1`, expected an Map&quot; }&quot;#</span>,
     );
 }
 </code></pre></div>
