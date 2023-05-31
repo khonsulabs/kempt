@@ -1,5 +1,6 @@
 use std::any::type_name;
 use std::collections::{BTreeMap, HashMap};
+use std::env;
 use std::hash::Hash;
 use std::ops::AddAssign;
 
@@ -12,7 +13,7 @@ use rand::distributions::Standard;
 use rand::prelude::Distribution;
 use rand::rngs::StdRng;
 use rand::seq::SliceRandom;
-use rand::SeedableRng;
+use rand::{thread_rng, Rng, SeedableRng};
 
 fn btree_lookup<Key>(bench: &mut Bencher, keys: &[Key])
 where
@@ -238,7 +239,7 @@ where
     }
 }
 
-fn generate_keys<Key>(max: Key, shuffle: bool) -> Vec<Key>
+fn generate_keys<Key>(max: Key, shuffle: bool, random_seed: &[u8; 32]) -> Vec<Key>
 where
     Key: Eq + Hash + Copy + Ord + Default + From<u8> + AddAssign,
 {
@@ -249,30 +250,58 @@ where
         key += Key::from(1);
     }
     if shuffle {
-        let mut rng = StdRng::from_seed([0; 32]);
+        let mut rng = StdRng::from_seed(*random_seed);
         keys.shuffle(&mut rng);
     }
     keys
 }
 
-fn suite_for_key<Key>(c: &mut Criterion, max: Key, sizes: &[usize])
+fn suite_for_key<Key>(c: &mut Criterion, max: Key, sizes: &[usize], random_seed: &[u8; 32])
 where
     Key: Eq + Hash + Copy + Ord + Default + From<u8> + TryFrom<usize> + AddAssign,
     Standard: Distribution<Key>,
 {
-    let keys = generate_keys::<Key>(max, true);
+    let keys = generate_keys::<Key>(max, true, random_seed);
     fill::<Key>(c, &keys, sizes, "fill-rdm");
     lookup::<Key>(c, &keys, sizes);
     remove::<Key>(c, &keys, sizes);
-    let keys = generate_keys::<Key>(max, false);
+    let keys = generate_keys::<Key>(max, false, random_seed);
     fill::<Key>(c, &keys, sizes, "fill-seq");
 }
 
 fn criterion_benchmark(c: &mut Criterion) {
+    let random_seed = env::args().find(|arg| arg.starts_with("-s")).map_or_else(
+        || thread_rng().gen(),
+        |seed| {
+            let (_, seed) = seed.split_at(2);
+            let (upper, lower) = if seed.len() > 32 {
+                let (upper, lower) = seed.split_at(seed.len() - 32);
+                (
+                    u128::from_str_radix(upper, 16).expect("invalid hexadecimal seed"),
+                    u128::from_str_radix(lower, 16).expect("invalid hexadecimal seed"),
+                )
+            } else {
+                (
+                    0,
+                    u128::from_str_radix(seed, 16).expect("invalid hexadecimal seed"),
+                )
+            };
+            let mut seed = [0; 32];
+            seed[..16].copy_from_slice(&upper.to_be_bytes());
+            seed[16..].copy_from_slice(&lower.to_be_bytes());
+            seed
+        },
+    );
+    print!("Using random seed -s");
+    for b in random_seed {
+        print!("{b:02x}");
+    }
+    println!();
+
     let sizes = [5, 10, 25, 50, 100, 250, 500, 1000];
-    suite_for_key::<u8>(c, u8::MAX, &sizes);
-    suite_for_key::<usize>(c, usize::MAX, &sizes);
-    suite_for_key::<u128>(c, u128::MAX, &sizes);
+    suite_for_key::<u8>(c, u8::MAX, &sizes, &random_seed);
+    suite_for_key::<usize>(c, usize::MAX, &sizes, &random_seed);
+    suite_for_key::<u128>(c, u128::MAX, &sizes, &random_seed);
 }
 
 criterion_group!(benches, criterion_benchmark);

@@ -93,12 +93,19 @@ cargo bench -p benchmarks
 
 The suite uses randomization, which means that each run may produce slightly
 different results. However, each data structure is tested with the same
-randomized data, so each individual run of a benchmark is a true comparison.
+randomized data, so each individual run of a benchmark is a true comparison. The
+randomization can be provided a stable seed to allow comparing the same data
+sets by providing the `-s` option:
+
+```sh
+# -s takes up to 64 hexadecimal digits to produce the random seed
+cargo bench -p benchmarks -- -s0
+```
 
 Full results as run on Github Actions [can be viewed
-here](https://khonsulabs.github.io/kempt/benchmarks/report/index.html). Here
-are the results run from the developer's machine (an AMD Ryzen 7 3800X) for data
-sets containing 25 elements:
+here](https://khonsulabs.github.io/kempt/benchmarks/report/index.html), using a
+randomized seed. Here are the results run from the developer's machine (an AMD
+Ryzen 7 3800X) for data sets containing 25 elements using `-s0`:
 
 | Benchmark   | Key Type | [Map][map] | HashMap ([fnv][fnv]) | BTreeMap |
 |-------------|----------|-----------|----------------------|----------|
