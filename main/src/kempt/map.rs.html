@@ -3218,9 +3218,9 @@
     /// fn merge(a: &amp;Map&lt;String, u32&gt;, b: &amp;Map&lt;String, u32&gt;) -&gt; Map&lt;String, u32&gt; {
     ///     a.union(b)
     ///         .map(|unioned| {
-    ///             dbg!(unioned
+    ///             unioned
     ///                 .map_both(|_key, left, right| *left + *right)
-    ///                 .into_owned())
+    ///                 .into_owned()
     ///         })
     ///         .collect()
     /// }

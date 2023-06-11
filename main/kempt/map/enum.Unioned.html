@@ -38,9 +38,9 @@ single value. If <code>self</code> is either <a href="enum.Unioned.html#variant.
 <span class="kw">fn </span>merge(a: <span class="kw-2">&amp;</span>Map&lt;String, u32&gt;, b: <span class="kw-2">&amp;</span>Map&lt;String, u32&gt;) -&gt; Map&lt;String, u32&gt; {
     a.union(b)
         .map(|unioned| {
-            <span class="macro">dbg!</span>(unioned
+            unioned
                 .map_both(|_key, left, right| <span class="kw-2">*</span>left + <span class="kw-2">*</span>right)
-                .into_owned())
+                .into_owned()
         })
         .collect()
 }
