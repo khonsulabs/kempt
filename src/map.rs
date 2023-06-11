@@ -705,6 +705,8 @@ where
     }
 
     /// If an entry was not found for the given key, `contents` is invoked to
+    /// populate the entry. A mutable reference to the entry's value is
+    /// returned.
     #[inline]
     pub fn or_insert_with(self, contents: impl FnOnce() -> Value) -> &'a mut Value
     where
@@ -717,7 +719,8 @@ where
         }
     }
 
-    /// If an entry was not found for the given key, `contents` is invoked to
+    /// If an entry was not found for the given key, `value` is inserted into
+    /// the entry.  A mutable reference to the entry's value is returned.
     #[inline]
     pub fn or_insert(self, value: Value) -> &'a mut Value
     where
@@ -728,6 +731,19 @@ where
             Entry::Occupied(entry) => entry.into_mut(),
             Entry::Vacant(entry) => entry.insert(value),
         }
+    }
+
+    /// If this entry is vacant, it is populated with `Value::default()`. A
+    /// mutable reference to the entry's value is returned.
+    ///
+    /// This function does not change the entry if it is present.
+    pub fn or_default(self) -> &'a mut Value
+    where
+        Key: Borrow<BorrowedKey>,
+        BorrowedKey: ToOwned<Owned = Key>,
+        Value: Default,
+    {
+        self.or_insert_with(Value::default)
     }
 }
 

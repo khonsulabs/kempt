@@ -96,6 +96,8 @@ fn entry() {
     assert_eq!(entry.replace(2), 1);
     assert_eq!(map.get("b"), Some(&2));
 
+    assert_eq!(*map.entry("c").or_default(), 0);
+
     // Entry with [u8]/Vec<u8>
     let mut map = Map::<Vec<u8>, usize>::new();
     map.entry(vec![b'a']).or_insert(1);
