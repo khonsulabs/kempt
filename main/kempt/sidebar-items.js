@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["map"],"trait":["Sort"]};
+window.SIDEBAR_ITEMS = {"mod":["map","set"],"trait":["Sort"]};
