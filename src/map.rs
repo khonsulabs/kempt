@@ -1502,9 +1502,9 @@ impl<'a, K, V> Unioned<'a, K, V> {
     /// fn merge(a: &Map<String, u32>, b: &Map<String, u32>) -> Map<String, u32> {
     ///     a.union(b)
     ///         .map(|unioned| {
-    ///             dbg!(unioned
+    ///             unioned
     ///                 .map_both(|_key, left, right| *left + *right)
-    ///                 .into_owned())
+    ///                 .into_owned()
     ///         })
     ///         .collect()
     /// }
