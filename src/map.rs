@@ -4,7 +4,7 @@ use core::alloc::Layout;
 use core::borrow::Borrow;
 use core::cmp::Ordering;
 use core::fmt::{self, Debug};
-use core::iter::FusedIterator;
+use core::iter::{FusedIterator, Peekable};
 use core::ops::{Deref, DerefMut};
 use core::{mem, slice};
 
@@ -119,6 +119,25 @@ where
         }
     }
 
+    /// Inserts an entry with `key` only if the map does not already contain
+    /// that key.
+    ///
+    /// If an existing key is found, `Some(key)` is returned. If an existing key
+    /// isn't found, `value()` will be called, a new entry will be inserted, and
+    /// `None` will be returned.
+    ///
+    /// This is similar to using [`Map::entry`], except this function does not
+    /// require that `Key` implement [`ToOwned`].
+    pub fn insert_with(&mut self, key: Key, value: impl FnOnce() -> Value) -> Option<Key> {
+        match self.find_key_index(&key) {
+            Err(insert_at) => {
+                self.fields.insert(insert_at, Field::new(key, value()));
+                None
+            }
+            Ok(_) => Some(key),
+        }
+    }
+
     /// Returns true if this object contains `key`.
     #[inline]
     pub fn contains<SearchFor>(&self, key: &SearchFor) -> bool
@@ -136,7 +155,17 @@ where
         Key: Sort<SearchFor>,
         SearchFor: ?Sized,
     {
-        self.find_key(key).ok().map(|field| &field.value)
+        self.get_field(key).map(|field| &field.value)
+    }
+
+    /// Returns the value associated with `key`, if found.
+    #[inline]
+    pub fn get_field<SearchFor>(&self, key: &SearchFor) -> Option<&Field<Key, Value>>
+    where
+        Key: Sort<SearchFor>,
+        SearchFor: ?Sized,
+    {
+        self.find_key(key).ok()
     }
 
     /// Returns the [`Field`] at the specified `index`, or None if the index is
@@ -286,6 +315,13 @@ where
         IterMut(self.fields.iter_mut())
     }
 
+    /// Returns an iterator over the keys in this object.
+    #[must_use]
+    #[inline]
+    pub fn keys(&self) -> Keys<'_, Key, Value> {
+        Keys(self.fields.iter())
+    }
+
     /// Returns an iterator over the values in this object.
     #[must_use]
     #[inline]
@@ -423,6 +459,56 @@ where
     pub fn drain(&mut self) -> Drain<'_, Key, Value> {
         Drain(self.fields.drain(..))
     }
+
+    /// Returns an iterator that yields [`Unioned`] entries.
+    ///
+    /// The iterator will return a single result for each unique `Key` contained
+    /// in either `self` or `other`. If both collections contain a key, the
+    /// iterator will contain [`Unioned::Both`] for that key.
+    ///
+    /// This iterator is guaranteed to return results in the sort order of the
+    /// `Key` type.
+    #[must_use]
+    pub fn union<'a>(&'a self, other: &'a Self) -> Union<'a, Key, Value> {
+        Union {
+            left: self.iter().peekable(),
+            right: other.iter().peekable(),
+        }
+    }
+
+    /// Returns an iterator that yields entries that appear in both `self` and
+    /// `other`.
+    ///
+    /// The iterator will return a result for each `Key` contained in both
+    /// `self` and `other`. If a particular key is only found in one collection,
+    /// it will not be included.
+    ///
+    /// This iterator is guaranteed to return results in the sort order of the
+    /// `Key` type.
+    #[must_use]
+    pub fn intersection<'a>(&'a self, other: &'a Self) -> Intersection<'a, Key, Value> {
+        Intersection {
+            left: self.iter().peekable(),
+            right: other.iter().peekable(),
+        }
+    }
+
+    /// Returns an iterator that yields entries that appear in `self`, but not
+    /// in `other`.
+    ///
+    /// The iterator will return a result for each `Key` contained in `self` but
+    /// not contained in `other`. If a `Key` is only in `other` or is in both
+    /// collections, it will not be returned.
+    ///
+    /// This iterator is guaranteed to return results in the sort order of the
+    /// `Key` type.
+    #[must_use]
+    pub fn difference<'a>(&'a self, other: &'a Self) -> Difference<'a, Key, Value> {
+        Difference {
+            left: self.iter().peekable(),
+            right: other.iter().peekable(),
+        }
+    }
 }
 
 trait EntryKey<Key, SearchFor = Key>
@@ -546,9 +632,11 @@ where
     fn from_iter<T: IntoIterator<Item = (Key, Value)>>(iter: T) -> Self {
         let iter = iter.into_iter();
         let mut obj = Self::with_capacity(iter.size_hint().0);
+        // Insert out of order, then sort before returning.
         for (key, value) in iter {
-            obj.insert(key, value);
+            obj.fields.push(Field::new(key, value));
         }
+        obj.fields.sort_unstable_by(|a, b| a.key().compare(b.key()));
         obj
     }
 }
@@ -573,6 +661,17 @@ impl<Key, Value> Field<Key, Value> {
     #[inline]
     pub fn key(&self) -> &Key {
         &self.key
+    }
+
+    /// Converts this field into its key.
+    #[inline]
+    pub fn into_key(self) -> Key {
+        self.key
+    }
+
+    /// Returns this field as the contained key and value.
+    pub fn into_parts(self) -> (Key, Value) {
+        (self.key, self.value)
     }
 }
 
@@ -730,8 +829,8 @@ where
 
 impl<'a, 'key, Key, Value, BorrowedKey> VacantEntry<'a, 'key, Key, Value, BorrowedKey>
 where
-    Key: Sort<Key>,
-    BorrowedKey: ?Sized,
+    Key: Borrow<BorrowedKey> + Sort<Key>,
+    BorrowedKey: ToOwned<Owned = Key> + ?Sized,
 {
     #[inline]
     fn new(
@@ -744,6 +843,12 @@ where
             key,
             insert_at,
         }
+    }
+
+    /// Returns a reference to the key being inserted.
+    #[inline]
+    pub fn key(&self) -> &BorrowedKey {
+        self.key.as_ref()
     }
 
     /// Inserts `key` and `value` at this location in the object.
@@ -947,6 +1052,124 @@ impl<Key, Value> DoubleEndedIterator for IntoIter<Key, Value> {
 }
 
 impl<Key, Value> FusedIterator for IntoIter<Key, Value> {}
+
+/// An iterator over the keys in an [`Map`].
+pub struct Keys<'a, Key, Value>(slice::Iter<'a, Field<Key, Value>>);
+
+impl<'a, Key, Value> Iterator for Keys<'a, Key, Value> {
+    type Item = &'a Key;
+
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next().map(Field::key)
+    }
+
+    #[inline]
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.0.size_hint()
+    }
+
+    #[inline]
+    fn count(self) -> usize
+    where
+        Self: Sized,
+    {
+        self.0.count()
+    }
+
+    #[inline]
+    fn last(self) -> Option<Self::Item>
+    where
+        Self: Sized,
+    {
+        self.0.last().map(Field::key)
+    }
+
+    #[inline]
+    fn nth(&mut self, n: usize) -> Option<Self::Item> {
+        self.0.nth(n).map(Field::key)
+    }
+}
+
+impl<'a, Key, Value> ExactSizeIterator for Keys<'a, Key, Value> {
+    #[inline]
+    fn len(&self) -> usize {
+        self.0.len()
+    }
+}
+
+impl<'a, Key, Value> DoubleEndedIterator for Keys<'a, Key, Value> {
+    #[inline]
+    fn next_back(&mut self) -> Option<Self::Item> {
+        self.0.next_back().map(Field::key)
+    }
+
+    #[inline]
+    fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
+        self.0.nth_back(n).map(Field::key)
+    }
+}
+
+impl<'a, Key, Value> FusedIterator for Keys<'a, Key, Value> {}
+
+/// An iterator converting a [`Map`] into a series of owned keys.
+pub struct IntoKeys<Key, Value>(vec::IntoIter<Field<Key, Value>>);
+
+impl<Key, Value> Iterator for IntoKeys<Key, Value> {
+    type Item = Key;
+
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next().map(Field::into_key)
+    }
+
+    #[inline]
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.0.size_hint()
+    }
+
+    #[inline]
+    fn count(self) -> usize
+    where
+        Self: Sized,
+    {
+        self.0.count()
+    }
+
+    #[inline]
+    fn last(self) -> Option<Self::Item>
+    where
+        Self: Sized,
+    {
+        self.0.last().map(Field::into_key)
+    }
+
+    #[inline]
+    fn nth(&mut self, n: usize) -> Option<Self::Item> {
+        self.0.nth(n).map(Field::into_key)
+    }
+}
+
+impl<Key, Value> ExactSizeIterator for IntoKeys<Key, Value> {
+    #[inline]
+    fn len(&self) -> usize {
+        self.0.len()
+    }
+}
+
+impl<Key, Value> DoubleEndedIterator for IntoKeys<Key, Value> {
+    #[inline]
+    fn next_back(&mut self) -> Option<Self::Item> {
+        self.0.next_back().map(Field::into_key)
+    }
+
+    #[inline]
+    fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
+        self.0.nth_back(n).map(Field::into_key)
+    }
+}
+
+impl<Key, Value> FusedIterator for IntoKeys<Key, Value> {}
 
 /// An iterator over the values contained in an [`Map`].
 pub struct Values<'a, Key, Value>(slice::Iter<'a, Field<Key, Value>>);
@@ -1190,3 +1413,304 @@ impl<'a, Key, Value> DoubleEndedIterator for Drain<'a, Key, Value> {
 }
 
 impl<'a, Key, Value> FusedIterator for Drain<'a, Key, Value> {}
+
+/// An iterator that yields [`Unioned`] entries for two [`Map`]s.
+///
+/// The iterator will return a single result for each unique `Key` contained in
+/// either map. If both collections contain a key, the iterator will contain
+/// [`Unioned::Both`] for that key.
+///
+/// This iterator is guaranteed to return results in the sort order of the `Key`
+/// type.
+pub struct Union<'a, K, V>
+where
+    K: Sort,
+{
+    left: Peekable<Iter<'a, K, V>>,
+    right: Peekable<Iter<'a, K, V>>,
+}
+
+impl<'a, K, V> Iterator for Union<'a, K, V>
+where
+    K: Sort,
+{
+    type Item = Unioned<'a, K, V>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some(left) = self.left.peek() {
+            if let Some(right) = self.right.peek() {
+                match left.key().compare(right.key()) {
+                    Ordering::Less => Some(Unioned::left(self.left.next().expect("just peeked"))),
+                    Ordering::Equal => Some(Unioned::both(
+                        self.left.next().expect("just peeked"),
+                        self.right.next().expect("just peeked"),
+                    )),
+                    Ordering::Greater => {
+                        Some(Unioned::right(self.right.next().expect("just peeked")))
+                    }
+                }
+            } else {
+                Some(Unioned::left(self.left.next().expect("just peeked")))
+            }
+        } else {
+            self.right.next().map(Unioned::right)
+        }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (self.left.len(), Some(self.left.len() + self.right.len()))
+    }
+}
+
+/// A unioned entry from a [`Union`] iterator. An entry can be from the left,
+/// right, or both maps.
+pub enum Unioned<'a, K, V> {
+    /// The `self`/left map contained this key/value pair.
+    Left {
+        /// The key of the entry.
+        key: &'a K,
+        /// The value of the entry.
+        value: &'a V,
+    },
+    /// The `other`/right map contained this key/value pair.
+    Right {
+        /// The key of the entry.
+        key: &'a K,
+        /// The value of the entry.
+        value: &'a V,
+    },
+    /// Both maps contained this `key`.
+    Both {
+        /// The key of the entry.
+        key: &'a K,
+        /// The value of the `self`/left entry.
+        left: &'a V,
+        /// The value of the `other`/right entry.
+        right: &'a V,
+    },
+}
+
+impl<'a, K, V> Unioned<'a, K, V> {
+    /// If `self` is [`Unioned::Both`] `merge` will be called to produce a
+    /// single value. If `self` is either [`Unioned::Left`] or
+    /// [`Unioned::Right`], the key/value will be returned without calling
+    /// `merge`.
+    ///
+    /// ```rust
+    /// use kempt::Map;
+    ///
+    /// fn merge(a: &Map<String, u32>, b: &Map<String, u32>) -> Map<String, u32> {
+    ///     a.union(b)
+    ///         .map(|unioned| {
+    ///             dbg!(unioned
+    ///                 .map_both(|_key, left, right| *left + *right)
+    ///                 .into_owned())
+    ///         })
+    ///         .collect()
+    /// }
+    ///
+    /// let mut a = Map::new();
+    /// a.insert(String::from("a"), 1);
+    /// a.insert(String::from("b"), 1);
+    /// a.insert(String::from("c"), 1);
+    /// let mut b = Map::new();
+    /// b.insert(String::from("b"), 1);
+    ///
+    /// let merged = merge(&a, &b);
+    /// assert_eq!(merged.get("a"), Some(&1));
+    /// assert_eq!(merged.get("b"), Some(&2));
+    /// ```
+    pub fn map_both<R>(self, merge: impl FnOnce(&'a K, &'a V, &'a V) -> R) -> EntryRef<'a, K, V>
+    where
+        R: Into<OwnedOrRef<'a, V>>,
+    {
+        match self {
+            Unioned::Left { key, value } | Unioned::Right { key, value } => EntryRef {
+                key,
+                value: OwnedOrRef::Ref(value),
+            },
+            Unioned::Both { key, left, right } => EntryRef {
+                key,
+                value: merge(key, left, right).into(),
+            },
+        }
+    }
+}
+
+impl<'a, K, V> Unioned<'a, K, V> {
+    fn both(left: &'a Field<K, V>, right: &'a Field<K, V>) -> Self {
+        Self::Both {
+            key: left.key(),
+            left: &left.value,
+            right: &right.value,
+        }
+    }
+
+    fn left(field: &'a Field<K, V>) -> Self {
+        Self::Left {
+            key: field.key(),
+            value: &field.value,
+        }
+    }
+
+    fn right(field: &'a Field<K, V>) -> Self {
+        Self::Right {
+            key: field.key(),
+            value: &field.value,
+        }
+    }
+}
+
+/// A reference to a key from a [`Map`] and an associated value.
+pub struct EntryRef<'a, K, V> {
+    /// The key of the entry.
+    pub key: &'a K,
+    /// The associated value of this key.
+    pub value: OwnedOrRef<'a, V>,
+}
+
+impl<'a, K, V> EntryRef<'a, K, V> {
+    /// Returns the owned versions of the contained key and value, cloning as
+    /// needed.
+    pub fn into_owned(self) -> (K, V)
+    where
+        K: Clone,
+        V: Clone,
+    {
+        (self.key.clone(), self.value.into_owned())
+    }
+}
+
+/// An owned value or a reference to a value of that type.
+///
+/// This type is similar to [`alloc::borrow::Cow`] except that it does not
+/// require that the contained type implement `ToOwned`.
+pub enum OwnedOrRef<'a, K> {
+    /// An owned value.
+    Owned(K),
+    /// A reference to a value.
+    Ref(&'a K),
+}
+
+impl<'a, K> OwnedOrRef<'a, K> {
+    /// Converts the contained value into an owned representation, cloning only
+    /// if needed.
+    pub fn into_owned(self) -> K
+    where
+        K: Clone,
+    {
+        match self {
+            OwnedOrRef::Owned(owned) => owned,
+            OwnedOrRef::Ref(r) => r.clone(),
+        }
+    }
+}
+
+impl<K> From<K> for OwnedOrRef<'_, K> {
+    fn from(value: K) -> Self {
+        Self::Owned(value)
+    }
+}
+
+impl<'a, K> From<&'a K> for OwnedOrRef<'a, K> {
+    fn from(value: &'a K) -> Self {
+        Self::Ref(value)
+    }
+}
+
+/// An iterator that yields entries that appear in two maps.
+///
+/// The iterator will return a result for each `Key` contained in both maps. If
+/// a particular key is only found in one collection, it will not be included.
+///
+/// This iterator is guaranteed to return results in the sort order of the `Key`
+/// type.
+pub struct Intersection<'a, K, V>
+where
+    K: Sort,
+{
+    left: Peekable<Iter<'a, K, V>>,
+    right: Peekable<Iter<'a, K, V>>,
+}
+
+impl<'a, K, V> Iterator for Intersection<'a, K, V>
+where
+    K: Sort,
+{
+    type Item = (&'a K, &'a V, &'a V);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            let left = self.left.peek()?;
+            let right = self.right.peek()?;
+            match left.key().compare(right.key()) {
+                Ordering::Less => {
+                    let _skipped = self.left.next();
+                }
+                Ordering::Equal => {
+                    let left = self.left.next().expect("just peeked");
+                    let right = self.right.next().expect("just peeked");
+                    return Some((left.key(), &left.value, &right.value));
+                }
+                Ordering::Greater => {
+                    let _skipped = self.right.next();
+                }
+            }
+        }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (0, Some(self.left.len().min(self.right.len())))
+    }
+}
+
+/// An iterator over the difference between two [`Map`]s.
+///
+/// This iterator will return a result for each `Key` contained in `self` but
+/// not contained in `other`. If a `Key` is only in `other` or is in both
+/// collections, it will not be returned.
+///
+/// This iterator is guaranteed to return results in the sort order of the `Key`
+/// type.
+pub struct Difference<'a, K, V>
+where
+    K: Sort,
+{
+    left: Peekable<Iter<'a, K, V>>,
+    right: Peekable<Iter<'a, K, V>>,
+}
+
+impl<'a, K, V> Iterator for Difference<'a, K, V>
+where
+    K: Sort,
+{
+    type Item = (&'a K, &'a V);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            let left = self.left.peek()?;
+            if let Some(right) = self.right.peek() {
+                match left.key().compare(right.key()) {
+                    Ordering::Less => {
+                        let left = self.left.next().expect("just peeked");
+                        return Some((left.key(), &left.value));
+                    }
+                    Ordering::Equal => {
+                        let _left = self.left.next();
+                        let _right = self.right.next();
+                    }
+                    Ordering::Greater => {
+                        let _skipped = self.right.next();
+                    }
+                }
+            } else {
+                let left = self.left.next().expect("just peeked");
+                return Some((left.key(), &left.value));
+            }
+        }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (0, Some(self.left.len()))
+    }
+}

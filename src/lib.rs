@@ -14,8 +14,11 @@ extern crate alloc;
 
 /// Types supporting the [`Map<Key, Value>`] collection type.
 pub mod map;
+/// Types supporting the [`Set<T>`] collection type.
+pub mod set;
 
 pub use map::Map;
+pub use set::Set;
 
 #[cfg(feature = "serde")]
 mod serde;
