@@ -1714,6 +1714,22 @@
 <a href="#1714" id="1714">1714</a>
 <a href="#1715" id="1715">1715</a>
 <a href="#1716" id="1716">1716</a>
+<a href="#1717" id="1717">1717</a>
+<a href="#1718" id="1718">1718</a>
+<a href="#1719" id="1719">1719</a>
+<a href="#1720" id="1720">1720</a>
+<a href="#1721" id="1721">1721</a>
+<a href="#1722" id="1722">1722</a>
+<a href="#1723" id="1723">1723</a>
+<a href="#1724" id="1724">1724</a>
+<a href="#1725" id="1725">1725</a>
+<a href="#1726" id="1726">1726</a>
+<a href="#1727" id="1727">1727</a>
+<a href="#1728" id="1728">1728</a>
+<a href="#1729" id="1729">1729</a>
+<a href="#1730" id="1730">1730</a>
+<a href="#1731" id="1731">1731</a>
+<a href="#1732" id="1732">1732</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>alloc::borrow::ToOwned;
 <span class="kw">use </span>alloc::vec::{<span class="self">self</span>, Vec};
 <span class="kw">use </span>core::alloc::Layout;
@@ -2421,6 +2437,8 @@
     </span>}
 
     <span class="doccomment">/// If an entry was not found for the given key, `contents` is invoked to
+    /// populate the entry. A mutable reference to the entry&#39;s value is
+    /// returned.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>or_insert_with(<span class="self">self</span>, contents: <span class="kw">impl </span>FnOnce() -&gt; Value) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Value
     <span class="kw">where
@@ -2433,7 +2451,8 @@
         }
     }
 
-    <span class="doccomment">/// If an entry was not found for the given key, `contents` is invoked to
+    <span class="doccomment">/// If an entry was not found for the given key, `value` is inserted into
+    /// the entry.  A mutable reference to the entry&#39;s value is returned.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>or_insert(<span class="self">self</span>, value: Value) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Value
     <span class="kw">where
@@ -2444,6 +2463,19 @@
             Entry::Occupied(entry) =&gt; entry.into_mut(),
             Entry::Vacant(entry) =&gt; entry.insert(value),
         }
+    }
+
+    <span class="doccomment">/// If this entry is vacant, it is populated with `Value::default()`. A
+    /// mutable reference to the entry&#39;s value is returned.
+    ///
+    /// This function does not change the entry if it is present.
+    </span><span class="kw">pub fn </span>or_default(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Value
+    <span class="kw">where
+        </span>Key: Borrow&lt;BorrowedKey&gt;,
+        BorrowedKey: ToOwned&lt;Owned = Key&gt;,
+        Value: Default,
+    {
+        <span class="self">self</span>.or_insert_with(Value::default)
     }
 }
 
