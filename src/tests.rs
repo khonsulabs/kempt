@@ -235,3 +235,74 @@ fn capacity() {
     map.insert(2, 2);
     assert!(map.capacity() > 1);
 }
+
+#[test]
+fn insert_with() {
+    let mut map = Map::with_capacity(1);
+    assert_eq!(map.insert_with("a", || 1), None);
+    assert!(map.contains(&"a"));
+    assert_eq!(map.insert_with("a", || unreachable!()), Some("a"));
+}
+
+#[test]
+fn field() {
+    let field = Field::new("a", 1);
+    assert_eq!(field.key(), &"a");
+    assert_eq!(field.value, 1);
+    assert_eq!(field.into_key(), "a");
+}
+
+#[test]
+fn vacant_entry_key() {
+    let mut map = Map::<String, i32>::with_capacity(1);
+    let borrowed = "a";
+    let borrowed_ptr = borrowed.as_ptr();
+    let Entry::Vacant(entry) = map.entry(borrowed) else { unreachable!() };
+    // The key is still borrowed at this point.
+    assert_eq!(entry.key().as_ptr(), borrowed_ptr);
+
+    // This test just follows the path from taking the owned type to the
+    // borrowed type.
+    let Entry::Vacant(entry) = map.entry(String::from("a")) else { unreachable!() };
+    assert_eq!(entry.key(), "a");
+}
+
+#[test]
+fn union() {
+    let mut a = Map::new();
+    a.insert("a", 1);
+    a.insert("b", 2);
+    a.insert("c", 3);
+    let mut b = Map::new();
+    b.insert("b", 2);
+    b.insert("d", 4);
+    let merged = a
+        .union(&b)
+        .map(|unioned| unioned.map_both(|_key, a, b| *a + *b).into_owned())
+        .collect::<Map<_, _>>();
+    assert_eq!(merged.get(&"a"), Some(&1));
+    assert_eq!(merged.get(&"b"), Some(&4));
+    assert_eq!(merged.get(&"c"), Some(&3));
+    assert_eq!(merged.get(&"d"), Some(&4));
+    assert_eq!(merged.len(), 4);
+}
+
+#[test]
+fn unioned_map_both_ref() {
+    let mut a = Map::new();
+    a.insert("a", 1);
+    a.insert("b", 2);
+    a.insert("c", 3);
+    let mut b = Map::new();
+    b.insert("b", 42); // This value will not make it to the result.
+    b.insert("d", 4);
+    let merged = a
+        .union(&b)
+        .map(|unioned| unioned.map_both(|_key, a, _b| a).into_owned())
+        .collect::<Map<_, _>>();
+    assert_eq!(merged.get(&"a"), Some(&1));
+    assert_eq!(merged.get(&"b"), Some(&2));
+    assert_eq!(merged.get(&"c"), Some(&3));
+    assert_eq!(merged.get(&"d"), Some(&4));
+    assert_eq!(merged.len(), 4);
+}

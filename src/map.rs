@@ -511,29 +511,6 @@ where
     }
 }
 
-trait EntryKey<Key, SearchFor = Key>
-where
-    SearchFor: ?Sized,
-{
-    fn as_ref(&self) -> &SearchFor;
-    fn into_owned(self) -> Key;
-}
-
-impl<'a, Key> EntryKey<<Key as ToOwned>::Owned, Key> for &'a Key
-where
-    Key: ToOwned,
-{
-    #[inline]
-    fn as_ref(&self) -> &Key {
-        self
-    }
-
-    #[inline]
-    fn into_owned(self) -> <Key as ToOwned>::Owned {
-        self.to_owned()
-    }
-}
-
 /// A key provided to the [`Map::entry`] function.
 ///
 /// This is a [`Cow`](alloc::borrow::Cow)-like type that is slightly more

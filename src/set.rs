@@ -307,3 +307,22 @@ fn difference() {
     let b = [2, 5, 6].into_iter().collect::<Set<u8>>();
     assert_eq!(a.difference(&b).copied().collect::<Vec<_>>(), [1, 3]);
 }
+
+#[test]
+fn lookup() {
+    let mut set = Set::with_capacity(1);
+    let key = alloc::string::String::from("hello");
+    let key_ptr = key.as_ptr();
+    set.insert(key);
+    assert_eq!(set.get("hello").unwrap().as_ptr(), key_ptr);
+}
+
+#[test]
+fn iteration() {
+    use alloc::vec::Vec;
+    let mut set = Set::with_capacity(3);
+    set.insert(1);
+    set.insert(3);
+    set.insert(2);
+    assert_eq!(set.iter().copied().collect::<Vec<_>>(), &[1, 2, 3]);
+}
