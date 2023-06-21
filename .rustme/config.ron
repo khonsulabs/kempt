@@ -34,6 +34,11 @@ Configuration(
                 release: "https://docs.rs/kempt/*/kempt/struct.Map.html",
                 for_docs: "crate::Map",
             ),
+            "set": (
+                default: "https://khonsulabs.github.io/kempt/main/kempt/struct.Set.html",
+                release: "https://docs.rs/kempt/*/kempt/struct.Set.html",
+                for_docs: "crate::Set",
+            ),
             "map-merge-with": (
                 default: "https://khonsulabs.github.io/kempt/main/kempt/struct.Map.html#method.merge_with",
                 release: "https://docs.rs/kempt/*/kempt/struct.Map.html#method.merge_with",

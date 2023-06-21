@@ -64,6 +64,28 @@ The `HashMap` type is more beneficial for many other use cases:
 - Large Key types that are expensive to compare
 - Moderately large collections (> 100 entries, depending on Key and Value sizes)
 
+## `Set<T>`
+
+[`Set<T>`][set] provides an interface similar to a `BTreeSet<T>`, but utilizes a
+simpler storage model by leveraging this crate's `Map` type. The members are
+stored in a `Vec` in sort order. Retrieving values uses a hybrid binary search
+and sequential scan algorithm that is aimed at taking advantage of sequential
+scans for better cache performance.
+
+```rust
+use kempt::Set;
+
+let mut set = Set::new();
+set.insert(42);
+assert!(set.contains(&42));
+// Inserting again will return false, because the member already exists.
+assert!(!set.insert(42));
+// The collection will be automatically sorted as it is mutated.
+set.insert(1);
+assert_eq!(set.member(0), Some(&1));
+assert_eq!(set.member(1), Some(&42));
+```
+
 ## Why?
 
 This crate started as a thought experiment: when using [interned
@@ -130,6 +152,7 @@ their target hardware rather than rely on these benchmark results.
 [stylecs]: https://github.com/khonsulabs/stylecs
 [fnv]: https://github.com/servo/rust-fnv
 [map]: https://khonsulabs.github.io/kempt/main/kempt/struct.Map.html
+[set]: https://khonsulabs.github.io/kempt/main/kempt/struct.Set.html
 [merge-with]: https://khonsulabs.github.io/kempt/main/kempt/struct.Map.html#method.merge_with
 
 ## Open-source Licenses
