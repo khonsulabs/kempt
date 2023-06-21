@@ -57,6 +57,24 @@ comparison falls back to <code>Eq</code>.</li>
 <li>Large Key types that are expensive to compare</li>
 <li>Moderately large collections (&gt; 100 entries, depending on Key and Value sizes)</li>
 </ul>
+<h3 id="sett"><a href="#sett"><code>Set&lt;T&gt;</code></a></h3>
+<p><a href="https://khonsulabs.github.io/kempt/main/kempt/struct.Set.html"><code>Set&lt;T&gt;</code></a> provides an interface similar to a <code>BTreeSet&lt;T&gt;</code>, but utilizes a
+simpler storage model by leveraging this crate’s <code>Map</code> type. The members are
+stored in a <code>Vec</code> in sort order. Retrieving values uses a hybrid binary search
+and sequential scan algorithm that is aimed at taking advantage of sequential
+scans for better cache performance.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>kempt::Set;
+
+<span class="kw">let </span><span class="kw-2">mut </span>set = Set::new();
+set.insert(<span class="number">42</span>);
+<span class="macro">assert!</span>(set.contains(<span class="kw-2">&amp;</span><span class="number">42</span>));
+<span class="comment">// Inserting again will return false, because the member already exists.
+</span><span class="macro">assert!</span>(!set.insert(<span class="number">42</span>));
+<span class="comment">// The collection will be automatically sorted as it is mutated.
+</span>set.insert(<span class="number">1</span>);
+<span class="macro">assert_eq!</span>(set.member(<span class="number">0</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="number">1</span>));
+<span class="macro">assert_eq!</span>(set.member(<span class="number">1</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="number">42</span>));</code></pre></div>
 <h3 id="why"><a href="#why">Why?</a></h3>
 <p>This crate started as a thought experiment: when using <a href="https://github.com/khonsulabs/interner">interned
 strings</a>, could an ordered <code>Vec</code> outperform a <code>HashMap</code> for “small”
