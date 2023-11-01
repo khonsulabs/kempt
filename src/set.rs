@@ -1,3 +1,5 @@
+use core::fmt::{self, Debug};
+
 use crate::map::{self, Field, OwnedOrRef};
 use crate::{Map, Sort};
 
@@ -33,6 +35,7 @@ pub type IntoIter<T> = map::IntoKeys<T, ()>;
 /// assert_eq!(set.member(1), Some(&2));
 /// assert_eq!(set.member(2), Some(&3));
 /// ```
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Set<T>(Map<T, ()>)
 where
     T: Ord;
@@ -112,6 +115,16 @@ where
         self.0.field(index).map(Field::key)
     }
 
+    /// Removes the member at `index`.
+    ///
+    /// # Panics
+    ///
+    /// A panic will occur if `index` is greater than or equal to the set's
+    /// length.
+    pub fn remove_member(&mut self, index: usize) -> T {
+        self.0.remove_by_index(index).into_key()
+    }
+
     /// Returns the number of members in this set.
     #[must_use]
     pub fn len(&self) -> usize {
@@ -158,6 +171,19 @@ where
     #[must_use]
     pub fn difference<'a>(&'a self, other: &'a Set<T>) -> Difference<'a, T> {
         Difference(self.0.difference(&other.0))
+    }
+}
+
+impl<T> Debug for Set<T>
+where
+    T: Ord + Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut s = f.debug_set();
+        for member in self {
+            s.entry(member);
+        }
+        s.finish()
     }
 }
 

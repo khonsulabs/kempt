@@ -158,7 +158,17 @@ where
         self.get_field(key).map(|field| &field.value)
     }
 
-    /// Returns the value associated with `key`, if found.
+    /// Returns a mutable value associated with `key`, if found.
+    #[inline]
+    pub fn get_mut<SearchFor>(&mut self, key: &SearchFor) -> Option<&mut Value>
+    where
+        Key: Sort<SearchFor>,
+        SearchFor: ?Sized,
+    {
+        self.get_field_mut(key).map(|field| &mut field.value)
+    }
+
+    /// Returns the field associated with `key`, if found.
     #[inline]
     pub fn get_field<SearchFor>(&self, key: &SearchFor) -> Option<&Field<Key, Value>>
     where
@@ -166,6 +176,17 @@ where
         SearchFor: ?Sized,
     {
         self.find_key(key).ok()
+    }
+
+    /// Returns the a mutable reference to the field associated with `key`, if
+    /// found.
+    #[inline]
+    pub fn get_field_mut<SearchFor>(&mut self, key: &SearchFor) -> Option<&mut Field<Key, Value>>
+    where
+        Key: Sort<SearchFor>,
+        SearchFor: ?Sized,
+    {
+        self.find_key_mut(key).ok()
     }
 
     /// Returns the [`Field`] at the specified `index`, or None if the index is
