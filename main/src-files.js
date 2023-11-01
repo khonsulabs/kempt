@@ -1,4 +1,4 @@
-var sourcesIndex = JSON.parse('{\
+var srcIndex = JSON.parse('{\
 "kempt":["",[],["lib.rs","map.rs","serde.rs","set.rs"]]\
 }');
-createSourceSidebar();
+createSrcSidebar();
