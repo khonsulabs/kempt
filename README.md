@@ -4,9 +4,9 @@ A `#[forbid_unsafe]` ordered collection crate for Rust. This crate is `no_std`
 compatible using the `alloc` crate.
 
 [![crate version](https://img.shields.io/crates/v/kempt.svg)](https://crates.io/crates/kempt)
-[![Live Build Status](https://img.shields.io/github/actions/workflow/status/khonsulabs/kempt/rust.yml?branch=v0.2.0)](https://github.com/khonsulabs/kempt/actions?query=workflow:Tests)
+[![Live Build Status](https://img.shields.io/github/actions/workflow/status/khonsulabs/kempt/rust.yml?branch=v0.2.1)](https://github.com/khonsulabs/kempt/actions?query=workflow:Tests)
 [![HTML Coverage Report for `main` branch](https://khonsulabs.github.io/kempt/coverage/badge.svg)](https://khonsulabs.github.io/kempt/coverage/)
-[![Documentation for `v0.2.0` branch](https://img.shields.io/badge/docs-main-informational)](https://docs.rs/kempt)
+[![Documentation for `v0.2.1` branch](https://img.shields.io/badge/docs-main-informational)](https://docs.rs/kempt)
 
 ## `Map<K, V>`
 
