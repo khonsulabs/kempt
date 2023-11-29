@@ -172,6 +172,12 @@ where
     pub fn difference<'a>(&'a self, other: &'a Set<T>) -> Difference<'a, T> {
         Difference(self.0.difference(&other.0))
     }
+
+    /// Returns an iterator over the contents of this set. After the iterator is
+    /// dropped, this set will be empty.
+    pub fn drain(&mut self) -> Drain<'_, T> {
+        Drain(self.0.drain())
+    }
 }
 
 impl<T> Debug for Set<T>
@@ -279,6 +285,19 @@ where
 
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
+    }
+}
+
+/// An iterator that drains the contents of a [`Set`].
+///
+/// When this is dropped, the remaining contents are drained.
+pub struct Drain<'a, T>(map::Drain<'a, T, ()>);
+
+impl<T> Iterator for Drain<'_, T> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next().map(map::Field::into_key)
     }
 }
 
