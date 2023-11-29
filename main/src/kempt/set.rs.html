@@ -371,6 +371,41 @@
 <a href="#371" id="371">371</a>
 <a href="#372" id="372">372</a>
 <a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>core::fmt::{<span class="self">self</span>, Debug};
 
 <span class="kw">use </span><span class="kw">crate</span>::map::{<span class="self">self</span>, Field, OwnedOrRef};
@@ -417,7 +452,8 @@
 <span class="kw">where
     </span>T: Sort&lt;T&gt;,
 {
-    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new()
     }
 }
@@ -428,6 +464,7 @@
 {
     <span class="doccomment">/// Returns an empty set.
     </span><span class="attr">#[must_use]
+    #[inline]
     </span><span class="kw">pub const fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>(Map::new())
     }
@@ -435,14 +472,24 @@
     <span class="doccomment">/// Returns an empty set with enough allocated memory to store `capacity`
     /// values without reallocating.
     </span><span class="attr">#[must_use]
+    #[inline]
     </span><span class="kw">pub fn </span>with_capacity(capacity: usize) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>(Map::with_capacity(capacity))
+    }
+
+    <span class="doccomment">/// Returns the current capacity this map can hold before it must
+    /// reallocate.
+    </span><span class="attr">#[must_use]
+    #[inline]
+    </span><span class="kw">pub fn </span>capacity(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.<span class="number">0</span>.capacity()
     }
 
     <span class="doccomment">/// Inserts or replaces `value` in the set, returning `true` if the
     /// collection is modified. If a previously contained value returns
     /// [`Ordering::Equal`](core::cmp::Ordering::Equal) from [`Ord::cmp`], the
     /// collection will not be modified and `false` will be returned.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>insert(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: T) -&gt; bool {
         <span class="self">self</span>.<span class="number">0</span>.insert_with(value, || ()).is_none()
     }
@@ -451,11 +498,13 @@
     /// returns [`Ordering::Equal`](core::cmp::Ordering::Equal) from
     /// [`Ord::cmp`], the new value will overwrite the stored value and it will
     /// be returned.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: T) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt; {
         <span class="self">self</span>.<span class="number">0</span>.insert(value, ()).map(|field| field.into_parts().<span class="number">0</span>)
     }
 
     <span class="doccomment">/// Returns true if the set contains a matching `value`.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>contains&lt;SearchFor&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, value: <span class="kw-2">&amp;</span>SearchFor) -&gt; bool
     <span class="kw">where
         </span>T: Sort&lt;SearchFor&gt;,
@@ -465,6 +514,7 @@
     }
 
     <span class="doccomment">/// Returns the contained value that matches `value`.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get&lt;SearchFor&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, value: <span class="kw-2">&amp;</span>SearchFor) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>T&gt;
     <span class="kw">where
         </span>T: Sort&lt;SearchFor&gt;,
@@ -474,6 +524,7 @@
     }
 
     <span class="doccomment">/// Removes a value from the set, returning the value if it was removed.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>remove&lt;SearchFor&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: <span class="kw-2">&amp;</span>SearchFor) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt;
     <span class="kw">where
         </span>T: Sort&lt;SearchFor&gt;,
@@ -484,6 +535,7 @@
 
     <span class="doccomment">/// Returns the member at `index` inside of this ordered set. Returns `None`
     /// if `index` is greater than or equal to the set&#39;s length.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>member(<span class="kw-2">&amp;</span><span class="self">self</span>, index: usize) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>T&gt; {
         <span class="self">self</span>.<span class="number">0</span>.field(index).map(Field::key)
     }
@@ -494,24 +546,28 @@
     ///
     /// A panic will occur if `index` is greater than or equal to the set&#39;s
     /// length.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>remove_member(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: usize) -&gt; T {
         <span class="self">self</span>.<span class="number">0</span>.remove_by_index(index).into_key()
     }
 
     <span class="doccomment">/// Returns the number of members in this set.
     </span><span class="attr">#[must_use]
+    #[inline]
     </span><span class="kw">pub fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.<span class="number">0</span>.len()
     }
 
     <span class="doccomment">/// Returns true if there are no members in this set.
     </span><span class="attr">#[must_use]
+    #[inline]
     </span><span class="kw">pub fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.<span class="number">0</span>.is_empty()
     }
 
     <span class="doccomment">/// Returns an iterator over the members in this set.
     </span><span class="attr">#[must_use]
+    #[inline]
     </span><span class="kw">pub fn </span>iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Iter&lt;<span class="lifetime">&#39;_</span>, T&gt; {
         <span class="self">self</span>.into_iter()
     }
@@ -522,6 +578,7 @@
     /// This iterator is guaranteed to return results in the sort order of the
     /// `Key` type.
     </span><span class="attr">#[must_use]
+    #[inline]
     </span><span class="kw">pub fn </span>union&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Set&lt;T&gt;) -&gt; Union&lt;<span class="lifetime">&#39;a</span>, T&gt; {
         Union(<span class="self">self</span>.<span class="number">0</span>.union(<span class="kw-2">&amp;</span>other.<span class="number">0</span>))
     }
@@ -532,6 +589,7 @@
     /// This iterator is guaranteed to return results in the sort order of the
     /// `Key` type.
     </span><span class="attr">#[must_use]
+    #[inline]
     </span><span class="kw">pub fn </span>intersection&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Set&lt;T&gt;) -&gt; Intersection&lt;<span class="lifetime">&#39;a</span>, T&gt; {
         Intersection(<span class="self">self</span>.<span class="number">0</span>.intersection(<span class="kw-2">&amp;</span>other.<span class="number">0</span>))
     }
@@ -542,12 +600,14 @@
     /// This iterator is guaranteed to return results in the sort order of the
     /// `Key` type.
     </span><span class="attr">#[must_use]
+    #[inline]
     </span><span class="kw">pub fn </span>difference&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Set&lt;T&gt;) -&gt; Difference&lt;<span class="lifetime">&#39;a</span>, T&gt; {
         Difference(<span class="self">self</span>.<span class="number">0</span>.difference(<span class="kw-2">&amp;</span>other.<span class="number">0</span>))
     }
 
     <span class="doccomment">/// Returns an iterator over the contents of this set. After the iterator is
     /// dropped, this set will be empty.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Drain&lt;<span class="lifetime">&#39;_</span>, T&gt; {
         Drain(<span class="self">self</span>.<span class="number">0</span>.drain())
     }
@@ -557,7 +617,8 @@
 <span class="kw">where
     </span>T: Sort&lt;T&gt; + Debug,
 {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">let </span><span class="kw-2">mut </span>s = f.debug_set();
         <span class="kw">for </span>member <span class="kw">in </span><span class="self">self </span>{
             s.entry(member);
@@ -573,7 +634,8 @@
     <span class="kw">type </span>IntoIter = Iter&lt;<span class="lifetime">&#39;a</span>, T&gt;;
     <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T;
 
-    <span class="kw">fn </span>into_iter(<span class="self">self</span>) -&gt; <span class="self">Self</span>::IntoIter {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>into_iter(<span class="self">self</span>) -&gt; <span class="self">Self</span>::IntoIter {
         <span class="self">self</span>.<span class="number">0</span>.keys()
     }
 }
@@ -582,7 +644,8 @@
 <span class="kw">where
     </span>T: Sort&lt;T&gt;,
 {
-    <span class="kw">fn </span>from_iter&lt;I: IntoIterator&lt;Item = T&gt;&gt;(iter: I) -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>from_iter&lt;I: IntoIterator&lt;Item = T&gt;&gt;(iter: I) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>(iter.into_iter().map(|t| (t, ())).collect())
     }
 }
@@ -602,13 +665,15 @@
 {
     <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T;
 
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.<span class="number">0
             </span>.next()
             .map(|unioned| unioned.map_both(|<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>| OwnedOrRef::Owned(())).key)
     }
 
-    <span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
         <span class="self">self</span>.<span class="number">0</span>.size_hint()
     }
 }
@@ -628,11 +693,13 @@
 {
     <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T;
 
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.<span class="number">0</span>.next().map(|(k, <span class="kw">_</span>, <span class="kw">_</span>)| k)
     }
 
-    <span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
         <span class="self">self</span>.<span class="number">0</span>.size_hint()
     }
 }
@@ -652,11 +719,13 @@
 {
     <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T;
 
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.<span class="number">0</span>.next().map(|(k, <span class="kw">_</span>)| k)
     }
 
-    <span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
         <span class="self">self</span>.<span class="number">0</span>.size_hint()
     }
 }
@@ -669,7 +738,8 @@
 <span class="kw">impl</span>&lt;T&gt; Iterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;_</span>, T&gt; {
     <span class="kw">type </span>Item = T;
 
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.<span class="number">0</span>.next().map(map::Field::into_key)
     }
 }
