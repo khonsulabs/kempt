@@ -21,7 +21,7 @@ use crate::Sort;
 /// `HashMap` or `BTreeMap` will be better choices with larger numbers of
 /// entries. Additionally, `HashMap` will perform better if comparing the keys
 /// is expensive.
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Map<Key, Value>
 where
     Key: Sort<Key>,
@@ -644,7 +644,7 @@ where
 }
 
 /// A field in an [`Map`].
-#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Field<Key, Value> {
     key: Key,
     /// The value contained in this field.

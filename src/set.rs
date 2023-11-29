@@ -35,7 +35,7 @@ pub type IntoIter<T> = map::IntoKeys<T, ()>;
 /// assert_eq!(set.member(1), Some(&2));
 /// assert_eq!(set.member(2), Some(&3));
 /// ```
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Set<T>(Map<T, ()>)
 where
     T: Sort<T>;
