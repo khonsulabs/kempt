@@ -9,38 +9,38 @@ Average time (ns)
 Input
 </text>
 <polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="85,52 85,473 "/>
-<text x="76" y="463" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
-12.0
-</text>
-<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,463 85,463 "/>
-<text x="76" y="412" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
+<text x="76" y="450" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
 12.05
 </text>
-<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,412 85,412 "/>
-<text x="76" y="362" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
+<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,450 85,450 "/>
+<text x="76" y="396" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
 12.1
 </text>
-<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,362 85,362 "/>
-<text x="76" y="312" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
+<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,396 85,396 "/>
+<text x="76" y="341" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
 12.15
 </text>
-<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,312 85,312 "/>
-<text x="76" y="262" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
+<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,341 85,341 "/>
+<text x="76" y="287" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
 12.2
 </text>
-<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,262 85,262 "/>
-<text x="76" y="211" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
+<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,287 85,287 "/>
+<text x="76" y="233" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
 12.25
 </text>
-<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,211 85,211 "/>
-<text x="76" y="161" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
+<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,233 85,233 "/>
+<text x="76" y="179" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
 12.3
 </text>
-<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,161 85,161 "/>
-<text x="76" y="111" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
+<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,179 85,179 "/>
+<text x="76" y="124" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
 12.35
 </text>
-<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,111 85,111 "/>
+<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,124 85,124 "/>
+<text x="76" y="70" dy="0.5ex" text-anchor="end" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
+12.4
+</text>
+<polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="80,70 85,70 "/>
 <polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="86,474 933,474 "/>
 <text x="166" y="484" dy="0.76em" text-anchor="middle" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
 100.0
@@ -82,15 +82,15 @@ Input
 1000.0
 </text>
 <polyline fill="none" opacity="1" stroke="#000000" stroke-width="1" points="933,474 933,479 "/>
-<circle cx="86" cy="266" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
-<circle cx="90" cy="428" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
-<circle cx="103" cy="417" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
-<circle cx="124" cy="52" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
-<circle cx="166" cy="337" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
-<circle cx="294" cy="313" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
-<circle cx="507" cy="473" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
-<circle cx="933" cy="205" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
-<polyline fill="none" opacity="1" stroke="#B22222" stroke-width="1" points="86,266 90,428 103,417 124,52 166,337 294,313 507,473 933,205 "/>
+<circle cx="86" cy="316" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
+<circle cx="90" cy="425" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
+<circle cx="103" cy="452" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
+<circle cx="124" cy="473" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
+<circle cx="166" cy="361" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
+<circle cx="294" cy="52" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
+<circle cx="507" cy="389" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
+<circle cx="933" cy="196" r="3" opacity="1" fill="#B22222" stroke="none" stroke-width="1"/>
+<polyline fill="none" opacity="1" stroke="#B22222" stroke-width="1" points="86,316 90,425 103,452 124,473 166,361 294,52 507,389 933,196 "/>
 <text x="131" y="67" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
 hash
 </text>
