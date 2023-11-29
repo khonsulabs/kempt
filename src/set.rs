@@ -44,6 +44,7 @@ impl<T> Default for Set<T>
 where
     T: Sort<T>,
 {
+    #[inline]
     fn default() -> Self {
         Self::new()
     }
@@ -55,6 +56,7 @@ where
 {
     /// Returns an empty set.
     #[must_use]
+    #[inline]
     pub const fn new() -> Self {
         Self(Map::new())
     }
@@ -62,14 +64,24 @@ where
     /// Returns an empty set with enough allocated memory to store `capacity`
     /// values without reallocating.
     #[must_use]
+    #[inline]
     pub fn with_capacity(capacity: usize) -> Self {
         Self(Map::with_capacity(capacity))
+    }
+
+    /// Returns the current capacity this map can hold before it must
+    /// reallocate.
+    #[must_use]
+    #[inline]
+    pub fn capacity(&self) -> usize {
+        self.0.capacity()
     }
 
     /// Inserts or replaces `value` in the set, returning `true` if the
     /// collection is modified. If a previously contained value returns
     /// [`Ordering::Equal`](core::cmp::Ordering::Equal) from [`Ord::cmp`], the
     /// collection will not be modified and `false` will be returned.
+    #[inline]
     pub fn insert(&mut self, value: T) -> bool {
         self.0.insert_with(value, || ()).is_none()
     }
@@ -78,11 +90,13 @@ where
     /// returns [`Ordering::Equal`](core::cmp::Ordering::Equal) from
     /// [`Ord::cmp`], the new value will overwrite the stored value and it will
     /// be returned.
+    #[inline]
     pub fn replace(&mut self, value: T) -> Option<T> {
         self.0.insert(value, ()).map(|field| field.into_parts().0)
     }
 
     /// Returns true if the set contains a matching `value`.
+    #[inline]
     pub fn contains<SearchFor>(&self, value: &SearchFor) -> bool
     where
         T: Sort<SearchFor>,
@@ -92,6 +106,7 @@ where
     }
 
     /// Returns the contained value that matches `value`.
+    #[inline]
     pub fn get<SearchFor>(&self, value: &SearchFor) -> Option<&T>
     where
         T: Sort<SearchFor>,
@@ -101,6 +116,7 @@ where
     }
 
     /// Removes a value from the set, returning the value if it was removed.
+    #[inline]
     pub fn remove<SearchFor>(&mut self, value: &SearchFor) -> Option<T>
     where
         T: Sort<SearchFor>,
@@ -111,6 +127,7 @@ where
 
     /// Returns the member at `index` inside of this ordered set. Returns `None`
     /// if `index` is greater than or equal to the set's length.
+    #[inline]
     pub fn member(&self, index: usize) -> Option<&T> {
         self.0.field(index).map(Field::key)
     }
@@ -121,24 +138,28 @@ where
     ///
     /// A panic will occur if `index` is greater than or equal to the set's
     /// length.
+    #[inline]
     pub fn remove_member(&mut self, index: usize) -> T {
         self.0.remove_by_index(index).into_key()
     }
 
     /// Returns the number of members in this set.
     #[must_use]
+    #[inline]
     pub fn len(&self) -> usize {
         self.0.len()
     }
 
     /// Returns true if there are no members in this set.
     #[must_use]
+    #[inline]
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
 
     /// Returns an iterator over the members in this set.
     #[must_use]
+    #[inline]
     pub fn iter(&self) -> Iter<'_, T> {
         self.into_iter()
     }
@@ -149,6 +170,7 @@ where
     /// This iterator is guaranteed to return results in the sort order of the
     /// `Key` type.
     #[must_use]
+    #[inline]
     pub fn union<'a>(&'a self, other: &'a Set<T>) -> Union<'a, T> {
         Union(self.0.union(&other.0))
     }
@@ -159,6 +181,7 @@ where
     /// This iterator is guaranteed to return results in the sort order of the
     /// `Key` type.
     #[must_use]
+    #[inline]
     pub fn intersection<'a>(&'a self, other: &'a Set<T>) -> Intersection<'a, T> {
         Intersection(self.0.intersection(&other.0))
     }
@@ -169,12 +192,14 @@ where
     /// This iterator is guaranteed to return results in the sort order of the
     /// `Key` type.
     #[must_use]
+    #[inline]
     pub fn difference<'a>(&'a self, other: &'a Set<T>) -> Difference<'a, T> {
         Difference(self.0.difference(&other.0))
     }
 
     /// Returns an iterator over the contents of this set. After the iterator is
     /// dropped, this set will be empty.
+    #[inline]
     pub fn drain(&mut self) -> Drain<'_, T> {
         Drain(self.0.drain())
     }
@@ -184,6 +209,7 @@ impl<T> Debug for Set<T>
 where
     T: Sort<T> + Debug,
 {
+    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut s = f.debug_set();
         for member in self {
@@ -200,6 +226,7 @@ where
     type IntoIter = Iter<'a, T>;
     type Item = &'a T;
 
+    #[inline]
     fn into_iter(self) -> Self::IntoIter {
         self.0.keys()
     }
@@ -209,6 +236,7 @@ impl<T> FromIterator<T> for Set<T>
 where
     T: Sort<T>,
 {
+    #[inline]
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         Self(iter.into_iter().map(|t| (t, ())).collect())
     }
@@ -229,12 +257,14 @@ where
 {
     type Item = &'a T;
 
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         self.0
             .next()
             .map(|unioned| unioned.map_both(|_, _, _| OwnedOrRef::Owned(())).key)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
     }
@@ -255,10 +285,12 @@ where
 {
     type Item = &'a T;
 
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         self.0.next().map(|(k, _, _)| k)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
     }
@@ -279,10 +311,12 @@ where
 {
     type Item = &'a T;
 
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         self.0.next().map(|(k, _)| k)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
     }
@@ -296,6 +330,7 @@ pub struct Drain<'a, T>(map::Drain<'a, T, ()>);
 impl<T> Iterator for Drain<'_, T> {
     type Item = T;
 
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         self.0.next().map(map::Field::into_key)
     }

@@ -128,6 +128,7 @@ where
     ///
     /// This is similar to using [`Map::entry`], except this function does not
     /// require that `Key` implement [`ToOwned`].
+    #[inline]
     pub fn insert_with(&mut self, key: Key, value: impl FnOnce() -> Value) -> Option<Key> {
         match self.find_key_index(&key) {
             Err(insert_at) => {
@@ -258,7 +259,6 @@ where
         }
     }
 
-    #[inline]
     fn find_key<SearchFor>(&self, search_for: &SearchFor) -> Result<&Field<Key, Value>, usize>
     where
         Key: Sort<SearchFor>,
@@ -268,7 +268,6 @@ where
             .map(|index| &self.fields[index])
     }
 
-    #[inline]
     fn find_key_mut<SearchFor>(
         &mut self,
         search_for: &SearchFor,
@@ -281,7 +280,6 @@ where
             .map(|index| &mut self.fields[index])
     }
 
-    #[inline]
     fn find_key_index<SearchFor>(&self, search_for: &SearchFor) -> Result<usize, usize>
     where
         Key: Sort<SearchFor>,
@@ -481,6 +479,7 @@ where
 
     /// Returns an iterator that returns all of the elements in this collection.
     /// After the iterator is dropped, this object will be empty.
+    #[inline]
     pub fn drain(&mut self) -> Drain<'_, Key, Value> {
         Drain(self.fields.drain(..))
     }
@@ -494,6 +493,7 @@ where
     /// This iterator is guaranteed to return results in the sort order of the
     /// `Key` type.
     #[must_use]
+    #[inline]
     pub fn union<'a>(&'a self, other: &'a Self) -> Union<'a, Key, Value> {
         Union {
             left: self.iter().peekable(),
@@ -511,6 +511,7 @@ where
     /// This iterator is guaranteed to return results in the sort order of the
     /// `Key` type.
     #[must_use]
+    #[inline]
     pub fn intersection<'a>(&'a self, other: &'a Self) -> Intersection<'a, Key, Value> {
         Intersection {
             left: self.iter().peekable(),
@@ -528,6 +529,7 @@ where
     /// This iterator is guaranteed to return results in the sort order of the
     /// `Key` type.
     #[must_use]
+    #[inline]
     pub fn difference<'a>(&'a self, other: &'a Self) -> Difference<'a, Key, Value> {
         Difference {
             left: self.iter().peekable(),
@@ -553,6 +555,7 @@ where
 }
 
 impl<'key, K> From<K> for SearchKey<'key, K, K> {
+    #[inline]
     fn from(value: K) -> Self {
         SearchKey::Owned(value)
     }
@@ -562,6 +565,7 @@ impl<'key, Key, Borrowed> From<&'key Borrowed> for SearchKey<'key, Key, Borrowed
 where
     Borrowed: ?Sized,
 {
+    #[inline]
     fn from(value: &'key Borrowed) -> Self {
         SearchKey::Borrowed(value)
     }
@@ -572,6 +576,7 @@ where
     Key: Borrow<Borrowed>,
     Borrowed: ToOwned<Owned = Key> + ?Sized,
 {
+    #[inline]
     fn as_ref(&self) -> &Borrowed {
         match self {
             SearchKey::Borrowed(key) => key,
@@ -579,6 +584,7 @@ where
         }
     }
 
+    #[inline]
     fn into_owned(self) -> Key {
         match self {
             SearchKey::Borrowed(key) => key.to_owned(),
@@ -592,6 +598,7 @@ where
     Key: Debug + Sort<Key>,
     Value: Debug,
 {
+    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut s = f.debug_map();
         for Field { key, value } in self {
@@ -621,6 +628,7 @@ where
     type IntoIter = IntoIter<Key, Value>;
     type Item = Field<Key, Value>;
 
+    #[inline]
     fn into_iter(self) -> Self::IntoIter {
         IntoIter(self.fields.into_iter())
     }
@@ -739,6 +747,7 @@ where
     /// mutable reference to the entry's value is returned.
     ///
     /// This function does not change the entry if it is present.
+    #[inline]
     pub fn or_default(self) -> &'a mut Value
     where
         Key: Borrow<BorrowedKey>,
@@ -1455,6 +1464,7 @@ where
 {
     type Item = Unioned<'a, K, V>;
 
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(left) = self.left.peek() {
             if let Some(right) = self.right.peek() {
@@ -1476,6 +1486,7 @@ where
         }
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (self.left.len(), Some(self.left.len() + self.right.len()))
     }
@@ -1539,6 +1550,7 @@ impl<'a, K, V> Unioned<'a, K, V> {
     /// assert_eq!(merged.get("a"), Some(&1));
     /// assert_eq!(merged.get("b"), Some(&2));
     /// ```
+    #[inline]
     pub fn map_both<R>(self, merge: impl FnOnce(&'a K, &'a V, &'a V) -> R) -> EntryRef<'a, K, V>
     where
         R: Into<OwnedOrRef<'a, V>>,
@@ -1591,6 +1603,7 @@ pub struct EntryRef<'a, K, V> {
 impl<'a, K, V> EntryRef<'a, K, V> {
     /// Returns the owned versions of the contained key and value, cloning as
     /// needed.
+    #[inline]
     pub fn into_owned(self) -> (K, V)
     where
         K: Clone,
@@ -1614,6 +1627,7 @@ pub enum OwnedOrRef<'a, K> {
 impl<'a, K> OwnedOrRef<'a, K> {
     /// Converts the contained value into an owned representation, cloning only
     /// if needed.
+    #[inline]
     pub fn into_owned(self) -> K
     where
         K: Clone,
@@ -1626,12 +1640,14 @@ impl<'a, K> OwnedOrRef<'a, K> {
 }
 
 impl<K> From<K> for OwnedOrRef<'_, K> {
+    #[inline]
     fn from(value: K) -> Self {
         Self::Owned(value)
     }
 }
 
 impl<'a, K> From<&'a K> for OwnedOrRef<'a, K> {
+    #[inline]
     fn from(value: &'a K) -> Self {
         Self::Ref(value)
     }
@@ -1658,6 +1674,7 @@ where
 {
     type Item = (&'a K, &'a V, &'a V);
 
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             let left = self.left.peek()?;
@@ -1678,6 +1695,7 @@ where
         }
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (0, Some(self.left.len().min(self.right.len())))
     }
@@ -1705,6 +1723,7 @@ where
 {
     type Item = (&'a K, &'a V);
 
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             let left = self.left.peek()?;
@@ -1729,6 +1748,7 @@ where
         }
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (0, Some(self.left.len()))
     }

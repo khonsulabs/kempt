@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Set` now implements `Serialize` and `Deserialize` when the `serde` feature is
   enabled.
 - `Set` and `Map` now implement `Hash`.
+- `Set::capacity` returns the currently allocated capacity.
 
 ## v0.2.1
 
