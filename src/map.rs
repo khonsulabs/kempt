@@ -456,7 +456,9 @@ where
                 Ordering::Greater => {
                     // Other has a value that self doesn't.
                     other_index += 1;
-                    let Some(value) = filter(&other_field.key, &other_field.value) else { continue };
+                    let Some(value) = filter(&other_field.key, &other_field.value) else {
+                        continue;
+                    };
 
                     self.fields
                         .insert(self_index, Field::new(other_field.key.clone(), value));
@@ -468,7 +470,9 @@ where
         if other_index < other.fields.len() {
             // Other has more entries that we don't have
             for field in &other.fields[other_index..] {
-                let Some(value) = filter(&field.key, &field.value) else { continue };
+                let Some(value) = filter(&field.key, &field.value) else {
+                    continue;
+                };
 
                 self.fields.push(Field::new(field.key.clone(), value));
             }
@@ -741,6 +745,7 @@ where
         BorrowedKey: ToOwned<Owned = Key>,
         Value: Default,
     {
+        #[allow(clippy::unwrap_or_default)] // This is the implementation of said function...
         self.or_insert_with(Value::default)
     }
 }

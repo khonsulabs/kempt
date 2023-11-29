@@ -38,11 +38,11 @@ pub type IntoIter<T> = map::IntoKeys<T, ()>;
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Set<T>(Map<T, ()>)
 where
-    T: Ord;
+    T: Sort<T>;
 
 impl<T> Default for Set<T>
 where
-    T: Ord,
+    T: Sort<T>,
 {
     fn default() -> Self {
         Self::new()
@@ -51,7 +51,7 @@ where
 
 impl<T> Set<T>
 where
-    T: Ord,
+    T: Sort<T>,
 {
     /// Returns an empty set.
     #[must_use]
@@ -176,7 +176,7 @@ where
 
 impl<T> Debug for Set<T>
 where
-    T: Ord + Debug,
+    T: Sort<T> + Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut s = f.debug_set();
@@ -189,7 +189,7 @@ where
 
 impl<'a, T> IntoIterator for &'a Set<T>
 where
-    T: Ord,
+    T: Sort<T>,
 {
     type IntoIter = Iter<'a, T>;
     type Item = &'a T;
@@ -201,7 +201,7 @@ where
 
 impl<T> FromIterator<T> for Set<T>
 where
-    T: Ord,
+    T: Sort<T>,
 {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         Self(iter.into_iter().map(|t| (t, ())).collect())
@@ -215,11 +215,11 @@ where
 /// type.
 pub struct Union<'a, T>(map::Union<'a, T, ()>)
 where
-    T: Ord;
+    T: Sort<T>;
 
 impl<'a, T> Iterator for Union<'a, T>
 where
-    T: Ord,
+    T: Sort<T>,
 {
     type Item = &'a T;
 
@@ -241,11 +241,11 @@ where
 /// type.
 pub struct Intersection<'a, T>(map::Intersection<'a, T, ()>)
 where
-    T: Ord;
+    T: Sort<T>;
 
 impl<'a, T> Iterator for Intersection<'a, T>
 where
-    T: Ord,
+    T: Sort<T>,
 {
     type Item = &'a T;
 
@@ -265,11 +265,11 @@ where
 /// type.
 pub struct Difference<'a, T>(map::Difference<'a, T, ()>)
 where
-    T: Ord;
+    T: Sort<T>;
 
 impl<'a, T> Iterator for Difference<'a, T>
 where
-    T: Ord,
+    T: Sort<T>,
 {
     type Item = &'a T;
 

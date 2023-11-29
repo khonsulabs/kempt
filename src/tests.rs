@@ -85,14 +85,18 @@ fn entry() {
     let entry = map.entry("a").or_insert(0);
     assert_eq!(*entry, 2);
 
-    let Entry::Occupied(entry) = map.entry("a") else { unreachable!() };
+    let Entry::Occupied(entry) = map.entry("a") else {
+        unreachable!()
+    };
     assert_eq!(entry.key(), "a");
     assert_eq!(*entry, 2);
     let removed = entry.remove();
     assert_eq!(removed.key(), "a");
     assert_eq!(removed.value, 2);
 
-    let Entry::Occupied(entry) = map.entry("b") else { unreachable!() };
+    let Entry::Occupied(entry) = map.entry("b") else {
+        unreachable!()
+    };
     assert_eq!(entry.replace(2), 1);
     assert_eq!(map.get("b"), Some(&2));
 
@@ -257,13 +261,17 @@ fn vacant_entry_key() {
     let mut map = Map::<String, i32>::with_capacity(1);
     let borrowed = "a";
     let borrowed_ptr = borrowed.as_ptr();
-    let Entry::Vacant(entry) = map.entry(borrowed) else { unreachable!() };
+    let Entry::Vacant(entry) = map.entry(borrowed) else {
+        unreachable!()
+    };
     // The key is still borrowed at this point.
     assert_eq!(entry.key().as_ptr(), borrowed_ptr);
 
     // This test just follows the path from taking the owned type to the
     // borrowed type.
-    let Entry::Vacant(entry) = map.entry(String::from("a")) else { unreachable!() };
+    let Entry::Vacant(entry) = map.entry(String::from("a")) else {
+        unreachable!()
+    };
     assert_eq!(entry.key(), "a");
 }
 
