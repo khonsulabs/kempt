@@ -484,6 +484,38 @@ where
         Drain(self.fields.drain(..))
     }
 
+    /// Clears the contents of this collection.
+    ///
+    /// This does not return any allocated memory to the OS.
+    #[inline]
+    pub fn clear(&mut self) {
+        self.fields.clear();
+    }
+
+    /// Resizes this collection to fit its contents exactly.
+    ///
+    /// This function will reallocate its internal storage to fit the contents
+    /// of this collection's current size. If the allocation is already the
+    /// correct size, this is a no-op.
+    #[inline]
+    pub fn shrink_to_fit(&mut self) {
+        self.fields.shrink_to_fit();
+    }
+
+    /// Resizes this collection to be able to hold `min_capacity`.
+    ///
+    /// This function will reallocate its internal storage to fit the contents
+    /// of this collection's current size. If the allocation is already the
+    /// correct size, this is a no-op.
+    ///
+    /// If the length of this collection is larger than `min_capacity`, this
+    /// function will behave identically to
+    /// [`shrink_to_fit()`](Self::shrink_to_fit).
+    #[inline]
+    pub fn shrink_to(&mut self, min_capacity: usize) {
+        self.fields.shrink_to(min_capacity);
+    }
+
     /// Returns an iterator that yields [`Unioned`] entries.
     ///
     /// The iterator will return a single result for each unique `Key` contained
