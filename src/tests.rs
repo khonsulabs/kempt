@@ -7,6 +7,7 @@ use core::borrow::Borrow;
 use std::println;
 
 use crate::map::{Entry, Field, Map};
+use crate::Set;
 
 #[test]
 fn basics() {
@@ -64,6 +65,40 @@ fn basics() {
     let drained = map.drain();
     drop(drained);
     assert!(map.is_empty());
+}
+
+#[test]
+fn clear_and_shrink() {
+    let mut map = Map::<&'static str, usize>::with_capacity(10);
+    map.insert("a", 1);
+    assert_eq!(map.capacity(), 10);
+    map.shrink_to(0);
+    assert_eq!(map.capacity(), 1);
+    map.clear();
+    assert_eq!(map.capacity(), 1);
+    assert!(map.is_empty());
+
+    let mut map = Map::<&'static str, usize>::with_capacity(10);
+    map.insert("a", 1);
+    assert_eq!(map.capacity(), 10);
+    map.shrink_to_fit();
+    assert_eq!(map.capacity(), 1);
+
+    // Set
+    let mut map = Set::<&'static str>::with_capacity(10);
+    map.insert("a");
+    assert_eq!(map.capacity(), 10);
+    map.shrink_to(0);
+    assert_eq!(map.capacity(), 1);
+    map.clear();
+    assert_eq!(map.capacity(), 1);
+    assert!(map.is_empty());
+
+    let mut map = Set::<&'static str>::with_capacity(10);
+    map.insert("a");
+    assert_eq!(map.capacity(), 10);
+    map.shrink_to_fit();
+    assert_eq!(map.capacity(), 1);
 }
 
 #[test]
