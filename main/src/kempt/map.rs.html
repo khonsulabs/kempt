@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/map.rs`."><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="kempt" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/map.rs`."><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="kempt" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1785,6 +1786,43 @@
 <a href="#1785" id="1785">1785</a>
 <a href="#1786" id="1786">1786</a>
 <a href="#1787" id="1787">1787</a>
+<a href="#1788" id="1788">1788</a>
+<a href="#1789" id="1789">1789</a>
+<a href="#1790" id="1790">1790</a>
+<a href="#1791" id="1791">1791</a>
+<a href="#1792" id="1792">1792</a>
+<a href="#1793" id="1793">1793</a>
+<a href="#1794" id="1794">1794</a>
+<a href="#1795" id="1795">1795</a>
+<a href="#1796" id="1796">1796</a>
+<a href="#1797" id="1797">1797</a>
+<a href="#1798" id="1798">1798</a>
+<a href="#1799" id="1799">1799</a>
+<a href="#1800" id="1800">1800</a>
+<a href="#1801" id="1801">1801</a>
+<a href="#1802" id="1802">1802</a>
+<a href="#1803" id="1803">1803</a>
+<a href="#1804" id="1804">1804</a>
+<a href="#1805" id="1805">1805</a>
+<a href="#1806" id="1806">1806</a>
+<a href="#1807" id="1807">1807</a>
+<a href="#1808" id="1808">1808</a>
+<a href="#1809" id="1809">1809</a>
+<a href="#1810" id="1810">1810</a>
+<a href="#1811" id="1811">1811</a>
+<a href="#1812" id="1812">1812</a>
+<a href="#1813" id="1813">1813</a>
+<a href="#1814" id="1814">1814</a>
+<a href="#1815" id="1815">1815</a>
+<a href="#1816" id="1816">1816</a>
+<a href="#1817" id="1817">1817</a>
+<a href="#1818" id="1818">1818</a>
+<a href="#1819" id="1819">1819</a>
+<a href="#1820" id="1820">1820</a>
+<a href="#1821" id="1821">1821</a>
+<a href="#1822" id="1822">1822</a>
+<a href="#1823" id="1823">1823</a>
+<a href="#1824" id="1824">1824</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>alloc::borrow::ToOwned;
 <span class="kw">use </span>alloc::vec::{<span class="self">self</span>, Vec};
 <span class="kw">use </span>core::alloc::Layout;
@@ -1829,8 +1867,8 @@
 <span class="doccomment">/// Returns a heuristic guessing the size that should be allowed to be scanned
 /// sequentially.
 ///
-/// This uses the key and value types&#39;s layout to calculate based on multiple
-/// cache line widths. Magic numbers are a code smell, but I&#39;m not sure how else
+/// This uses the key and value types's layout to calculate based on multiple
+/// cache line widths. Magic numbers are a code smell, but I'm not sure how else
 /// to tune this heuristic based on the information available at compile time.
 </span><span class="kw">const fn </span>scan_limit&lt;Key, Value&gt;() -&gt; usize {
     <span class="kw">let </span>field_layout = Layout::new::&lt;Field&lt;Key, Value&gt;&gt;();
@@ -1910,7 +1948,7 @@
     /// that key.
     ///
     /// If an existing key is found, `Some(key)` is returned. If an existing key
-    /// isn&#39;t found, `value()` will be called, a new entry will be inserted, and
+    /// isn't found, `value()` will be called, a new entry will be inserted, and
     /// `None` will be returned.
     ///
     /// This is similar to using [`Map::entry`], except this function does not
@@ -2031,13 +2069,13 @@
 
     <span class="doccomment">/// Returns an [`Entry`] for the associated key.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>entry&lt;<span class="lifetime">&#39;key</span>, SearchFor&gt;(
+    </span><span class="kw">pub fn </span>entry&lt;<span class="lifetime">'key</span>, SearchFor&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        key: <span class="kw">impl </span>Into&lt;SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, SearchFor&gt;&gt;,
-    ) -&gt; Entry&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;key</span>, Key, Value, SearchFor&gt;
+        key: <span class="kw">impl </span>Into&lt;SearchKey&lt;<span class="lifetime">'key</span>, Key, SearchFor&gt;&gt;,
+    ) -&gt; Entry&lt;<span class="lifetime">'_</span>, <span class="lifetime">'key</span>, Key, Value, SearchFor&gt;
     <span class="kw">where
         </span>Key: Sort&lt;SearchFor&gt; + Borrow&lt;SearchFor&gt;,
-        SearchFor: ToOwned&lt;Owned = Key&gt; + <span class="question-mark">?</span>Sized + <span class="lifetime">&#39;key</span>,
+        SearchFor: ToOwned&lt;Owned = Key&gt; + <span class="question-mark">?</span>Sized + <span class="lifetime">'key</span>,
     {
         <span class="kw">let </span>key = key.into();
         <span class="kw">match </span><span class="self">self</span>.find_key_index(key.as_ref()) {
@@ -2110,35 +2148,35 @@
     <span class="doccomment">/// Returns an iterator over the fields in this object.
     </span><span class="attr">#[must_use]
     #[inline]
-    </span><span class="kw">pub fn </span>iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Iter&lt;<span class="lifetime">&#39;_</span>, Key, Value&gt; {
+    </span><span class="kw">pub fn </span>iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Iter&lt;<span class="lifetime">'_</span>, Key, Value&gt; {
         <span class="self">self</span>.into_iter()
     }
 
     <span class="doccomment">/// Returns an iterator over the fields in this object, with mutable access.
     </span><span class="attr">#[must_use]
     #[inline]
-    </span><span class="kw">pub fn </span>iter_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; IterMut&lt;<span class="lifetime">&#39;_</span>, Key, Value&gt; {
-        IterMut(<span class="self">self</span>.fields.iter_mut())
+    </span><span class="kw">pub fn </span>iter_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; IterMut&lt;<span class="lifetime">'_</span>, Key, Value&gt; {
+        <span class="self">self</span>.into_iter()
     }
 
     <span class="doccomment">/// Returns an iterator over the keys in this object.
     </span><span class="attr">#[must_use]
     #[inline]
-    </span><span class="kw">pub fn </span>keys(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Keys&lt;<span class="lifetime">&#39;_</span>, Key, Value&gt; {
+    </span><span class="kw">pub fn </span>keys(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Keys&lt;<span class="lifetime">'_</span>, Key, Value&gt; {
         Keys(<span class="self">self</span>.fields.iter())
     }
 
     <span class="doccomment">/// Returns an iterator over the values in this object.
     </span><span class="attr">#[must_use]
     #[inline]
-    </span><span class="kw">pub fn </span>values(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Values&lt;<span class="lifetime">&#39;_</span>, Key, Value&gt; {
+    </span><span class="kw">pub fn </span>values(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Values&lt;<span class="lifetime">'_</span>, Key, Value&gt; {
         Values(<span class="self">self</span>.fields.iter())
     }
 
     <span class="doccomment">/// Returns an iterator over the fields in this object, with mutable access.
     </span><span class="attr">#[must_use]
     #[inline]
-    </span><span class="kw">pub fn </span>values_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ValuesMut&lt;<span class="lifetime">&#39;_</span>, Key, Value&gt; {
+    </span><span class="kw">pub fn </span>values_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ValuesMut&lt;<span class="lifetime">'_</span>, Key, Value&gt; {
         ValuesMut(<span class="self">self</span>.fields.iter_mut())
     }
 
@@ -2167,13 +2205,13 @@
     /// ```rust
     /// use kempt::Map;
     ///
-    /// let a: Map&lt;&amp;&#39;static str, usize&gt; = [(&quot;a&quot;, 1), (&quot;b&quot;, 2)].into_iter().collect();
-    /// let b: Map&lt;&amp;&#39;static str, usize&gt; = [(&quot;a&quot;, 1), (&quot;c&quot;, 3)].into_iter().collect();
+    /// let a: Map&lt;&amp;'static str, usize&gt; = [("a", 1), ("b", 2)].into_iter().collect();
+    /// let b: Map&lt;&amp;'static str, usize&gt; = [("a", 1), ("c", 3)].into_iter().collect();
     /// let merged = a.merged_with(&amp;b, |_key, b| Some(*b), |_key, a, b| *a += *b);
     ///
-    /// assert_eq!(merged.get(&amp;&quot;a&quot;), Some(&amp;2));
-    /// assert_eq!(merged.get(&amp;&quot;b&quot;), Some(&amp;2));
-    /// assert_eq!(merged.get(&amp;&quot;c&quot;), Some(&amp;3));
+    /// assert_eq!(merged.get(&amp;"a"), Some(&amp;2));
+    /// assert_eq!(merged.get(&amp;"b"), Some(&amp;2));
+    /// assert_eq!(merged.get(&amp;"c"), Some(&amp;3));
     /// ```
     </span><span class="attr">#[inline]
     #[must_use]
@@ -2205,12 +2243,12 @@
     /// ```rust
     /// use kempt::Map;
     ///
-    /// let mut a: Map&lt;&amp;&#39;static str, usize&gt; = [(&quot;a&quot;, 1), (&quot;b&quot;, 2)].into_iter().collect();
-    /// let b: Map&lt;&amp;&#39;static str, usize&gt; = [(&quot;a&quot;, 1), (&quot;c&quot;, 3)].into_iter().collect();
+    /// let mut a: Map&lt;&amp;'static str, usize&gt; = [("a", 1), ("b", 2)].into_iter().collect();
+    /// let b: Map&lt;&amp;'static str, usize&gt; = [("a", 1), ("c", 3)].into_iter().collect();
     /// a.merge_with(&amp;b, |_key, b| Some(*b), |_key, a, b| *a += *b);
-    /// assert_eq!(a.get(&amp;&quot;a&quot;), Some(&amp;2));
-    /// assert_eq!(a.get(&amp;&quot;b&quot;), Some(&amp;2));
-    /// assert_eq!(a.get(&amp;&quot;c&quot;), Some(&amp;3));
+    /// assert_eq!(a.get(&amp;"a"), Some(&amp;2));
+    /// assert_eq!(a.get(&amp;"b"), Some(&amp;2));
+    /// assert_eq!(a.get(&amp;"c"), Some(&amp;3));
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>merge_with(
@@ -2229,7 +2267,7 @@
             <span class="kw">let </span>other_field = <span class="kw-2">&amp;</span>other.fields[other_index];
             <span class="kw">match </span>Key::compare(<span class="kw-2">&amp;</span>self_field.key, <span class="kw-2">&amp;</span>other_field.key) {
                 Ordering::Less =&gt; {
-                    <span class="comment">// Self has a key that other didn&#39;t.
+                    <span class="comment">// Self has a key that other didn't.
                     </span>self_index += <span class="number">1</span>;
                 }
                 Ordering::Equal =&gt; {
@@ -2239,7 +2277,7 @@
                     merge(<span class="kw-2">&amp;</span>self_field.key, <span class="kw-2">&amp;mut </span>self_field.value, <span class="kw-2">&amp;</span>other_field.value);
                 }
                 Ordering::Greater =&gt; {
-                    <span class="comment">// Other has a value that self doesn&#39;t.
+                    <span class="comment">// Other has a value that self doesn't.
                     </span>other_index += <span class="number">1</span>;
                     <span class="kw">let </span><span class="prelude-val">Some</span>(value) = filter(<span class="kw-2">&amp;</span>other_field.key, <span class="kw-2">&amp;</span>other_field.value) <span class="kw">else </span>{
                         <span class="kw">continue</span>;
@@ -2253,7 +2291,7 @@
         }
 
         <span class="kw">if </span>other_index &lt; other.fields.len() {
-            <span class="comment">// Other has more entries that we don&#39;t have
+            <span class="comment">// Other has more entries that we don't have
             </span><span class="kw">for </span>field <span class="kw">in </span><span class="kw-2">&amp;</span>other.fields[other_index..] {
                 <span class="kw">let </span><span class="prelude-val">Some</span>(value) = filter(<span class="kw-2">&amp;</span>field.key, <span class="kw-2">&amp;</span>field.value) <span class="kw">else </span>{
                     <span class="kw">continue</span>;
@@ -2267,7 +2305,7 @@
     <span class="doccomment">/// Returns an iterator that returns all of the elements in this collection.
     /// After the iterator is dropped, this object will be empty.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Drain&lt;<span class="lifetime">&#39;_</span>, Key, Value&gt; {
+    </span><span class="kw">pub fn </span>drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Drain&lt;<span class="lifetime">'_</span>, Key, Value&gt; {
         Drain(<span class="self">self</span>.fields.drain(..))
     }
 
@@ -2282,7 +2320,7 @@
     <span class="doccomment">/// Resizes this collection to fit its contents exactly.
     ///
     /// This function will reallocate its internal storage to fit the contents
-    /// of this collection&#39;s current size. If the allocation is already the
+    /// of this collection's current size. If the allocation is already the
     /// correct size, this is a no-op.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>shrink_to_fit(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
@@ -2292,7 +2330,7 @@
     <span class="doccomment">/// Resizes this collection to be able to hold `min_capacity`.
     ///
     /// This function will reallocate its internal storage to fit the contents
-    /// of this collection&#39;s current size. If the allocation is already the
+    /// of this collection's current size. If the allocation is already the
     /// correct size, this is a no-op.
     ///
     /// If the length of this collection is larger than `min_capacity`, this
@@ -2313,7 +2351,7 @@
     /// `Key` type.
     </span><span class="attr">#[must_use]
     #[inline]
-    </span><span class="kw">pub fn </span>union&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">Self</span>) -&gt; Union&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+    </span><span class="kw">pub fn </span>union&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">Self</span>) -&gt; Union&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
         Union {
             left: <span class="self">self</span>.iter().peekable(),
             right: other.iter().peekable(),
@@ -2331,7 +2369,7 @@
     /// `Key` type.
     </span><span class="attr">#[must_use]
     #[inline]
-    </span><span class="kw">pub fn </span>intersection&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">Self</span>) -&gt; Intersection&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+    </span><span class="kw">pub fn </span>intersection&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">Self</span>) -&gt; Intersection&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
         Intersection {
             left: <span class="self">self</span>.iter().peekable(),
             right: other.iter().peekable(),
@@ -2349,11 +2387,35 @@
     /// `Key` type.
     </span><span class="attr">#[must_use]
     #[inline]
-    </span><span class="kw">pub fn </span>difference&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">Self</span>) -&gt; Difference&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+    </span><span class="kw">pub fn </span>difference&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">Self</span>) -&gt; Difference&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
         Difference {
             left: <span class="self">self</span>.iter().peekable(),
             right: other.iter().peekable(),
         }
+    }
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, SearchFor, Key, V&gt; core::ops::Index&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>SearchFor&gt; <span class="kw">for </span>Map&lt;Key, V&gt;
+<span class="kw">where
+    </span>Key: Sort&lt;Key&gt;,
+    Key: Sort&lt;SearchFor&gt;,
+    SearchFor: <span class="question-mark">?</span>Sized,
+{
+    <span class="kw">type </span>Output = V;
+
+    <span class="kw">fn </span>index(<span class="kw-2">&amp;</span><span class="self">self</span>, index: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>SearchFor) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Output {
+        <span class="self">self</span>.get(index).expect(<span class="string">"key not found"</span>)
+    }
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, SearchFor, Key, V&gt; core::ops::IndexMut&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>SearchFor&gt; <span class="kw">for </span>Map&lt;Key, V&gt;
+<span class="kw">where
+    </span>Key: Sort&lt;Key&gt;,
+    Key: Sort&lt;SearchFor&gt;,
+    SearchFor: <span class="question-mark">?</span>Sized,
+{
+    <span class="kw">fn </span>index_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>SearchFor) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Output {
+        <span class="self">self</span>.get_mut(index).expect(<span class="string">"key not found"</span>)
     }
 }
 
@@ -2363,34 +2425,34 @@
 /// flexible with `From` implementations. The `Owned` and `Borrowed` types are
 /// kept separate, allowing for more general `From` implementations.
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub enum </span>SearchKey&lt;<span class="lifetime">&#39;key</span>, Owned, Borrowed&gt;
+</span><span class="kw">pub enum </span>SearchKey&lt;<span class="lifetime">'key</span>, Owned, Borrowed&gt;
 <span class="kw">where
     </span>Borrowed: <span class="question-mark">?</span>Sized,
 {
     <span class="doccomment">/// A borrowed key.
-    </span>Borrowed(<span class="kw-2">&amp;</span><span class="lifetime">&#39;key </span>Borrowed),
+    </span>Borrowed(<span class="kw-2">&amp;</span><span class="lifetime">'key </span>Borrowed),
     <span class="doccomment">/// An owned key.
     </span>Owned(Owned),
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;key</span>, K&gt; From&lt;K&gt; <span class="kw">for </span>SearchKey&lt;<span class="lifetime">&#39;key</span>, K, K&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'key</span>, K&gt; From&lt;K&gt; <span class="kw">for </span>SearchKey&lt;<span class="lifetime">'key</span>, K, K&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>from(value: K) -&gt; <span class="self">Self </span>{
         SearchKey::Owned(value)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;key</span>, Key, Borrowed&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;key </span>Borrowed&gt; <span class="kw">for </span>SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, Borrowed&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'key</span>, Key, Borrowed&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">'key </span>Borrowed&gt; <span class="kw">for </span>SearchKey&lt;<span class="lifetime">'key</span>, Key, Borrowed&gt;
 <span class="kw">where
     </span>Borrowed: <span class="question-mark">?</span>Sized,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;key </span>Borrowed) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span><span class="lifetime">'key </span>Borrowed) -&gt; <span class="self">Self </span>{
         SearchKey::Borrowed(value)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;key</span>, Key, Borrowed&gt; SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, Borrowed&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'key</span>, Key, Borrowed&gt; SearchKey&lt;<span class="lifetime">'key</span>, Key, Borrowed&gt;
 <span class="kw">where
     </span>Key: Borrow&lt;Borrowed&gt;,
     Borrowed: ToOwned&lt;Owned = Key&gt; + <span class="question-mark">?</span>Sized,
@@ -2418,7 +2480,7 @@
     Value: Debug,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">let </span><span class="kw-2">mut </span>s = f.debug_map();
         <span class="kw">for </span>Field { key, value } <span class="kw">in </span><span class="self">self </span>{
             s.entry(key, value);
@@ -2427,16 +2489,29 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Map&lt;Key, Value&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>Map&lt;Key, Value&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
 {
-    <span class="kw">type </span>IntoIter = Iter&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;;
-    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Field&lt;Key, Value&gt;;
+    <span class="kw">type </span>IntoIter = Iter&lt;<span class="lifetime">'a</span>, Key, Value&gt;;
+    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Field&lt;Key, Value&gt;;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>into_iter(<span class="self">self</span>) -&gt; <span class="self">Self</span>::IntoIter {
         Iter(<span class="self">self</span>.fields.iter())
+    }
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;
+<span class="kw">where
+    </span>Key: Sort&lt;Key&gt;,
+{
+    <span class="kw">type </span>IntoIter = IterMut&lt;<span class="lifetime">'a</span>, Key, Value&gt;;
+    <span class="kw">type </span>Item = (<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Key, <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Value);
+
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>into_iter(<span class="self">self</span>) -&gt; <span class="self">Self</span>::IntoIter {
+        IterMut(<span class="self">self</span>.fields.iter_mut())
     }
 }
 
@@ -2506,18 +2581,18 @@
 
 <span class="doccomment">/// The result of looking up an entry by its key.
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub enum </span>Entry&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;key</span>, Key, Value, BorrowedKey&gt;
+</span><span class="kw">pub enum </span>Entry&lt;<span class="lifetime">'a</span>, <span class="lifetime">'key</span>, Key, Value, BorrowedKey&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
     BorrowedKey: <span class="question-mark">?</span>Sized,
 {
     <span class="doccomment">/// A field was found for the given key.
-    </span>Occupied(OccupiedEntry&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;),
+    </span>Occupied(OccupiedEntry&lt;<span class="lifetime">'a</span>, Key, Value&gt;),
     <span class="doccomment">/// A field was not found for the given key.
-    </span>Vacant(VacantEntry&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;key</span>, Key, Value, BorrowedKey&gt;),
+    </span>Vacant(VacantEntry&lt;<span class="lifetime">'a</span>, <span class="lifetime">'key</span>, Key, Value, BorrowedKey&gt;),
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;key</span>, Key, Value, BorrowedKey&gt; Entry&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;key</span>, Key, Value, BorrowedKey&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'key</span>, Key, Value, BorrowedKey&gt; Entry&lt;<span class="lifetime">'a</span>, <span class="lifetime">'key</span>, Key, Value, BorrowedKey&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
     BorrowedKey: <span class="question-mark">?</span>Sized,
@@ -2534,10 +2609,10 @@
     </span>}
 
     <span class="doccomment">/// If an entry was not found for the given key, `contents` is invoked to
-    /// populate the entry. A mutable reference to the entry&#39;s value is
+    /// populate the entry. A mutable reference to the entry's value is
     /// returned.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>or_insert_with(<span class="self">self</span>, contents: <span class="kw">impl </span>FnOnce() -&gt; Value) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Value
+    </span><span class="kw">pub fn </span>or_insert_with(<span class="self">self</span>, contents: <span class="kw">impl </span>FnOnce() -&gt; Value) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Value
     <span class="kw">where
         </span>Key: Borrow&lt;BorrowedKey&gt;,
         BorrowedKey: ToOwned&lt;Owned = Key&gt;,
@@ -2549,9 +2624,9 @@
     }
 
     <span class="doccomment">/// If an entry was not found for the given key, `value` is inserted into
-    /// the entry.  A mutable reference to the entry&#39;s value is returned.
+    /// the entry.  A mutable reference to the entry's value is returned.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>or_insert(<span class="self">self</span>, value: Value) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Value
+    </span><span class="kw">pub fn </span>or_insert(<span class="self">self</span>, value: Value) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Value
     <span class="kw">where
         </span>Key: Borrow&lt;BorrowedKey&gt;,
         BorrowedKey: ToOwned&lt;Owned = Key&gt;,
@@ -2563,11 +2638,11 @@
     }
 
     <span class="doccomment">/// If this entry is vacant, it is populated with `Value::default()`. A
-    /// mutable reference to the entry&#39;s value is returned.
+    /// mutable reference to the entry's value is returned.
     ///
     /// This function does not change the entry if it is present.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>or_default(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Value
+    </span><span class="kw">pub fn </span>or_default(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Value
     <span class="kw">where
         </span>Key: Borrow&lt;BorrowedKey&gt;,
         BorrowedKey: ToOwned&lt;Owned = Key&gt;,
@@ -2580,20 +2655,20 @@
 
 <span class="doccomment">/// An entry that exists in an [`Map`].
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>OccupiedEntry&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;
+</span><span class="kw">pub struct </span>OccupiedEntry&lt;<span class="lifetime">'a</span>, Key, Value&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
 {
-    object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;,
+    object: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;,
     index: usize,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; OccupiedEntry&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; OccupiedEntry&lt;<span class="lifetime">'a</span>, Key, Value&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>new(object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;, index: usize) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>new(object: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;, index: usize) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ object, index }
     }
 
@@ -2614,7 +2689,7 @@
     /// the original lifetime of the map.
     </span><span class="attr">#[must_use]
     #[inline]
-    </span><span class="kw">pub fn </span>into_mut(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Value {
+    </span><span class="kw">pub fn </span>into_mut(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Value {
         <span class="kw-2">&amp;mut </span><span class="self">self</span>.object.fields[<span class="self">self</span>.index].value
     }
 
@@ -2640,7 +2715,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; Deref <span class="kw">for </span>OccupiedEntry&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; Deref <span class="kw">for </span>OccupiedEntry&lt;<span class="lifetime">'a</span>, Key, Value&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
 {
@@ -2652,7 +2727,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; DerefMut <span class="kw">for </span>OccupiedEntry&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; DerefMut <span class="kw">for </span>OccupiedEntry&lt;<span class="lifetime">'a</span>, Key, Value&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
 {
@@ -2664,25 +2739,25 @@
 
 <span class="doccomment">/// A vacant entry in an [`Map`].
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>VacantEntry&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;key</span>, Key, Value, BorrowedKey&gt;
+</span><span class="kw">pub struct </span>VacantEntry&lt;<span class="lifetime">'a</span>, <span class="lifetime">'key</span>, Key, Value, BorrowedKey&gt;
 <span class="kw">where
     </span>Key: Sort&lt;Key&gt;,
     BorrowedKey: <span class="question-mark">?</span>Sized,
 {
-    object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;,
-    key: SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, BorrowedKey&gt;,
+    object: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;,
+    key: SearchKey&lt;<span class="lifetime">'key</span>, Key, BorrowedKey&gt;,
     insert_at: usize,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;key</span>, Key, Value, BorrowedKey&gt; VacantEntry&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;key</span>, Key, Value, BorrowedKey&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'key</span>, Key, Value, BorrowedKey&gt; VacantEntry&lt;<span class="lifetime">'a</span>, <span class="lifetime">'key</span>, Key, Value, BorrowedKey&gt;
 <span class="kw">where
     </span>Key: Borrow&lt;BorrowedKey&gt; + Sort&lt;Key&gt;,
     BorrowedKey: ToOwned&lt;Owned = Key&gt; + <span class="question-mark">?</span>Sized,
 {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>new(
-        object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;,
-        key: SearchKey&lt;<span class="lifetime">&#39;key</span>, Key, BorrowedKey&gt;,
+        object: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Map&lt;Key, Value&gt;,
+        key: SearchKey&lt;<span class="lifetime">'key</span>, Key, BorrowedKey&gt;,
         insert_at: usize,
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
@@ -2705,7 +2780,7 @@
     /// This function panics if `key` does not match the original order of the
     /// key that was passed to [`Map::entry()`].
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>insert(<span class="self">self</span>, value: Value) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Value
+    </span><span class="kw">pub fn </span>insert(<span class="self">self</span>, value: Value) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Value
     <span class="kw">where
         </span>Key: Borrow&lt;BorrowedKey&gt;,
         BorrowedKey: ToOwned&lt;Owned = Key&gt;,
@@ -2718,10 +2793,10 @@
 }
 
 <span class="doccomment">/// An iterator over the [`Field`]s in an [`Map`].
-</span><span class="kw">pub struct </span>Iter&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;(slice::Iter&lt;<span class="lifetime">&#39;a</span>, Field&lt;Key, Value&gt;&gt;);
+</span><span class="kw">pub struct </span>Iter&lt;<span class="lifetime">'a</span>, Key, Value&gt;(slice::Iter&lt;<span class="lifetime">'a</span>, Field&lt;Key, Value&gt;&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; Iterator <span class="kw">for </span>Iter&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
-    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Field&lt;Key, Value&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; Iterator <span class="kw">for </span>Iter&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
+    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Field&lt;Key, Value&gt;;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -2755,14 +2830,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; ExactSizeIterator <span class="kw">for </span>Iter&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; ExactSizeIterator <span class="kw">for </span>Iter&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.<span class="number">0</span>.len()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; DoubleEndedIterator <span class="kw">for </span>Iter&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; DoubleEndedIterator <span class="kw">for </span>Iter&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.<span class="number">0</span>.next_back()
@@ -2774,13 +2849,13 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>Iter&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {}
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>Iter&lt;<span class="lifetime">'a</span>, Key, Value&gt; {}
 
 <span class="doccomment">/// An iterator over mutable [`Field`]s contained in an [`Map`].
-</span><span class="kw">pub struct </span>IterMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;(slice::IterMut&lt;<span class="lifetime">&#39;a</span>, Field&lt;Key, Value&gt;&gt;);
+</span><span class="kw">pub struct </span>IterMut&lt;<span class="lifetime">'a</span>, Key, Value&gt;(slice::IterMut&lt;<span class="lifetime">'a</span>, Field&lt;Key, Value&gt;&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; Iterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
-    <span class="kw">type </span>Item = (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Key, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Value);
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; Iterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
+    <span class="kw">type </span>Item = (<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Key, <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Value);
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -2815,14 +2890,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; ExactSizeIterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; ExactSizeIterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.<span class="number">0</span>.len()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; DoubleEndedIterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; DoubleEndedIterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.<span class="number">0
@@ -2838,7 +2913,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {}
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">'a</span>, Key, Value&gt; {}
 
 <span class="doccomment">/// An iterator that returns all of the elements of an [`Map`] while
 /// freeing its underlying memory.
@@ -2901,10 +2976,10 @@
 <span class="kw">impl</span>&lt;Key, Value&gt; FusedIterator <span class="kw">for </span>IntoIter&lt;Key, Value&gt; {}
 
 <span class="doccomment">/// An iterator over the keys in an [`Map`].
-</span><span class="kw">pub struct </span>Keys&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;(slice::Iter&lt;<span class="lifetime">&#39;a</span>, Field&lt;Key, Value&gt;&gt;);
+</span><span class="kw">pub struct </span>Keys&lt;<span class="lifetime">'a</span>, Key, Value&gt;(slice::Iter&lt;<span class="lifetime">'a</span>, Field&lt;Key, Value&gt;&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; Iterator <span class="kw">for </span>Keys&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
-    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Key;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; Iterator <span class="kw">for </span>Keys&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
+    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Key;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -2938,14 +3013,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; ExactSizeIterator <span class="kw">for </span>Keys&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; ExactSizeIterator <span class="kw">for </span>Keys&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.<span class="number">0</span>.len()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; DoubleEndedIterator <span class="kw">for </span>Keys&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; DoubleEndedIterator <span class="kw">for </span>Keys&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.<span class="number">0</span>.next_back().map(Field::key)
@@ -2957,7 +3032,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>Keys&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {}
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>Keys&lt;<span class="lifetime">'a</span>, Key, Value&gt; {}
 
 <span class="doccomment">/// An iterator converting a [`Map`] into a series of owned keys.
 </span><span class="kw">pub struct </span>IntoKeys&lt;Key, Value&gt;(vec::IntoIter&lt;Field&lt;Key, Value&gt;&gt;);
@@ -3019,10 +3094,10 @@
 <span class="kw">impl</span>&lt;Key, Value&gt; FusedIterator <span class="kw">for </span>IntoKeys&lt;Key, Value&gt; {}
 
 <span class="doccomment">/// An iterator over the values contained in an [`Map`].
-</span><span class="kw">pub struct </span>Values&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;(slice::Iter&lt;<span class="lifetime">&#39;a</span>, Field&lt;Key, Value&gt;&gt;);
+</span><span class="kw">pub struct </span>Values&lt;<span class="lifetime">'a</span>, Key, Value&gt;(slice::Iter&lt;<span class="lifetime">'a</span>, Field&lt;Key, Value&gt;&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; Iterator <span class="kw">for </span>Values&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
-    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Value;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; Iterator <span class="kw">for </span>Values&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
+    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Value;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -3057,14 +3132,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; ExactSizeIterator <span class="kw">for </span>Values&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; ExactSizeIterator <span class="kw">for </span>Values&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.<span class="number">0</span>.len()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; DoubleEndedIterator <span class="kw">for </span>Values&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; DoubleEndedIterator <span class="kw">for </span>Values&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.<span class="number">0</span>.next_back().map(|field| <span class="kw-2">&amp;</span>field.value)
@@ -3076,13 +3151,13 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>Values&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {}
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>Values&lt;<span class="lifetime">'a</span>, Key, Value&gt; {}
 
 <span class="doccomment">/// An iterator over mutable values contained in an [`Map`].
-</span><span class="kw">pub struct </span>ValuesMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;(slice::IterMut&lt;<span class="lifetime">&#39;a</span>, Field&lt;Key, Value&gt;&gt;);
+</span><span class="kw">pub struct </span>ValuesMut&lt;<span class="lifetime">'a</span>, Key, Value&gt;(slice::IterMut&lt;<span class="lifetime">'a</span>, Field&lt;Key, Value&gt;&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; Iterator <span class="kw">for </span>ValuesMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
-    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Value;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; Iterator <span class="kw">for </span>ValuesMut&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
+    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Value;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -3117,14 +3192,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; ExactSizeIterator <span class="kw">for </span>ValuesMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; ExactSizeIterator <span class="kw">for </span>ValuesMut&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.<span class="number">0</span>.len()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; DoubleEndedIterator <span class="kw">for </span>ValuesMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; DoubleEndedIterator <span class="kw">for </span>ValuesMut&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.<span class="number">0</span>.next_back().map(|field| <span class="kw-2">&amp;mut </span>field.value)
@@ -3136,7 +3211,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>ValuesMut&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {}
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>ValuesMut&lt;<span class="lifetime">'a</span>, Key, Value&gt; {}
 
 <span class="doccomment">/// An iterator returning all of the values contained in an [`Map`] as its
 /// underlying storage is freed.
@@ -3203,9 +3278,9 @@
 ///
 /// When this iterator is dropped, the underlying [`Map`] will be empty
 /// regardless of whether the iterator has been fully exhausted.
-</span><span class="kw">pub struct </span>Drain&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt;(vec::Drain&lt;<span class="lifetime">&#39;a</span>, Field&lt;Key, Value&gt;&gt;);
+</span><span class="kw">pub struct </span>Drain&lt;<span class="lifetime">'a</span>, Key, Value&gt;(vec::Drain&lt;<span class="lifetime">'a</span>, Field&lt;Key, Value&gt;&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; Iterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; Iterator <span class="kw">for </span>Drain&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="kw">type </span>Item = Field&lt;Key, Value&gt;;
 
     <span class="attr">#[inline]
@@ -3240,14 +3315,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; ExactSizeIterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; ExactSizeIterator <span class="kw">for </span>Drain&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.<span class="number">0</span>.len()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; DoubleEndedIterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; DoubleEndedIterator <span class="kw">for </span>Drain&lt;<span class="lifetime">'a</span>, Key, Value&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.<span class="number">0</span>.next_back()
@@ -3259,7 +3334,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;a</span>, Key, Value&gt; {}
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Key, Value&gt; FusedIterator <span class="kw">for </span>Drain&lt;<span class="lifetime">'a</span>, Key, Value&gt; {}
 
 <span class="doccomment">/// An iterator that yields [`Unioned`] entries for two [`Map`]s.
 ///
@@ -3269,36 +3344,36 @@
 ///
 /// This iterator is guaranteed to return results in the sort order of the `Key`
 /// type.
-</span><span class="kw">pub struct </span>Union&lt;<span class="lifetime">&#39;a</span>, K, V&gt;
+</span><span class="kw">pub struct </span>Union&lt;<span class="lifetime">'a</span>, K, V&gt;
 <span class="kw">where
     </span>K: Sort,
 {
-    left: Peekable&lt;Iter&lt;<span class="lifetime">&#39;a</span>, K, V&gt;&gt;,
-    right: Peekable&lt;Iter&lt;<span class="lifetime">&#39;a</span>, K, V&gt;&gt;,
+    left: Peekable&lt;Iter&lt;<span class="lifetime">'a</span>, K, V&gt;&gt;,
+    right: Peekable&lt;Iter&lt;<span class="lifetime">'a</span>, K, V&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V&gt; Iterator <span class="kw">for </span>Union&lt;<span class="lifetime">&#39;a</span>, K, V&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, K, V&gt; Iterator <span class="kw">for </span>Union&lt;<span class="lifetime">'a</span>, K, V&gt;
 <span class="kw">where
     </span>K: Sort,
 {
-    <span class="kw">type </span>Item = Unioned&lt;<span class="lifetime">&#39;a</span>, K, V&gt;;
+    <span class="kw">type </span>Item = Unioned&lt;<span class="lifetime">'a</span>, K, V&gt;;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(left) = <span class="self">self</span>.left.peek() {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(right) = <span class="self">self</span>.right.peek() {
                 <span class="kw">match </span>left.key().compare(right.key()) {
-                    Ordering::Less =&gt; <span class="prelude-val">Some</span>(Unioned::left(<span class="self">self</span>.left.next().expect(<span class="string">&quot;just peeked&quot;</span>))),
+                    Ordering::Less =&gt; <span class="prelude-val">Some</span>(Unioned::left(<span class="self">self</span>.left.next().expect(<span class="string">"just peeked"</span>))),
                     Ordering::Equal =&gt; <span class="prelude-val">Some</span>(Unioned::both(
-                        <span class="self">self</span>.left.next().expect(<span class="string">&quot;just peeked&quot;</span>),
-                        <span class="self">self</span>.right.next().expect(<span class="string">&quot;just peeked&quot;</span>),
+                        <span class="self">self</span>.left.next().expect(<span class="string">"just peeked"</span>),
+                        <span class="self">self</span>.right.next().expect(<span class="string">"just peeked"</span>),
                     )),
                     Ordering::Greater =&gt; {
-                        <span class="prelude-val">Some</span>(Unioned::right(<span class="self">self</span>.right.next().expect(<span class="string">&quot;just peeked&quot;</span>)))
+                        <span class="prelude-val">Some</span>(Unioned::right(<span class="self">self</span>.right.next().expect(<span class="string">"just peeked"</span>)))
                     }
                 }
             } <span class="kw">else </span>{
-                <span class="prelude-val">Some</span>(Unioned::left(<span class="self">self</span>.left.next().expect(<span class="string">&quot;just peeked&quot;</span>)))
+                <span class="prelude-val">Some</span>(Unioned::left(<span class="self">self</span>.left.next().expect(<span class="string">"just peeked"</span>)))
             }
         } <span class="kw">else </span>{
             <span class="self">self</span>.right.next().map(Unioned::right)
@@ -3313,33 +3388,33 @@
 
 <span class="doccomment">/// A unioned entry from a [`Union`] iterator. An entry can be from the left,
 /// right, or both maps.
-</span><span class="kw">pub enum </span>Unioned&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
+</span><span class="kw">pub enum </span>Unioned&lt;<span class="lifetime">'a</span>, K, V&gt; {
     <span class="doccomment">/// The `self`/left map contained this key/value pair.
     </span>Left {
         <span class="doccomment">/// The key of the entry.
-        </span>key: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K,
+        </span>key: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>K,
         <span class="doccomment">/// The value of the entry.
-        </span>value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V,
+        </span>value: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>V,
     },
     <span class="doccomment">/// The `other`/right map contained this key/value pair.
     </span>Right {
         <span class="doccomment">/// The key of the entry.
-        </span>key: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K,
+        </span>key: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>K,
         <span class="doccomment">/// The value of the entry.
-        </span>value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V,
+        </span>value: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>V,
     },
     <span class="doccomment">/// Both maps contained this `key`.
     </span>Both {
         <span class="doccomment">/// The key of the entry.
-        </span>key: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K,
+        </span>key: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>K,
         <span class="doccomment">/// The value of the `self`/left entry.
-        </span>left: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V,
+        </span>left: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>V,
         <span class="doccomment">/// The value of the `other`/right entry.
-        </span>right: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V,
+        </span>right: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>V,
     },
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V&gt; Unioned&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, K, V&gt; Unioned&lt;<span class="lifetime">'a</span>, K, V&gt; {
     <span class="doccomment">/// If `self` is [`Unioned::Both`] `merge` will be called to produce a
     /// single value. If `self` is either [`Unioned::Left`] or
     /// [`Unioned::Right`], the key/value will be returned without calling
@@ -3359,20 +3434,20 @@
     /// }
     ///
     /// let mut a = Map::new();
-    /// a.insert(String::from(&quot;a&quot;), 1);
-    /// a.insert(String::from(&quot;b&quot;), 1);
-    /// a.insert(String::from(&quot;c&quot;), 1);
+    /// a.insert(String::from("a"), 1);
+    /// a.insert(String::from("b"), 1);
+    /// a.insert(String::from("c"), 1);
     /// let mut b = Map::new();
-    /// b.insert(String::from(&quot;b&quot;), 1);
+    /// b.insert(String::from("b"), 1);
     ///
     /// let merged = merge(&amp;a, &amp;b);
-    /// assert_eq!(merged.get(&quot;a&quot;), Some(&amp;1));
-    /// assert_eq!(merged.get(&quot;b&quot;), Some(&amp;2));
+    /// assert_eq!(merged.get("a"), Some(&amp;1));
+    /// assert_eq!(merged.get("b"), Some(&amp;2));
     /// ```
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>map_both&lt;R&gt;(<span class="self">self</span>, merge: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V) -&gt; R) -&gt; EntryRef&lt;<span class="lifetime">&#39;a</span>, K, V&gt;
+    </span><span class="kw">pub fn </span>map_both&lt;R&gt;(<span class="self">self</span>, merge: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>V, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>V) -&gt; R) -&gt; EntryRef&lt;<span class="lifetime">'a</span>, K, V&gt;
     <span class="kw">where
-        </span>R: Into&lt;OwnedOrRef&lt;<span class="lifetime">&#39;a</span>, V&gt;&gt;,
+        </span>R: Into&lt;OwnedOrRef&lt;<span class="lifetime">'a</span>, V&gt;&gt;,
     {
         <span class="kw">match </span><span class="self">self </span>{
             Unioned::Left { key, value } | Unioned::Right { key, value } =&gt; EntryRef {
@@ -3387,8 +3462,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V&gt; Unioned&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
-    <span class="kw">fn </span>both(left: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Field&lt;K, V&gt;, right: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Field&lt;K, V&gt;) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, K, V&gt; Unioned&lt;<span class="lifetime">'a</span>, K, V&gt; {
+    <span class="kw">fn </span>both(left: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Field&lt;K, V&gt;, right: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Field&lt;K, V&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::Both {
             key: left.key(),
             left: <span class="kw-2">&amp;</span>left.value,
@@ -3396,14 +3471,14 @@
         }
     }
 
-    <span class="kw">fn </span>left(field: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Field&lt;K, V&gt;) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>left(field: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Field&lt;K, V&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::Left {
             key: field.key(),
             value: <span class="kw-2">&amp;</span>field.value,
         }
     }
 
-    <span class="kw">fn </span>right(field: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Field&lt;K, V&gt;) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>right(field: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Field&lt;K, V&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::Right {
             key: field.key(),
             value: <span class="kw-2">&amp;</span>field.value,
@@ -3412,14 +3487,14 @@
 }
 
 <span class="doccomment">/// A reference to a key from a [`Map`] and an associated value.
-</span><span class="kw">pub struct </span>EntryRef&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
+</span><span class="kw">pub struct </span>EntryRef&lt;<span class="lifetime">'a</span>, K, V&gt; {
     <span class="doccomment">/// The key of the entry.
-    </span><span class="kw">pub </span>key: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K,
+    </span><span class="kw">pub </span>key: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>K,
     <span class="doccomment">/// The associated value of this key.
-    </span><span class="kw">pub </span>value: OwnedOrRef&lt;<span class="lifetime">&#39;a</span>, V&gt;,
+    </span><span class="kw">pub </span>value: OwnedOrRef&lt;<span class="lifetime">'a</span>, V&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V&gt; EntryRef&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, K, V&gt; EntryRef&lt;<span class="lifetime">'a</span>, K, V&gt; {
     <span class="doccomment">/// Returns the owned versions of the contained key and value, cloning as
     /// needed.
     </span><span class="attr">#[inline]
@@ -3436,14 +3511,14 @@
 ///
 /// This type is similar to [`alloc::borrow::Cow`] except that it does not
 /// require that the contained type implement `ToOwned`.
-</span><span class="kw">pub enum </span>OwnedOrRef&lt;<span class="lifetime">&#39;a</span>, K&gt; {
+</span><span class="kw">pub enum </span>OwnedOrRef&lt;<span class="lifetime">'a</span>, K&gt; {
     <span class="doccomment">/// An owned value.
     </span>Owned(K),
     <span class="doccomment">/// A reference to a value.
-    </span>Ref(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K),
+    </span>Ref(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>K),
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K&gt; OwnedOrRef&lt;<span class="lifetime">&#39;a</span>, K&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, K&gt; OwnedOrRef&lt;<span class="lifetime">'a</span>, K&gt; {
     <span class="doccomment">/// Converts the contained value into an owned representation, cloning only
     /// if needed.
     </span><span class="attr">#[inline]
@@ -3458,16 +3533,16 @@
     }
 }
 
-<span class="kw">impl</span>&lt;K&gt; From&lt;K&gt; <span class="kw">for </span>OwnedOrRef&lt;<span class="lifetime">&#39;_</span>, K&gt; {
+<span class="kw">impl</span>&lt;K&gt; From&lt;K&gt; <span class="kw">for </span>OwnedOrRef&lt;<span class="lifetime">'_</span>, K&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>from(value: K) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::Owned(value)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K&gt; <span class="kw">for </span>OwnedOrRef&lt;<span class="lifetime">&#39;a</span>, K&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, K&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>K&gt; <span class="kw">for </span>OwnedOrRef&lt;<span class="lifetime">'a</span>, K&gt; {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>K) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::Ref(value)
     }
 }
@@ -3479,19 +3554,19 @@
 ///
 /// This iterator is guaranteed to return results in the sort order of the `Key`
 /// type.
-</span><span class="kw">pub struct </span>Intersection&lt;<span class="lifetime">&#39;a</span>, K, V&gt;
+</span><span class="kw">pub struct </span>Intersection&lt;<span class="lifetime">'a</span>, K, V&gt;
 <span class="kw">where
     </span>K: Sort,
 {
-    left: Peekable&lt;Iter&lt;<span class="lifetime">&#39;a</span>, K, V&gt;&gt;,
-    right: Peekable&lt;Iter&lt;<span class="lifetime">&#39;a</span>, K, V&gt;&gt;,
+    left: Peekable&lt;Iter&lt;<span class="lifetime">'a</span>, K, V&gt;&gt;,
+    right: Peekable&lt;Iter&lt;<span class="lifetime">'a</span>, K, V&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V&gt; Iterator <span class="kw">for </span>Intersection&lt;<span class="lifetime">&#39;a</span>, K, V&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, K, V&gt; Iterator <span class="kw">for </span>Intersection&lt;<span class="lifetime">'a</span>, K, V&gt;
 <span class="kw">where
     </span>K: Sort,
 {
-    <span class="kw">type </span>Item = (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V);
+    <span class="kw">type </span>Item = (<span class="kw-2">&amp;</span><span class="lifetime">'a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>V, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>V);
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -3503,8 +3578,8 @@
                     <span class="kw">let </span>_skipped = <span class="self">self</span>.left.next();
                 }
                 Ordering::Equal =&gt; {
-                    <span class="kw">let </span>left = <span class="self">self</span>.left.next().expect(<span class="string">&quot;just peeked&quot;</span>);
-                    <span class="kw">let </span>right = <span class="self">self</span>.right.next().expect(<span class="string">&quot;just peeked&quot;</span>);
+                    <span class="kw">let </span>left = <span class="self">self</span>.left.next().expect(<span class="string">"just peeked"</span>);
+                    <span class="kw">let </span>right = <span class="self">self</span>.right.next().expect(<span class="string">"just peeked"</span>);
                     <span class="kw">return </span><span class="prelude-val">Some</span>((left.key(), <span class="kw-2">&amp;</span>left.value, <span class="kw-2">&amp;</span>right.value));
                 }
                 Ordering::Greater =&gt; {
@@ -3528,19 +3603,19 @@
 ///
 /// This iterator is guaranteed to return results in the sort order of the `Key`
 /// type.
-</span><span class="kw">pub struct </span>Difference&lt;<span class="lifetime">&#39;a</span>, K, V&gt;
+</span><span class="kw">pub struct </span>Difference&lt;<span class="lifetime">'a</span>, K, V&gt;
 <span class="kw">where
     </span>K: Sort,
 {
-    left: Peekable&lt;Iter&lt;<span class="lifetime">&#39;a</span>, K, V&gt;&gt;,
-    right: Peekable&lt;Iter&lt;<span class="lifetime">&#39;a</span>, K, V&gt;&gt;,
+    left: Peekable&lt;Iter&lt;<span class="lifetime">'a</span>, K, V&gt;&gt;,
+    right: Peekable&lt;Iter&lt;<span class="lifetime">'a</span>, K, V&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V&gt; Iterator <span class="kw">for </span>Difference&lt;<span class="lifetime">&#39;a</span>, K, V&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, K, V&gt; Iterator <span class="kw">for </span>Difference&lt;<span class="lifetime">'a</span>, K, V&gt;
 <span class="kw">where
     </span>K: Sort,
 {
-    <span class="kw">type </span>Item = (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V);
+    <span class="kw">type </span>Item = (<span class="kw-2">&amp;</span><span class="lifetime">'a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>V);
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -3549,7 +3624,7 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(right) = <span class="self">self</span>.right.peek() {
                 <span class="kw">match </span>left.key().compare(right.key()) {
                     Ordering::Less =&gt; {
-                        <span class="kw">let </span>left = <span class="self">self</span>.left.next().expect(<span class="string">&quot;just peeked&quot;</span>);
+                        <span class="kw">let </span>left = <span class="self">self</span>.left.next().expect(<span class="string">"just peeked"</span>);
                         <span class="kw">return </span><span class="prelude-val">Some</span>((left.key(), <span class="kw-2">&amp;</span>left.value));
                     }
                     Ordering::Equal =&gt; {
@@ -3561,7 +3636,7 @@
                     }
                 }
             } <span class="kw">else </span>{
-                <span class="kw">let </span>left = <span class="self">self</span>.left.next().expect(<span class="string">&quot;just peeked&quot;</span>);
+                <span class="kw">let </span>left = <span class="self">self</span>.left.next().expect(<span class="string">"just peeked"</span>);
                 <span class="kw">return </span><span class="prelude-val">Some</span>((left.key(), <span class="kw-2">&amp;</span>left.value));
             }
         }
