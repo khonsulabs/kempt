@@ -27,7 +27,7 @@ Configuration(
             ),
             "ref-name": (
                 default: "main",
-                release: "v0.2.3",
+                release: "v0.2.4",
             ),
             "map": (
                 default: "https://khonsulabs.github.io/kempt/main/kempt/struct.Map.html",
