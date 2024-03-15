@@ -48,6 +48,7 @@ fn basics() {
     assert_eq!(iter.next().unwrap(), 3);
 
     // Increment via iter_mut
+    #[allow(clippy::explicit_iter_loop)] // for coverage
     for (_, value) in map.iter_mut() {
         *value += 1;
     }
@@ -133,7 +134,7 @@ fn entry() {
         unreachable!()
     };
     assert_eq!(entry.replace(2), 1);
-    assert_eq!(map.get("b"), Some(&2));
+    assert_eq!(map["b"], 2);
 
     assert_eq!(*map.entry("c").or_default(), 0);
 

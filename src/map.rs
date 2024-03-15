@@ -331,7 +331,7 @@ where
     #[must_use]
     #[inline]
     pub fn iter_mut(&mut self) -> IterMut<'_, Key, Value> {
-        IterMut(self.fields.iter_mut())
+        self.into_iter()
     }
 
     /// Returns an iterator over the keys in this object.
@@ -570,6 +570,30 @@ where
     }
 }
 
+impl<'a, SearchFor, Key, V> core::ops::Index<&'a SearchFor> for Map<Key, V>
+where
+    Key: Sort<Key>,
+    Key: Sort<SearchFor>,
+    SearchFor: ?Sized,
+{
+    type Output = V;
+
+    fn index(&self, index: &'a SearchFor) -> &Self::Output {
+        self.get(index).expect("key not found")
+    }
+}
+
+impl<'a, SearchFor, Key, V> core::ops::IndexMut<&'a SearchFor> for Map<Key, V>
+where
+    Key: Sort<Key>,
+    Key: Sort<SearchFor>,
+    SearchFor: ?Sized,
+{
+    fn index_mut(&mut self, index: &'a SearchFor) -> &mut Self::Output {
+        self.get_mut(index).expect("key not found")
+    }
+}
+
 /// A key provided to the [`Map::entry`] function.
 ///
 /// This is a [`Cow`](alloc::borrow::Cow)-like type that is slightly more
@@ -650,6 +674,19 @@ where
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
         Iter(self.fields.iter())
+    }
+}
+
+impl<'a, Key, Value> IntoIterator for &'a mut Map<Key, Value>
+where
+    Key: Sort<Key>,
+{
+    type IntoIter = IterMut<'a, Key, Value>;
+    type Item = (&'a Key, &'a mut Value);
+
+    #[inline]
+    fn into_iter(self) -> Self::IntoIter {
+        IterMut(self.fields.iter_mut())
     }
 }
 

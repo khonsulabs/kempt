@@ -293,7 +293,7 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         self.0
             .next()
-            .map(|unioned| unioned.map_both(|_, _, _| OwnedOrRef::Owned(())).key)
+            .map(|unioned| unioned.map_both(|_, (), ()| OwnedOrRef::Owned(())).key)
     }
 
     #[inline]
@@ -319,7 +319,7 @@ where
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        self.0.next().map(|(k, _, _)| k)
+        self.0.next().map(|(k, (), ())| k)
     }
 
     #[inline]
@@ -345,7 +345,7 @@ where
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        self.0.next().map(|(k, _)| k)
+        self.0.next().map(|(k, ())| k)
     }
 
     #[inline]
