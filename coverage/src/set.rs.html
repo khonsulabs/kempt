@@ -3882,7 +3882,7 @@
                 12
             </div>
             <div class="column has-background-success-light p-0">
-                <pre class="has-background-success-light py-0 px-2">            .map(|unioned| unioned.map_both(|_, _, _| OwnedOrRef::Owned(())).key)</pre>
+                <pre class="has-background-success-light py-0 px-2">            .map(|unioned| unioned.map_both(|_, (), ()| OwnedOrRef::Owned(())).key)</pre>
             </div>
         </div><div class="columns p-0 m-0">
             <div
@@ -4220,7 +4220,7 @@
                 4
             </div>
             <div class="column has-background-success-light p-0">
-                <pre class="has-background-success-light py-0 px-2">        self.0.next().map(|(k, _, _)| k)</pre>
+                <pre class="has-background-success-light py-0 px-2">        self.0.next().map(|(k, (), ())| k)</pre>
             </div>
         </div><div class="columns p-0 m-0">
             <div
@@ -4558,7 +4558,7 @@
                 6
             </div>
             <div class="column has-background-success-light p-0">
-                <pre class="has-background-success-light py-0 px-2">        self.0.next().map(|(k, _)| k)</pre>
+                <pre class="has-background-success-light py-0 px-2">        self.0.next().map(|(k, ())| k)</pre>
             </div>
         </div><div class="columns p-0 m-0">
             <div
@@ -5759,7 +5759,7 @@
         </div></div>
         <footer class="footer">
             <div class="content has-text-centered">
-                <p class="heading">Date: 2023-12-29 15:55</p>
+                <p class="heading">Date: 2024-03-15 19:09</p>
             </div>
         </footer>
     </body>
